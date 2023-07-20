@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,7 +12,6 @@ import 'classes/User.dart';
 const footerBlue = Color(0xFF1f4c73);
 const colorBlue = Color(0xFF0f2940);
 const colorGreen = Color(0xFF03a751);
-final _formKey = GlobalKey<FormBuilderState>();
 final angelenoAccountButtonStyle =  ButtonStyle(
     backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
     foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
@@ -25,18 +25,19 @@ final angelenoAccountButtonStyle =  ButtonStyle(
       )
     )
 );
-final actionButtonStyle = ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-    shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    surfaceTintColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    overlayColor: MaterialStateProperty.all<Color>(const Color(0xfff6f6f6)),
+final actionButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: Colors.transparent,
+    disabledBackgroundColor: Colors.transparent,
     alignment: Alignment.center,
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(4.0)),
-            side: BorderSide(color: Colors.black)
-        )
+    textStyle: const TextStyle(
+      color: Colors.black
+    ),
+    surfaceTintColor: Colors.transparent,
+    foregroundColor: Colors.black,
+    shadowColor: Colors.transparent,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      side: BorderSide(color: Colors.black)
     )
 );
 
@@ -71,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /* Unused */
   late User user;
 
+  final _formKey = GlobalKey<FormBuilderState>();
   static bool _isEditing = false;
   int _selectedIndex = 0;
 
@@ -90,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     });
 
-    fetchUser();
+    fetchUser(_formKey);
   }
 
   void _navigationSelected(int index) {
@@ -103,15 +105,9 @@ class _MyHomePageState extends State<MyHomePage> {
     _newPassword = '',
     _passwordMatch = '';
 
-  /* Unused */
-  // Would like to replace the `validator`
-  // on each TextFormField with a single function if possible
-  validatePasswords (value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Password is required';
-    }
-    return null;
-  }
+  String? validatePasswords (value) =>
+    (value == null || value.trim().isEmpty) ?
+      'Password is required' : null;
 
   get profileScreen => FormBuilder(
     key: _formKey,
@@ -223,12 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
           obscureText: true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Password is required';
-            }
-            return null;
-          },
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: validatePasswords,
           decoration: const InputDecoration(
               border: OutlineInputBorder(), labelText: 'Current Password')),
       const SizedBox(height: 10.0),
@@ -237,12 +229,8 @@ class _MyHomePageState extends State<MyHomePage> {
           obscureText: true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Password is required';
-            }
-            return null;
-          },
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: validatePasswords,
           decoration: const InputDecoration(
               border: OutlineInputBorder(), labelText: 'New Password')),
       const SizedBox(height: 10.0),
@@ -251,12 +239,8 @@ class _MyHomePageState extends State<MyHomePage> {
           obscureText: true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Password is required';
-            }
-            return null;
-          },
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: validatePasswords,
           decoration: const InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Confirm New Password'
@@ -267,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: null,
             style: actionButtonStyle,
             child: const Text('Change Password'),
           )
@@ -464,7 +448,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 }
 
-Future<void> fetchUser() async {
+Future<void> fetchUser(formKey) async {
   // placeholder request until we get the proper endpoints and flow
   final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
 
@@ -472,7 +456,7 @@ Future<void> fetchUser() async {
     // Targeting just the first user from the placeholder endpoint [0]
     User userData = User.fromJson(jsonDecode(response.body)[0]);
 
-    _formKey.currentState?.patchValue({
+    formKey.currentState?.patchValue({
       'full_name': userData.name,
       'email': userData.email,
       'first_name': userData.name.split(" ")[0],
