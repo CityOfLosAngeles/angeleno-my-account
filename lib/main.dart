@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -76,6 +75,14 @@ class _MyHomePageState extends State<MyHomePage> {
   static bool _isEditing = false;
   int _selectedIndex = 0;
 
+  static bool viewPassword = false;
+  static bool viewNewPassword = false;
+  static bool viewPasswordMatch = false;
+  late bool _isButtonDisabled;
+  late String currentPassword;
+  late String newPassword;
+  late String passwordMatch;
+
   /* Proof of Concept for Data Retention on Full Name field */
   final TextEditingController _controller = TextEditingController();
 
@@ -92,6 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     });
 
+    currentPassword = '';
+    newPassword = '';
+    passwordMatch = '';
+    _isButtonDisabled = true;
     fetchUser(_formKey);
   }
 
@@ -101,13 +112,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  static String _currentPassword = '',
-    _newPassword = '',
-    _passwordMatch = '';
-
   String? validatePasswords (value) =>
     (value == null || value.trim().isEmpty) ?
       'Password is required' : null;
+
+  submitRequest() {
+    if (newPassword == passwordMatch) {
+      //submit request to finalize updated
+    }
+  }
+
+  bool enablePasswordSubmit() {
+    return !(currentPassword.trim() != "" && newPassword.trim() != ""
+      && passwordMatch.trim() != "");
+  }
 
   get profileScreen => FormBuilder(
     key: _formKey,
@@ -215,43 +233,88 @@ class _MyHomePageState extends State<MyHomePage> {
     children: [
       const SizedBox(height: 5.0),
       TextFormField(
-          initialValue: _currentPassword,
-          obscureText: true,
+          obscureText: viewPassword ? false : true,
           autocorrect: false,
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: validatePasswords,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(), labelText: 'Current Password')),
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(), 
+              labelText: 'Current Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    viewPassword = !viewPassword;
+                  });
+                }, 
+                icon: Icon(viewPassword ? Icons.remove_red_eye_sharp : Icons.remove_red_eye_outlined)
+              )
+          ),
+          onChanged: (value) {
+            setState(() {
+              currentPassword = value;
+              _isButtonDisabled = enablePasswordSubmit();
+            });
+          },
+          ),
       const SizedBox(height: 10.0),
       TextFormField(
-          initialValue: _newPassword,
-          obscureText: true,
+          obscureText: viewNewPassword ? false : true,
           autocorrect: false,
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: validatePasswords,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(), labelText: 'New Password')),
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(), 
+              labelText: 'New Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    viewNewPassword = !viewNewPassword;
+                  });
+                }, 
+                icon: Icon(viewNewPassword ? Icons.remove_red_eye_sharp : Icons.remove_red_eye_outlined)
+              )
+          ),
+          onChanged: (value) {
+            setState(() {
+              newPassword = value;
+              _isButtonDisabled = enablePasswordSubmit();
+            });
+          },
+        ),
       const SizedBox(height: 10.0),
       TextFormField(
-          initialValue: _passwordMatch,
-          obscureText: true,
+          obscureText: viewPasswordMatch ? false : true,
           autocorrect: false,
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: validatePasswords,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Confirm New Password'
-          )
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: 'Confirm New Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    viewPasswordMatch = !viewPasswordMatch;
+                  });
+                }, 
+                icon: Icon(viewPasswordMatch ? Icons.remove_red_eye_sharp : Icons.remove_red_eye_outlined)
+              )
+          ),
+          onChanged: (value) {
+            setState(() {
+              passwordMatch = value;
+              _isButtonDisabled = enablePasswordSubmit();
+            });
+          },
       ),
       const SizedBox(height: 10.0),
       Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ElevatedButton(
-            onPressed: null,
+            onPressed: _isButtonDisabled ? null : () => submitRequest(),
             style: actionButtonStyle,
             child: const Text('Change Password'),
           )
