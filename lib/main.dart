@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'classes/User.dart';
+import 'classes/user.dart';
 
 const footerBlue = Color(0xFF1f4c73);
 const colorBlue = Color(0xFF0f2940);
@@ -68,29 +68,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /* Unused */
   late User user;
-
+  late bool loading = true;
   static bool _isEditing = false;
   int _selectedIndex = 0;
-
-  /* Proof of Concept for Data Retention on Full Name field */
-  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    _controller.addListener(() {
-      final String text = _controller.text;
-      _controller.value = _controller.value.copyWith(
-        text: text,
-        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
-        composing: TextRange.empty
-      );
+    fetchUser().then((value) {
+      setState(() {
+        user = value;
+        loading = false;
+      });
     });
-
-    fetchUser();
   }
 
   void _navigationSelected(int index) {
@@ -144,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: const InputDecoration(
                   labelText: 'Full Name'
               ),
-              controller: _controller
+              initialValue: user.fullName,
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -153,6 +145,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'Email'
             ),
+            initialValue: user.email,
+            onChanged: (val) {
+              user.email = val!;
+            },
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -161,6 +157,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'First Name'
             ),
+            initialValue: user.firstName,
+            onChanged: (val) {
+              user.firstName = val!;
+            },
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -169,6 +169,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'Last Name'
             ),
+            initialValue: user.lastName,
+            onChanged: (val) {
+              user.lastName = val!;
+            },
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -177,6 +181,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'Zip'
             ),
+            initialValue: user.zip,
+            onChanged: (val) {
+              user.zip = val!;
+            },
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -185,6 +193,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'Address'
             ),
+            initialValue: user.address,
+            onChanged: (val) {
+              user.address = val!;
+            },
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -193,6 +205,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'City'
             ),
+            initialValue: user.city,
+            onChanged: (val) {
+              user.city = val!;
+            },
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -201,6 +217,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'State'
             ),
+            initialValue: user.state,
+            onChanged: (val) {
+              user.state = val!;
+            },
           ),
           const SizedBox(height: 25.0),
           FormBuilderTextField(
@@ -209,6 +229,10 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: const InputDecoration(
                 labelText: 'Mobile'
             ),
+            initialValue: user.phone,
+            onChanged: (val) {
+              user.phone = val!;
+            },
           ),
         ],
       ),
@@ -418,7 +442,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     flex: 8,
                     child: Padding(
                         padding: const EdgeInsets.all(20.0),
-                        child: screens[_selectedIndex]
+                        child: loading ? null : screens[_selectedIndex]
                     )
                 )
               ],
@@ -464,37 +488,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
 }
 
-Future<void> fetchUser() async {
+Future<User> fetchUser() async {
   // placeholder request until we get the proper endpoints and flow
   final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
 
   if (response.statusCode == HttpStatus.ok) {
     // Targeting just the first user from the placeholder endpoint [0]
-    User userData = User.fromJson(jsonDecode(response.body)[0]);
+    final data = jsonDecode(response.body)[0];
 
-    _formKey.currentState?.patchValue({
-      'full_name': userData.name,
-      'email': userData.email,
-      'first_name': userData.name.split(" ")[0],
-      'last_name': userData.name.split(" ")[1],
-      'zip': '',
-      'address': '',
-      'city': '',
-      'state': '',
-      'mobile': userData.phone
-    });
+    User user = User();
+    user.email = data["email"];
+    user.firstName = data["name"].toString().split(" ")[0];
+    user.lastName = data["name"].toString().split(" ")[1];
+    user.phone = data["phone"];
+    user.address = data["address"]["street"];
+    user.zip = data["address"]["zipcode"];
+    user.city = data["address"]["city"];
 
+    return user;
   } else {
     throw Exception('Failed to load user data.');
   }
 }
-
-
-/* TO DO
-
-- Center area so it doesn't expand to full width
-- Implement loading screen?
-- Review for accessibility
-- Be able to Toggle password input
-
- */
