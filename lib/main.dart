@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +12,7 @@ import 'classes/User.dart';
 const footerBlue = Color(0xFF1f4c73);
 const colorBlue = Color(0xFF0f2940);
 const colorGreen = Color(0xFF03a751);
+final _formKey = GlobalKey<FormBuilderState>();
 final angelenoAccountButtonStyle =  ButtonStyle(
     backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
     foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
@@ -71,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
   /* Unused */
   late User user;
 
-  final _formKey = GlobalKey<FormBuilderState>();
   static bool _isEditing = false;
   int _selectedIndex = 0;
 
@@ -103,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
     newPassword = '';
     passwordMatch = '';
     _isButtonDisabled = true;
-    fetchUser(_formKey);
+    fetchUser();
   }
 
   void _navigationSelected(int index) {
@@ -247,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     viewPassword = !viewPassword;
                   });
                 }, 
-                icon: Icon(viewPassword ? Icons.remove_red_eye_sharp : Icons.remove_red_eye_outlined)
+                icon: Icon(viewPassword ? CupertinoIcons.eye  : CupertinoIcons.eye_slash)
               )
           ),
           onChanged: (value) {
@@ -273,7 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     viewNewPassword = !viewNewPassword;
                   });
                 }, 
-                icon: Icon(viewNewPassword ? Icons.remove_red_eye_sharp : Icons.remove_red_eye_outlined)
+                icon: Icon(viewNewPassword ? CupertinoIcons.eye  : CupertinoIcons.eye_slash)
               )
           ),
           onChanged: (value) {
@@ -299,7 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     viewPasswordMatch = !viewPasswordMatch;
                   });
                 }, 
-                icon: Icon(viewPasswordMatch ? Icons.remove_red_eye_sharp : Icons.remove_red_eye_outlined)
+                icon: Icon(viewPasswordMatch ? CupertinoIcons.eye  : CupertinoIcons.eye_slash)
               )
           ),
           onChanged: (value) {
@@ -511,7 +512,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 }
 
-Future<void> fetchUser(formKey) async {
+Future<void> fetchUser() async {
   // placeholder request until we get the proper endpoints and flow
   final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
 
@@ -519,7 +520,7 @@ Future<void> fetchUser(formKey) async {
     // Targeting just the first user from the placeholder endpoint [0]
     User userData = User.fromJson(jsonDecode(response.body)[0]);
 
-    formKey.currentState?.patchValue({
+    _formKey.currentState?.patchValue({
       'full_name': userData.name,
       'email': userData.email,
       'first_name': userData.name.split(" ")[0],
