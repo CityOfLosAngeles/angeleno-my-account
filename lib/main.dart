@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -248,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     viewPassword = !viewPassword;
                   });
                 }, 
-                icon: Icon(viewPassword ? CupertinoIcons.eye  : CupertinoIcons.eye_slash)
+                icon: Icon(viewPassword ? Icons.visibility  : Icons.visibility_off)
               )
           ),
           onChanged: (value) {
@@ -274,7 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     viewNewPassword = !viewNewPassword;
                   });
                 }, 
-                icon: Icon(viewNewPassword ? CupertinoIcons.eye  : CupertinoIcons.eye_slash)
+                icon: Icon(viewNewPassword ? Icons.visibility  : Icons.visibility_off)
               )
           ),
           onChanged: (value) {
@@ -300,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     viewPasswordMatch = !viewPasswordMatch;
                   });
                 }, 
-                icon: Icon(viewPasswordMatch ? CupertinoIcons.eye  : CupertinoIcons.eye_slash)
+                icon: Icon(viewPasswordMatch ? Icons.visibility  : Icons.visibility_off)
               )
           ),
           onChanged: (value) {
