@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'classes/User.dart';
+import 'classes/user.dart';
 
 const footerBlue = Color(0xFF1f4c73);
 const colorBlue = Color(0xFF0f2940);
@@ -20,9 +20,7 @@ final angelenoAccountButtonStyle =  ButtonStyle(
     overlayColor: MaterialStateProperty.all<Color>(const Color(0xff0daa58)),
     alignment: Alignment.center,
     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-      const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero
-      )
+      const RoundedRectangleBorder()
     )
 );
 final actionButtonStyle = ButtonStyle(
@@ -35,7 +33,7 @@ final actionButtonStyle = ButtonStyle(
     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
         const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(4.0)),
-            side: BorderSide(color: Colors.black)
+            side: BorderSide()
         )
     )
 );
@@ -48,8 +46,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(final BuildContext context) => MaterialApp(
       title: 'Angeleno - Account',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -57,7 +54,6 @@ class MyApp extends StatelessWidget {
       ),
       home: const MyHomePage(),
     );
-  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -85,7 +81,10 @@ class _MyHomePageState extends State<MyHomePage> {
       final String text = _controller.text;
       _controller.value = _controller.value.copyWith(
         text: text,
-        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+        selection: TextSelection(
+            baseOffset: text.length,
+            extentOffset: text.length
+        ),
         composing: TextRange.empty
       );
     });
@@ -93,27 +92,27 @@ class _MyHomePageState extends State<MyHomePage> {
     fetchUser();
   }
 
-  void _navigationSelected(int index) {
+  void _navigationSelected(final int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  static String _currentPassword = '',
+  final String _currentPassword = '',
     _newPassword = '',
     _passwordMatch = '';
 
   /* Unused */
   // Would like to replace the `validator`
   // on each TextFormField with a single function if possible
-  validatePasswords (value) {
+  String? validatePasswords (final value) {
     if (value == null || value.trim().isEmpty) {
       return 'Password is required';
     }
     return null;
   }
 
-  get profileScreen => FormBuilder(
+  FormBuilder get profileScreen => FormBuilder(
     key: _formKey,
     onChanged: () {
       _formKey.currentState!.save();
@@ -215,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   );
 
-  get passwordScreen => ListView(
+  ListView get passwordScreen => ListView(
     children: [
       const SizedBox(height: 5.0),
       TextFormField(
@@ -223,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
           obscureText: true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (value) {
+          validator: (final value) {
             if (value == null || value.trim().isEmpty) {
               return 'Password is required';
             }
@@ -237,7 +236,7 @@ class _MyHomePageState extends State<MyHomePage> {
           obscureText: true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (value) {
+          validator: (final value) {
             if (value == null || value.trim().isEmpty) {
               return 'Password is required';
             }
@@ -251,7 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
           obscureText: true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (value) {
+          validator: (final value) {
             if (value == null || value.trim().isEmpty) {
               return 'Password is required';
             }
@@ -264,7 +263,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       const SizedBox(height: 10.0),
       Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ElevatedButton(
             onPressed: () {},
@@ -289,8 +287,8 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    bool smallScreen = MediaQuery.of(context).size.width < 720;
+  Widget build(final BuildContext context) {
+    final bool smallScreen = MediaQuery.of(context).size.width < 720;
     print('Rebuilding');
     
     return Scaffold(
@@ -342,36 +340,41 @@ class _MyHomePageState extends State<MyHomePage> {
                  ElevatedButton.icon(
                   onPressed: () async {
                     await launchUrl(
-                      Uri.parse('https://angeleno.lacity.org/'),
-                      mode: LaunchMode.platformDefault
+                      Uri.parse('https://angeleno.lacity.org/')
                     );
                   },
                   icon: const Icon(Icons.home, color: Colors.white,),
-                  label: const Text('Home', style: TextStyle(color: Colors.white)),
+                  label: const Text('Home',
+                      style: TextStyle(color: Colors.white)
+                  ),
                   style: angelenoAccountButtonStyle
                  ),
                 const SizedBox(width: 5.0),
                 ElevatedButton.icon(
                   onPressed: () async {
                     await launchUrl(
-                        Uri.parse('https://angeleno.lacity.org/apps'),
-                        mode: LaunchMode.platformDefault
+                        Uri.parse('https://angeleno.lacity.org/apps')
                     );
                   },
-                  icon: const Icon(Icons.grid_view_rounded, color: Colors.white,),
-                  label: const Text('Services', style: TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.grid_view_rounded,
+                    color: Colors.white
+                  ),
+                  label: const Text('Services',
+                      style: TextStyle(color: Colors.white)
+                  ),
                   style: angelenoAccountButtonStyle
                 ),
                 const SizedBox(width: 5.0),
                 ElevatedButton.icon(
                     onPressed: () async {
                       await launchUrl(
-                          Uri.parse('https://angeleno.lacity.org/help'),
-                          mode: LaunchMode.platformDefault
+                          Uri.parse('https://angeleno.lacity.org/help')
                       );
                     },
                     icon: const Icon(Icons.question_mark, color: Colors.white,),
-                    label: const Text('Help', style: TextStyle(color: Colors.white)),
+                    label: const Text('Help',
+                        style: TextStyle(color: Colors.white)
+                    ),
                     style: angelenoAccountButtonStyle
                 ),
                 const SizedBox(width: 5.0),
@@ -398,17 +401,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         destinations: const <NavigationRailDestination> [
                           NavigationRailDestination(
                               icon: Icon(Icons.person_outline_outlined),
-                              selectedIcon: Icon(Icons.person, color: Colors.white),
+                              selectedIcon: Icon(Icons.person,
+                                  color: Colors.white
+                              ),
                               label: Text('Profile')
                           ),
                           NavigationRailDestination(
                               icon: Icon(Icons.password_outlined),
-                              selectedIcon: Icon(Icons.password, color: Colors.white),
+                              selectedIcon: Icon(Icons.password,
+                                  color: Colors.white
+                              ),
                               label: Text('Password')
                           ),
                           NavigationRailDestination(
                               icon: Icon(Icons.lock_outline),
-                              selectedIcon: Icon(Icons.lock, color: Colors.white),
+                              selectedIcon: Icon(Icons.lock,
+                                  color: Colors.white
+                              ),
                               label: Text('Security')
                           )
                         ]
@@ -450,9 +459,11 @@ class _MyHomePageState extends State<MyHomePage> {
                padding: const EdgeInsets.all(16.0),
                child: const Row(
                  mainAxisAlignment: MainAxisAlignment.center,
-                 crossAxisAlignment: CrossAxisAlignment.center,
                  children: [
-                   Text("© Copyright 2023 City of Los Angeles. All rights reserved. Disclaimer | Privacy Policy", style: TextStyle(color: Colors.white),)
+                   Text('© Copyright 2023 City of Los Angeles. '
+                       'All rights reserved. Disclaimer | Privacy Policy',
+                     style: TextStyle(color: Colors.white)
+                   )
                  ],
               )
             )
@@ -461,22 +472,23 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
 }
 
 Future<void> fetchUser() async {
   // placeholder request until we get the proper endpoints and flow
-  final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/users'));
+  final response = await http.get(
+      Uri.parse('https://jsonplaceholder.typicode.com/users')
+  );
 
   if (response.statusCode == HttpStatus.ok) {
     // Targeting just the first user from the placeholder endpoint [0]
-    User userData = User.fromJson(jsonDecode(response.body)[0]);
+    final User userData = User.fromJson(jsonDecode(response.body)[0]);
 
     _formKey.currentState?.patchValue({
       'full_name': userData.name,
       'email': userData.email,
-      'first_name': userData.name.split(" ")[0],
-      'last_name': userData.name.split(" ")[1],
+      'first_name': userData.name.split(' ')[0],
+      'last_name': userData.name.split(' ')[1],
       'zip': '',
       'address': '',
       'city': '',
@@ -488,13 +500,3 @@ Future<void> fetchUser() async {
     throw Exception('Failed to load user data.');
   }
 }
-
-
-/* TO DO
-
-- Center area so it doesn't expand to full width
-- Implement loading screen?
-- Review for accessibility
-- Be able to Toggle password input
-
- */

@@ -11,7 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:angeleno_project/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  // ignore: lines_longer_than_80_chars
+  testWidgets('Counter increments smoke test', (final WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
