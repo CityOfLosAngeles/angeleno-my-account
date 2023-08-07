@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /* Unused */
   // Would like to replace the `validator`
   // on each TextFormField with a single function if possible
-  String? validatePasswords (final value) {
+  String? validatePasswords (final String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Password is required';
     }
@@ -482,18 +482,19 @@ Future<void> fetchUser() async {
 
   if (response.statusCode == HttpStatus.ok) {
     // Targeting just the first user from the placeholder endpoint [0]
-    final User userData = User.fromJson(jsonDecode(response.body)[0]);
+    final String rawJson = response.body;
+    final jsonMap = jsonDecode(rawJson)[0];
 
     _formKey.currentState?.patchValue({
-      'full_name': userData.name,
-      'email': userData.email,
-      'first_name': userData.name.split(' ')[0],
-      'last_name': userData.name.split(' ')[1],
+      'full_name': jsonMap['name'],
+      'email': jsonMap['email'],
+      'first_name': jsonMap['name'].split(' ')[0],
+      'last_name': jsonMap['name'].split(' ')[1],
       'zip': '',
       'address': '',
       'city': '',
       'state': '',
-      'mobile': userData.phone
+      'mobile': jsonMap['phone']
     });
 
   } else {
