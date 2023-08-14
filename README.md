@@ -13,3 +13,5 @@ Making updates to `.dart` files will require you to run `flutter build web` so t
 After building, you can use `flutter run -d chrome` to run on Chrome. You can add additional devices (browsers) for additional testing.
 
 If you need to specify a web port to run the app on, you can append the argument `--web-port=####` to the above - this will be helpful when testing redirects from external apps as it'll allow us to control a designated port.
+
+Running `flutter analyze` will check your code to make sure it aligns with our linting rules.
