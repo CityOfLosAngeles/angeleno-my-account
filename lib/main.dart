@@ -23,18 +23,19 @@ final angelenoAccountButtonStyle =  ButtonStyle(
       const RoundedRectangleBorder()
     )
 );
-final actionButtonStyle = ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-    shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    surfaceTintColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    overlayColor: MaterialStateProperty.all<Color>(const Color(0xfff6f6f6)),
+final actionButtonStyle = ElevatedButton.styleFrom(
+    backgroundColor: Colors.transparent,
+    disabledBackgroundColor: Colors.transparent,
     alignment: Alignment.center,
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(4.0)),
-            side: BorderSide()
-        )
+    textStyle: const TextStyle(
+      color: Colors.black
+    ),
+    surfaceTintColor: Colors.transparent,
+    foregroundColor: Colors.black,
+    shadowColor: Colors.transparent,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      side: BorderSide()
     )
 );
 
@@ -70,6 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
   static bool _isEditing = false;
   int _selectedIndex = 0;
 
+  static bool viewPassword = false;
+  static bool viewNewPassword = false;
+  static bool viewPasswordMatch = false;
+  late bool _isButtonDisabled;
+  late String currentPassword;
+  late String newPassword;
+  late String passwordMatch;
+
   /* Proof of Concept for Data Retention on Full Name field */
   final TextEditingController _controller = TextEditingController();
 
@@ -89,6 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     });
 
+    currentPassword = '';
+    newPassword = '';
+    passwordMatch = '';
+    _isButtonDisabled = true;
     fetchUser();
   }
 
@@ -98,19 +111,22 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  final String _currentPassword = '',
-    _newPassword = '',
-    _passwordMatch = '';
-
-  /* Unused */
-  // Would like to replace the `validator`
-  // on each TextFormField with a single function if possible
   String? validatePasswords (final String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Password is required';
     }
     return null;
   }
+
+  void submitRequest() {
+    if (newPassword == passwordMatch) {
+      //submit request to finalize updated
+    }
+  }
+
+  bool enablePasswordSubmit() => !(currentPassword.trim() != ''
+      && newPassword.trim() != ''
+      && passwordMatch.trim() != '');
 
   FormBuilder get profileScreen => FormBuilder(
     key: _formKey,
@@ -218,54 +234,93 @@ class _MyHomePageState extends State<MyHomePage> {
     children: [
       const SizedBox(height: 5.0),
       TextFormField(
-          initialValue: _currentPassword,
-          obscureText: true,
+          obscureText: viewPassword ? false : true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (final value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Password is required';
-            }
-            return null;
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: validatePasswords,
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(), 
+              labelText: 'Current Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    viewPassword = !viewPassword;
+                  });
+                }, 
+                icon: Icon(
+                    viewPassword ? Icons.visibility  : Icons.visibility_off
+                )
+              )
+          ),
+          onChanged: (final value) {
+            setState(() {
+              currentPassword = value;
+              _isButtonDisabled = enablePasswordSubmit();
+            });
           },
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(), labelText: 'Current Password')),
+          ),
       const SizedBox(height: 10.0),
       TextFormField(
-          initialValue: _newPassword,
-          obscureText: true,
+          obscureText: viewNewPassword ? false : true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (final value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Password is required';
-            }
-            return null;
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: validatePasswords,
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(), 
+              labelText: 'New Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    viewNewPassword = !viewNewPassword;
+                  });
+                }, 
+                icon: Icon(
+                    viewNewPassword ? Icons.visibility  : Icons.visibility_off
+                )
+              )
+          ),
+          onChanged: (final value) {
+            setState(() {
+              newPassword = value;
+              _isButtonDisabled = enablePasswordSubmit();
+            });
           },
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(), labelText: 'New Password')),
+        ),
       const SizedBox(height: 10.0),
       TextFormField(
-          initialValue: _passwordMatch,
-          obscureText: true,
+          obscureText: viewPasswordMatch ? false : true,
           autocorrect: false,
           enableSuggestions: false,
-          validator: (final value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Password is required';
-            }
-            return null;
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: validatePasswords,
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: 'Confirm New Password',
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    viewPasswordMatch = !viewPasswordMatch;
+                  });
+                }, 
+                icon: Icon(
+                    viewPasswordMatch ? Icons.visibility  : Icons.visibility_off
+                )
+              )
+          ),
+          onChanged: (final value) {
+            setState(() {
+              passwordMatch = value;
+              _isButtonDisabled = enablePasswordSubmit();
+            });
           },
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Confirm New Password'
-          )
       ),
       const SizedBox(height: 10.0),
       Row(
         children: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: _isButtonDisabled ? null : () => submitRequest(),
             style: actionButtonStyle,
             child: const Text('Change Password'),
           )
