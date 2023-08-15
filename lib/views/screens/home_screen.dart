@@ -2,7 +2,6 @@ import 'package:angeleno_project/models/constants.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/user.dart';
@@ -50,56 +49,22 @@ class _MyHomePageState extends State<MyHomePage> {
     final bool smallScreen = MediaQuery.of(context).size.width < 720;
     print('Rebuilding');
     
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: constants.colorBlue,
-        leading: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: SvgPicture.asset(
-                'images/los_angeles_seal.svg',
-                semanticsLabel: 'Los Angeles Seal'
-            )
-        ),
-        title: const Text('Los Angeles', style: TextStyle(color: Colors.white)),
-        actions: <Widget>[
-          IconButton(
-            tooltip: 'Opens https://myla311.lacity.org/ in a new window',
-            onPressed: () async {
-              await launchUrl(
-                  Uri.parse('https://www.myla311.lacity.org'),
-                  mode: LaunchMode.externalApplication
-              );
-            },
-            icon: const Icon(Icons.add_ic_call_outlined),
-            color: Colors.white,
-          ),
-          IconButton(
-            tooltip: 'Opens https://lacity.gov/directory in a new window',
-            onPressed: () async {
-              await launchUrl(
-                  Uri.parse('https://www.lacity.gov/directory/'),
-                  mode: LaunchMode.externalApplication
-              );
-            },
-            icon: const Icon(Icons.location_city_outlined),
-            color: Colors.white,
-          )
-        ],
-      ),
-      body: Scaffold(
-        appBar: AppBar(
-          backgroundColor: constants.colorGreen,
-          title: const Text('Angeleno Account',
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold),
-          ),
-          actions:
+    return Container(
+      margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: constants.colorGreen,
+            title: const Text('Angeleno Account',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            ),
+            actions:
             <Widget>[
-                 ElevatedButton.icon(
+              ElevatedButton.icon(
                   onPressed: () async {
                     await launchUrl(
-                      Uri.parse('https://angeleno.lacity.org/')
+                        Uri.parse('https://angeleno.lacity.org/')
                     );
                   },
                   icon: const Icon(Icons.home, color: Colors.white,),
@@ -107,39 +72,39 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: TextStyle(color: Colors.white)
                   ),
                   style: constants.angelenoAccountButtonStyle
-                 ),
-                const SizedBox(width: 5.0),
-                ElevatedButton.icon(
+              ),
+              const SizedBox(width: 5.0),
+              ElevatedButton.icon(
                   onPressed: () async {
                     await launchUrl(
                         Uri.parse('https://angeleno.lacity.org/apps')
                     );
                   },
                   icon: const Icon(Icons.grid_view_rounded,
-                    color: Colors.white
+                      color: Colors.white
                   ),
                   label: const Text('Services',
                       style: TextStyle(color: Colors.white)
                   ),
                   style: constants.angelenoAccountButtonStyle
-                ),
-                const SizedBox(width: 5.0),
-                ElevatedButton.icon(
-                    onPressed: () async {
-                      await launchUrl(
-                          Uri.parse('https://angeleno.lacity.org/help')
-                      );
-                    },
-                    icon: const Icon(Icons.question_mark, color: Colors.white,),
-                    label: const Text('Help',
-                        style: TextStyle(color: Colors.white)
-                    ),
-                    style: constants.angelenoAccountButtonStyle
-                ),
-                const SizedBox(width: 5.0),
+              ),
+              const SizedBox(width: 5.0),
+              ElevatedButton.icon(
+                  onPressed: () async {
+                    await launchUrl(
+                        Uri.parse('https://angeleno.lacity.org/help')
+                    );
+                  },
+                  icon: const Icon(Icons.question_mark, color: Colors.white,),
+                  label: const Text('Help',
+                      style: TextStyle(color: Colors.white)
+                  ),
+                  style: constants.angelenoAccountButtonStyle
+              ),
+              const SizedBox(width: 5.0),
             ],
-        ),
-        body: Container(
+      ),
+          body: Container(
           transformAlignment: Alignment.center,
           /*
           **  Add constraints when we figure out how to center
@@ -194,8 +159,8 @@ class _MyHomePageState extends State<MyHomePage> {
           )
 
         ),
-        bottomNavigationBar: smallScreen ?
-          BottomNavigationBar(
+          bottomNavigationBar: smallScreen ?
+            BottomNavigationBar(
               currentIndex: _selectedIndex,
               selectedItemColor: constants.colorBlue,
               onTap: _navigationSelected,
