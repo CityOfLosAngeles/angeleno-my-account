@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-import '../../models/constants.dart';
+import '../../utils/constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,9 +13,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
-  var constants = Constants();
 
-  static bool _isEditing = false;
+  late bool _isEditing;
 
   /* Proof of Concept for Data Retention on Full Name field */
   final TextEditingController _controller = TextEditingController();
@@ -35,6 +34,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           composing: TextRange.empty
       );
     });
+
+    _isEditing = false;
   }
 
   @override
@@ -57,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _isEditing = !_isEditing;
                       });
                     },
-                    style: constants.actionButtonStyle,
+                    style: actionButtonStyle,
                     child: Text(_isEditing ? 'Save' : 'Edit'),
                   )
                 ]

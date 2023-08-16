@@ -1,4 +1,4 @@
-import 'package:angeleno_project/models/constants.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class PasswordScreen extends StatefulWidget {
@@ -10,15 +10,12 @@ class PasswordScreen extends StatefulWidget {
 
 class _PasswordScreenState extends State<PasswordScreen> {
 
-  var constants = Constants();
-
-  static bool viewPassword = false;
-  static bool viewNewPassword = false;
-  static bool viewPasswordMatch = false;
-
   late String currentPassword;
   late String newPassword;
   late String passwordMatch;
+  late bool viewPassword;
+  late bool viewNewPassword;
+  late bool viewPasswordMatch;
   late bool _isButtonDisabled;
 
   @override
@@ -28,6 +25,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
     currentPassword = '';
     newPassword = '';
     passwordMatch = '';
+    viewPassword = false;
+    viewNewPassword = false;
+    viewPasswordMatch = false;
     _isButtonDisabled = true;
   }
 
@@ -140,7 +140,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
           children: [
             ElevatedButton(
               onPressed: _isButtonDisabled ? null : () => submitRequest(),
-              style: constants.actionButtonStyle,
+              style: actionButtonStyle,
               child: const Text('Change Password'),
             )
           ],

@@ -1,4 +1,4 @@
-import 'package:angeleno_project/models/constants.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +14,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  var constants = Constants();
 
   late User user;
 
@@ -53,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
       child: Scaffold(
           appBar: AppBar(
-            backgroundColor: constants.colorGreen,
+            backgroundColor: colorGreen,
             title: const Text('Angeleno Account',
               style: TextStyle(
                   color: Colors.white,
@@ -71,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: const Text('Home',
                       style: TextStyle(color: Colors.white)
                   ),
-                  style: constants.angelenoAccountButtonStyle
+                  style: angelenoAccountButtonStyle
               ),
               const SizedBox(width: 5.0),
               ElevatedButton.icon(
@@ -86,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: const Text('Services',
                       style: TextStyle(color: Colors.white)
                   ),
-                  style: constants.angelenoAccountButtonStyle
+                  style: angelenoAccountButtonStyle
               ),
               const SizedBox(width: 5.0),
               ElevatedButton.icon(
@@ -99,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   label: const Text('Help',
                       style: TextStyle(color: Colors.white)
                   ),
-                  style: constants.angelenoAccountButtonStyle
+                  style: angelenoAccountButtonStyle
               ),
               const SizedBox(width: 5.0),
             ],
@@ -120,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         selectedIndex: _selectedIndex,
                         labelType: NavigationRailLabelType.none,
                         extended: true,
-                        indicatorColor: constants.colorBlue,
+                        indicatorColor: colorBlue,
                         onDestinationSelected: _navigationSelected,
                         destinations: const <NavigationRailDestination> [
                           NavigationRailDestination(
@@ -162,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
           bottomNavigationBar: smallScreen ?
             BottomNavigationBar(
               currentIndex: _selectedIndex,
-              selectedItemColor: constants.colorBlue,
+              selectedItemColor: colorBlue,
               onTap: _navigationSelected,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
@@ -179,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ]
           ) : Container(
-               color: constants.footerBlue,
+               color: footerBlue,
                padding: const EdgeInsets.all(16.0),
                child: const Row(
                  mainAxisAlignment: MainAxisAlignment.center,
