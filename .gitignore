@@ -42,3 +42,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+#environment vars
+.env
+.idea
+
+#Firebase stuff
+firebase.json
+.firebaserc
+api-keys.json
