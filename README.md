@@ -26,10 +26,12 @@ flutter run -d chrome --web-port=3000 --dart-define-from-file=api-keys.json
 
 
 Usage for environment variables:
+
 1)Declare them in json file
 {
     "auth0domain": "testdomain.auth0.com"
 }
+
 2)Declare them in the dart file where you want to use them:
 static const auth0Domain = String.fromEnvironment('auth0domain');
 
