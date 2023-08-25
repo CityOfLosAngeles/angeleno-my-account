@@ -4,8 +4,6 @@ import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../models/user.dart';
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -14,15 +12,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  late User user;
-
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // fetchUser(formKey);
   }
 
   void _navigationSelected(final int index) {
@@ -155,7 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           )
-
         ),
           bottomNavigationBar: smallScreen ?
             BottomNavigationBar(
@@ -193,31 +186,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-// Future<void> fetchUser(final GlobalKey<FormBuilderState> formKey) async {
-//   // placeholder request until we get the proper endpoints and flow
-//   final response = await http.get(
-//       Uri.parse('https://jsonplaceholder.typicode.com/users')
-//   );
-//
-//   if (response.statusCode == HttpStatus.ok) {
-//     // Targeting just the first user from the placeholder endpoint [0]
-//     final String rawJson = response.body;
-//     final jsonMap = jsonDecode(rawJson)[0];
-//
-//     formKey.currentState?.patchValue({
-//       'full_name': jsonMap['name'],
-//       'email': jsonMap['email'],
-//       'first_name': jsonMap['name'].split(' ')[0],
-//       'last_name': jsonMap['name'].split(' ')[1],
-//       'zip': '',
-//       'address': '',
-//       'city': '',
-//       'state': '',
-//       'mobile': jsonMap['phone']
-//     });
-//
-//   } else {
-//     throw Exception('Failed to load user data.');
-//   }
-// }
