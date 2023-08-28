@@ -1,8 +1,8 @@
 import 'package:angeleno_project/utils/constants.dart';
+import 'package:angeleno_project/views/nav/app_bar.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -44,58 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
       child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: colorGreen,
-            title: const Text('Angeleno Account',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold),
-            ),
-            actions:
-            <Widget>[
-              ElevatedButton.icon(
-                  onPressed: () async {
-                    await launchUrl(
-                        Uri.parse('https://angeleno.lacity.org/')
-                    );
-                  },
-                  icon: const Icon(Icons.home, color: Colors.white,),
-                  label: const Text('Home',
-                      style: TextStyle(color: Colors.white)
-                  ),
-                  style: angelenoAccountButtonStyle
-              ),
-              const SizedBox(width: 5.0),
-              ElevatedButton.icon(
-                  onPressed: () async {
-                    await launchUrl(
-                        Uri.parse('https://angeleno.lacity.org/apps')
-                    );
-                  },
-                  icon: const Icon(Icons.grid_view_rounded,
-                      color: Colors.white
-                  ),
-                  label: const Text('Services',
-                      style: TextStyle(color: Colors.white)
-                  ),
-                  style: angelenoAccountButtonStyle
-              ),
-              const SizedBox(width: 5.0),
-              ElevatedButton.icon(
-                  onPressed: () async {
-                    await launchUrl(
-                        Uri.parse('https://angeleno.lacity.org/help')
-                    );
-                  },
-                  icon: const Icon(Icons.question_mark, color: Colors.white,),
-                  label: const Text('Help',
-                      style: TextStyle(color: Colors.white)
-                  ),
-                  style: angelenoAccountButtonStyle
-              ),
-              const SizedBox(width: 5.0),
-            ],
-      ),
+          appBar: const MainAppBar(),
           body: Container(
           transformAlignment: Alignment.center,
           /*
@@ -106,13 +55,11 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
               children: <Widget>[
                 smallScreen ? const SizedBox.shrink() : Expanded(
-                    flex: 2,
                     child:
                     NavigationRail(
                         selectedIndex: _selectedIndex,
-                        labelType: NavigationRailLabelType.none,
-                        extended: true,
-                        indicatorColor: colorBlue,
+                        labelType: NavigationRailLabelType.all,
+                        indicatorColor: colorGreen,
                         onDestinationSelected: _navigationSelected,
                         destinations: const <NavigationRailDestination> [
                           NavigationRailDestination(
@@ -153,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
           bottomNavigationBar: smallScreen ?
             BottomNavigationBar(
               currentIndex: _selectedIndex,
-              selectedItemColor: colorBlue,
+              selectedItemColor: colorGreen,
               onTap: _navigationSelected,
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(

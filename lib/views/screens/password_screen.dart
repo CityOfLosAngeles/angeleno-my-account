@@ -51,7 +51,17 @@ class _PasswordScreenState extends State<PasswordScreen> {
   @override
   Widget build(final BuildContext context) => ListView(
       children: [
-        const SizedBox(height: 5.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ElevatedButton(
+              onPressed: _isButtonDisabled ? null : () => submitRequest(),
+              style: actionButtonStyle,
+              child: const Text('Change Password'),
+            )
+          ],
+        ),
+        const SizedBox(height: 10.0),
         TextFormField(
           obscureText: !viewPassword,
           autocorrect: false,
@@ -135,17 +145,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
             });
           },
         ),
-        const SizedBox(height: 10.0),
-        Row(
-          children: [
-            ElevatedButton(
-              onPressed: _isButtonDisabled ? null : () => submitRequest(),
-              style: actionButtonStyle,
-              child: const Text('Change Password'),
-            )
-          ],
-        )
-
       ],
     );
 

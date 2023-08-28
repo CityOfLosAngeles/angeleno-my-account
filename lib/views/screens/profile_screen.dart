@@ -79,79 +79,80 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ]
                   ),
                   const SizedBox(height: 10.0),
-                  FormBuilderTextField(
-                      name: 'full_name',
+                  TextFormField(
                       enabled: false,
                       decoration: const InputDecoration(
-                          labelText: 'Full Name'
+                          labelText: 'Full Name',
+                          border: OutlineInputBorder()
                       ),
                       controller: _controller,
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'email',
+                  TextFormField(
                     enabled: false,
                     decoration: const InputDecoration(
-                        labelText: 'Email'
+                        labelText: 'Email',
+                        border: OutlineInputBorder()
                     ),
                     initialValue: snapshot.data!.email,
+
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'first_name',
+                  TextFormField(
                     enabled: _isEditing ? true : false,
                     decoration: const InputDecoration(
-                        labelText: 'First Name'
+                        labelText: 'First Name',
+                        border: OutlineInputBorder()
                     ),
                     initialValue: snapshot.data!.name.split(' ')[0],
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'last_name',
+                  TextFormField(
                     enabled: _isEditing ? true : false,
                     decoration: const InputDecoration(
-                        labelText: 'Last Name'
+                        labelText: 'Last Name',
+                        border: OutlineInputBorder()
                     ),
                     initialValue: snapshot.data!.name.split(' ')[1],
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'zip',
+                  TextFormField(
                     enabled: _isEditing ? true : false,
                     decoration: const InputDecoration(
-                        labelText: 'Zip'
+                        labelText: 'Zip',
+                        border: OutlineInputBorder()
                     ),
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'address',
+                  TextFormField(
                     enabled: _isEditing ? true : false,
                     decoration: const InputDecoration(
-                        labelText: 'Address'
+                        labelText: 'Address',
+                        border: OutlineInputBorder()
                     ),
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'city',
+                  TextFormField(
                     enabled: _isEditing ? true : false,
                     decoration: const InputDecoration(
-                        labelText: 'City'
+                        labelText: 'City',
+                        border: OutlineInputBorder()
                     ),
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'state',
+                  TextFormField(
                     enabled: _isEditing ? true : false,
                     decoration: const InputDecoration(
-                        labelText: 'State'
+                        labelText: 'State',
+                        border: OutlineInputBorder()
                     ),
                   ),
                   const SizedBox(height: 25.0),
-                  FormBuilderTextField(
-                    name: 'mobile',
+                  TextFormField(
                     enabled: _isEditing ? true : false,
                     decoration: const InputDecoration(
-                        labelText: 'Mobile'
+                        labelText: 'Mobile',
+                        border: OutlineInputBorder()
                     ),
                     initialValue: snapshot.data!.phone,
                     onChanged: (final value) {
