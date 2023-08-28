@@ -20,9 +20,13 @@ class UserApi extends Api {
 
         user = User(
             userId: jsonMap['id'].toString(),
-            name: jsonMap['name'].toString(),
-            username: jsonMap['username'].toString(),
             email: jsonMap['email'].toString(),
+            firstName: jsonMap['name'].toString().split(' ')[0],
+            lastName: jsonMap['name'].toString().split(' ')[1],
+            zip: jsonMap['address']['zipcode'].toString(),
+            address: jsonMap['address']['street'].toString(),
+            city: jsonMap['address']['city'].toString(),
+            state: 'CA',
             phone: jsonMap['phone'].toString()
         );
       }

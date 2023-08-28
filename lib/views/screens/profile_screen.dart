@@ -19,31 +19,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   late bool _isEditing;
 
-  /* Proof of Concept for Data Retention on Full Name field */
-  final TextEditingController _controller = TextEditingController();
-
   @override
   void initState() {
     super.initState();
-
-    _controller.addListener(() {
-      final String text = _controller.text;
-      _controller.value = _controller.value.copyWith(
-          text: text,
-          selection: TextSelection(
-              baseOffset: text.length,
-              extentOffset: text.length
-          ),
-          composing: TextRange.empty
-      );
-    });
 
     user = userApi.getUser('');
     _isEditing = false;
   }
 
   void updateUser() {
-    print(user.toString());
+    // Send request
+    // print to debug
+    user.then((final value) => print(value.toString()));
   }
 
   @override
@@ -85,7 +72,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           labelText: 'Full Name',
                           border: OutlineInputBorder()
                       ),
-                      controller: _controller,
+                      keyboardType: TextInputType.name,
+                      initialValue: snapshot.data!.fullName,
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -95,7 +83,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         border: OutlineInputBorder()
                     ),
                     initialValue: snapshot.data!.email,
-
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (final val) {
+                      snapshot.data!.email = val;
+                    },
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -104,7 +95,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         labelText: 'First Name',
                         border: OutlineInputBorder()
                     ),
-                    initialValue: snapshot.data!.name.split(' ')[0],
+                    initialValue: snapshot.data!.firstName,
+                    keyboardType: TextInputType.name,
+                    onChanged: (final val) {
+                      snapshot.data!.firstName = val;
+                    },
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -113,7 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         labelText: 'Last Name',
                         border: OutlineInputBorder()
                     ),
-                    initialValue: snapshot.data!.name.split(' ')[1],
+                    initialValue: snapshot.data!.lastName,
+                    keyboardType: TextInputType.name,
+                    onChanged: (final val) {
+                      snapshot.data!.lastName = val;
+                    },
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -122,6 +121,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         labelText: 'Zip',
                         border: OutlineInputBorder()
                     ),
+                    initialValue: snapshot.data!.zip,
+                    onChanged: (final val) {
+                      snapshot.data!.zip = val;
+                    },
+                    keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -130,6 +134,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         labelText: 'Address',
                         border: OutlineInputBorder()
                     ),
+                    keyboardType: TextInputType.streetAddress,
+                    onChanged: (final val) {
+                      snapshot.data!.address = val;
+                    },
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -138,6 +146,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         labelText: 'City',
                         border: OutlineInputBorder()
                     ),
+                    keyboardType: TextInputType.streetAddress,
+                    onChanged: (final val) {
+                      snapshot.data!.city = val;
+                    },
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -146,6 +158,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         labelText: 'State',
                         border: OutlineInputBorder()
                     ),
+                    keyboardType: TextInputType.streetAddress,
+                    onChanged: (final val) {
+                      snapshot.data!.state = val;
+                    },
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
@@ -155,7 +171,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         border: OutlineInputBorder()
                     ),
                     initialValue: snapshot.data!.phone,
-                    onChanged: (final value) {
+                    onChanged: (final val) {
+                      snapshot.data!.phone = val;
                     },
                   ),
                 ],
@@ -163,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
 
-          return const CircularProgressIndicator();
+          return const LinearProgressIndicator();
         }
       )
     );
