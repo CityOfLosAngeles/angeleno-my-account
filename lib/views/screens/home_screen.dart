@@ -39,8 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(final BuildContext context) {
     final bool smallScreen = MediaQuery.of(context).size.width < 720;
-    print('Rebuilding');
-    
+
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
       child: Scaffold(
