@@ -1,6 +1,5 @@
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/api_implementation.dart';
@@ -17,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   UserApi userApi = UserApi();
   late User providerUser;
-  final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -39,13 +38,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       providerUser = userProvider.user!;
     }
 
-    return FormBuilder(
+    return Form(
         key: formKey,
         onChanged: () {
           formKey.currentState!.save();
         },
         autovalidateMode: AutovalidateMode.disabled,
-        skipDisabled: true,
         child: SingleChildScrollView(
           child: Column(
             children: [
