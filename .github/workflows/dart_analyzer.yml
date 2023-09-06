@@ -1,4 +1,6 @@
-# https://github.com/marketplace/actions/dart-analyzer-sarif
+# Runs Static Analysis
+# Used to prevent bugs and ensure that code conforms to style guidelines.
+# Based on https://github.com/marketplace/actions/dart-analyzer-sarif
 
 name: Dart Analyzer
 
