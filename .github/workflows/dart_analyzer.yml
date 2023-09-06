@@ -24,7 +24,13 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
 
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '3.13.2'
+          channel: 'stable'
 
+      - run: flutter pub get
 
       # Re-run to see output in console until we have access
       # to sarif file
