@@ -119,8 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ) : Container(
                color: footerBlue,
                padding: const EdgeInsets.all(16.0),
-               child: const Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
+               child: const Wrap(
+                 alignment: WrapAlignment.center,
                  children: [
                    Text('© Copyright 2023 City of Los Angeles. '
                        'All rights reserved. Disclaimer | Privacy Policy',
