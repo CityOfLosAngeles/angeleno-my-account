@@ -10,6 +10,7 @@ class UserApi extends Api {
 
   @override
   Future<User> getUser(final String url) async {
+    late User user;
 
     try {
       final response = await http.get(Uri.parse(baseUrl + url));
@@ -18,7 +19,7 @@ class UserApi extends Api {
         final String rawJson = response.body;
         final jsonMap = jsonDecode(rawJson)[0];
 
-        return User(
+        user = User(
             userId: jsonMap['id'].toString(),
             email: jsonMap['email'].toString(),
             firstName: jsonMap['name'].toString().split(' ')[0],
@@ -37,8 +38,7 @@ class UserApi extends Api {
       throw '$e';
     }
 
-    return User(userId: '', email: '', firstName: '', lastName: '',
-        zip: '', address: '', city: '', state: '', phone: '');
+    return user;
   }
 
 
