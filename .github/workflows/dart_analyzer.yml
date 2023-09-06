@@ -13,10 +13,16 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
 
-      - name: Analyze Dart code
-        run: dartanalyzer . | dartanalyzer2sarif > analysis.sarif
-
-      - name: Upload SARIF report
+      - name: Dart Analyze
+        run: dart analyze > dart_analyze.txt || true
+        
+      - name: Dart Analyze to SARIF
+        uses: advanced-security/dart-analyzer-sarif@main
+        with:
+          input: dart_analyze.txt
+          output: dart_analyze.sarif
+          
+      - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: analysis.sarif
+          sarif_file: dart_analyze.sarif
