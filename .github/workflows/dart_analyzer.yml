@@ -24,15 +24,18 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
 
-      - name: Dart Analyze
-        run: dart analyze > dart_analyze.txt || true
+
 
       # Re-run to see output in console until we have access
       # to sarif file
       - name: Dart Analyze
         run: dart analyze
 
-      # Commented out until Repo is Public   
+      # 3 Tasks below commented out until Repo is Public
+
+      # - name: Dart Analyze
+      #  run: dart analyze > dart_analyze.txt || true
+
       # - name: Dart Analyze to SARIF
       #  uses: advanced-security/dart-analyzer-sarif@main
       #  with:
