@@ -27,8 +27,10 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
 
+      # https://github.com/marketplace/actions/flutter-action
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        # SHA for v2.10.0
+        uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa
         with:
           flutter-version: '3.13.2'
           channel: 'stable'
@@ -36,7 +38,7 @@ jobs:
 
       - run: flutter pub get
 
-      # Re-run to see output in console until we have access
+      # See output in console until we have access
       # to sarif file
       - name: Dart Analyze
         run: dart analyze
