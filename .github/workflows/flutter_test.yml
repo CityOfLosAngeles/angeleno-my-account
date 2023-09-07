@@ -2,7 +2,7 @@
 name: Flutter Unit Tests
 
 on:
-  pull_request:
+  pull_request: {}
 
 jobs:
   tests:
