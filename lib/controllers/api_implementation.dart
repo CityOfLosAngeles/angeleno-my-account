@@ -11,6 +11,7 @@ class UserApi extends Api {
   @override
   Future<User> getUser(final String url) async {
     late User user;
+
     try {
       final response = await http.get(Uri.parse(baseUrl + url));
 

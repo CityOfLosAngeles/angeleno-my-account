@@ -20,16 +20,11 @@ final angelenoAccountButtonStyle =  ButtonStyle(
 
 final actionButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: colorGreen,
-    disabledBackgroundColor: Colors.transparent,
+    disabledBackgroundColor: const Color(0xFF81d3a8),
+    disabledForegroundColor: Colors.white,
     alignment: Alignment.center,
     textStyle: const TextStyle(
-        color: Colors.black
+        color: Colors.white
     ),
-    surfaceTintColor: Colors.transparent,
     foregroundColor: Colors.white,
-    shadowColor: Colors.transparent,
-    // shape: const RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.all(Radius.circular(4.0)),
-    //     side: BorderSide()
-    // )
 );
