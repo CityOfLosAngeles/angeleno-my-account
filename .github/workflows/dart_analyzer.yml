@@ -1,0 +1,58 @@
+# Runs Static Analysis
+# Used to prevent bugs and ensure that code conforms to style guidelines.
+# Based on https://github.com/marketplace/actions/dart-analyzer-sarif
+
+name: Dart Analyzer
+
+on:
+  pull_request:
+
+jobs:
+  analyze:
+
+    permissions:
+      # For actions/checkout to fetch code
+      contents: read 
+       # For github/codeql-action/upload-sarif to upload SARIF results
+      security-events: write
+      # Only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+      actions: read 
+  
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '3.13.2'
+          channel: 'stable'
+
+      - run: flutter pub get
+
+      # Re-run to see output in console until we have access
+      # to sarif file
+      - name: Dart Analyze
+        run: dart analyze
+
+      # 3 Tasks below commented out until Repo is Public
+
+      # - name: Dart Analyze
+      #  run: dart analyze > dart_analyze.txt || true
+
+      # - name: Dart Analyze to SARIF
+      #  uses: advanced-security/dart-analyzer-sarif@main
+      #  with:
+      #    input: dart_analyze.txt
+      #    output: dart_analyze.sarif
+
+     
+      # - name: Upload SARIF
+      # uses: github/codeql-action/upload-sarif@v2
+      #  with:
+      #   sarif_file: dart_analyze.sarif
