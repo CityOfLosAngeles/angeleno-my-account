@@ -3,6 +3,9 @@ import 'package:angeleno_project/views/nav/app_bar.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../controllers/user_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -12,6 +15,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late UserProvider userProvider;
   int _selectedIndex = 0;
 
   @override
@@ -19,10 +23,49 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  Future<void> _unsavedDataDialog(final int futureIndex) async =>
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (final BuildContext context) => AlertDialog(
+        title: const Text('You have unsaved changes'),
+        content: const SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Your changes have not been saved. Discard changes?')
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              userProvider.toggleEditing();
+              setState(() {
+                _selectedIndex = futureIndex;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+
   void _navigationSelected(final int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+
+    if (userProvider.isEditing && index != 0) {
+      _unsavedDataDialog(index);
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   List<Widget> get screens => <Widget>[
@@ -37,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(final BuildContext context) {
     final bool smallScreen = MediaQuery.of(context).size.width < 720;
+     userProvider = context.watch<UserProvider>();
 
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
