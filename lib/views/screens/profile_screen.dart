@@ -25,13 +25,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void updateUser() {
     print(providerUser.toString());
+    UserApi().patchUser(providerUser);
   }
 
   @override
   Widget build(final BuildContext context) {
     final userProvider = context.watch<UserProvider>();
     if (userProvider.user == null) {
-      userProvider.fetchUser();
+      // userProvider.fetchUser();
       return const LinearProgressIndicator();
     } else {
       providerUser = userProvider.user!;

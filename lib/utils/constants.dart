@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/* Environment variables */
+const auth0Domain = String.fromEnvironment('AUTH0_DOMAIN');
+const auth0ClientId = String.fromEnvironment('CLIENT_ID');
+const redirectUri = String.fromEnvironment('REDIRECT_URI');
+const auth0Token = String.fromEnvironment('AUTH0_API_TOKEN');
+
 /* Colors */
 const footerBlue = Color(0xFF1f4c73);
 const colorBlue = Color(0xFF0f2940);

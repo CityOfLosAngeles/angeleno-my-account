@@ -1,13 +1,13 @@
 class User {
   late String userId;
-  late String email;
-  late String firstName;
-  late String lastName;
-  late String zip;
-  late String address;
-  late String city;
-  late String state;
-  late String phone;
+  late String? email;
+  late String? firstName;
+  late String? lastName;
+  late String? zip;
+  late String? address;
+  late String? city;
+  late String? state;
+  late String? phone;
 
    User({
       required this.userId,

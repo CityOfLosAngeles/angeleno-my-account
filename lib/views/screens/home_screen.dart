@@ -2,6 +2,9 @@ import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/nav/app_bar.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
+import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:auth0_flutter/auth0_flutter_web.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,12 +18,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Auth0Web auth0Web = Auth0Web(auth0Domain,auth0ClientId);
+  Credentials? _credentials;
   late UserProvider userProvider;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    if (kIsWeb) {
+      auth0Web.onLoad().then((final credentials) async {
+        if (credentials != null) {
+          // Access token -> credentials.accessToken
+          userProvider.setUser(credentials.user);
+        } else {
+          await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+        }
+      });
+    }
   }
 
   Future<void> _unsavedDataDialog(final int futureIndex) async =>
@@ -80,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(final BuildContext context) {
     final bool smallScreen = MediaQuery.of(context).size.width < 720;
-     userProvider = context.watch<UserProvider>();
+    userProvider = context.watch<UserProvider>();
 
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),

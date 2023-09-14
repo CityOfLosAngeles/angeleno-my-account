@@ -4,4 +4,6 @@ abstract class Api {
   final String baseUrl = 'https://jsonplaceholder.typicode.com/users';
 
   Future<User> getUser(final String url);
+
+  Future<User> patchUser(final User user);
 }

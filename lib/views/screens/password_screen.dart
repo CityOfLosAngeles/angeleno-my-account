@@ -41,6 +41,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
   void submitRequest() {
     if (newPassword == passwordMatch) {
       //submit request to finalize updated
+    } else {
+
     }
   }
 
@@ -123,7 +125,15 @@ class _PasswordScreenState extends State<PasswordScreen> {
           autocorrect: false,
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: validatePasswords,
+          validator: (final value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Password is required';
+            }
+            if (newPassword != value) {
+              return "Passwords don't match";
+            }
+            return null;
+          },
           decoration: InputDecoration(
               border: const OutlineInputBorder(),
               labelText: 'Confirm New Password',
