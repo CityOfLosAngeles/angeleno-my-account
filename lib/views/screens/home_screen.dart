@@ -54,10 +54,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (kIsWeb) {
       print('KisWeb!! onLoad()');
-      auth0Web.onLoad().then((final credentials) => setState(() {
+      auth0Web.onLoad().then((final credentials) {
             _user = credentials?.user;
-            print('The user onLoad() is $_user');
-          }));
+            var something = _user!.email;
+            print('The user onLoad() is $something');
+          });
     }
   }
 
