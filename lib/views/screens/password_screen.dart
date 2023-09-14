@@ -9,7 +9,6 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
-
   late String currentPassword;
   late String newPassword;
   late String passwordMatch;
@@ -31,7 +30,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
     _isButtonDisabled = true;
   }
 
-  String? validatePasswords (final String? value) {
+  String? validatePasswords(final String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Password is required';
     }
@@ -44,108 +43,101 @@ class _PasswordScreenState extends State<PasswordScreen> {
     }
   }
 
-  bool enablePasswordSubmit() => !(currentPassword.trim() != ''
-      && newPassword.trim() != ''
-      && passwordMatch.trim() != '');
+  bool enablePasswordSubmit() => !(currentPassword.trim() != '' &&
+      newPassword.trim() != '' &&
+      passwordMatch.trim() != '');
 
   @override
   Widget build(final BuildContext context) => ListView(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: _isButtonDisabled ? null : () => submitRequest(),
-              style: actionButtonStyle,
-              child: const Text('Change Password'),
-            )
-          ],
-        ),
-        const SizedBox(height: 30.0),
-        TextFormField(
-          obscureText: !viewPassword,
-          autocorrect: false,
-          enableSuggestions: false,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: validatePasswords,
-          decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Current Password',
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      viewPassword = !viewPassword;
-                    });
-                  },
-                  icon: Icon(
-                      viewPassword ? Icons.visibility  : Icons.visibility_off
-                  )
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: _isButtonDisabled ? null : () => submitRequest(),
+                style: actionButtonStyle,
+                child: const Text('Change Password'),
               )
+            ],
           ),
-          onChanged: (final value) {
-            setState(() {
-              currentPassword = value;
-              _isButtonDisabled = enablePasswordSubmit();
-            });
-          },
-        ),
-        const SizedBox(height: 10.0),
-        TextFormField(
-          obscureText: !viewNewPassword,
-          autocorrect: false,
-          enableSuggestions: false,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: validatePasswords,
-          decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'New Password',
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      viewNewPassword = !viewNewPassword;
-                    });
-                  },
-                  icon: Icon(
-                      viewNewPassword ? Icons.visibility  : Icons.visibility_off
-                  )
-              )
+          const SizedBox(height: 30.0),
+          TextFormField(
+            obscureText: !viewPassword,
+            autocorrect: false,
+            enableSuggestions: false,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: validatePasswords,
+            decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: 'Current Password',
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        viewPassword = !viewPassword;
+                      });
+                    },
+                    icon: Icon(viewPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off))),
+            onChanged: (final value) {
+              setState(() {
+                currentPassword = value;
+                _isButtonDisabled = enablePasswordSubmit();
+              });
+            },
           ),
-          onChanged: (final value) {
-            setState(() {
-              newPassword = value;
-              _isButtonDisabled = enablePasswordSubmit();
-            });
-          },
-        ),
-        const SizedBox(height: 10.0),
-        TextFormField(
-          obscureText: !viewPasswordMatch,
-          autocorrect: false,
-          enableSuggestions: false,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: validatePasswords,
-          decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Confirm New Password',
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      viewPasswordMatch = !viewPasswordMatch;
-                    });
-                  },
-                  icon: Icon(
-                    viewPasswordMatch ? Icons.visibility : Icons.visibility_off
-                  )
-              )
+          const SizedBox(height: 10.0),
+          TextFormField(
+            obscureText: !viewNewPassword,
+            autocorrect: false,
+            enableSuggestions: false,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: validatePasswords,
+            decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: 'New Password',
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        viewNewPassword = !viewNewPassword;
+                      });
+                    },
+                    icon: Icon(viewNewPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off))),
+            onChanged: (final value) {
+              setState(() {
+                newPassword = value;
+                _isButtonDisabled = enablePasswordSubmit();
+              });
+            },
           ),
-          onChanged: (final value) {
-            setState(() {
-              passwordMatch = value;
-              _isButtonDisabled = enablePasswordSubmit();
-            });
-          },
-        ),
-      ],
-    );
-
+          const SizedBox(height: 10.0),
+          TextFormField(
+            obscureText: !viewPasswordMatch,
+            autocorrect: false,
+            enableSuggestions: false,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: validatePasswords,
+            decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: 'Confirm New Password',
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        viewPasswordMatch = !viewPasswordMatch;
+                      });
+                    },
+                    icon: Icon(viewPasswordMatch
+                        ? Icons.visibility
+                        : Icons.visibility_off))),
+            onChanged: (final value) {
+              setState(() {
+                passwordMatch = value;
+                _isButtonDisabled = enablePasswordSubmit();
+              });
+            },
+          ),
+        ],
+      );
 }

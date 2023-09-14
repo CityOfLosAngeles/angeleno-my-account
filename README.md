@@ -15,3 +15,33 @@ After building, you can use `flutter run -d chrome` to run on Chrome. You can ad
 If you need to specify a web port to run the app on, you can append the argument `--web-port=####` to the above - this will be helpful when testing redirects from external apps as it'll allow us to control a designated port.
 
 Running `flutter analyze` will check your code to make sure it aligns with our linting rules.
+
+
+
+## Auth0 Login Testing
+In order to test with Auth0 app, we will need to get the port we configured in the console and declare it when we run flutter run and also inject the values for the environment variables:
+
+flutter run -d chrome --web-port=3000 --dart-define-from-file=api-keys.json
+
+
+
+Usage for environment variables:
+
+```
+1)Declare them in json file
+
+{ "auth0domain": "testdomain.auth0.com" }
+
+2)Declare them in the dart file where you want to use them:
+
+static const auth0Domain = String.fromEnvironment('auth0domain');
+
+3)Make sure to account for empty errors:
+
+if (auth0Domain.isEmpty) { throw AssertionError('auth0Domain is not set'); }
+
+4)Use the variable after:
+
+auth0Web = Auth0Web(auth0Domain, auth0ClientID);
+
+```

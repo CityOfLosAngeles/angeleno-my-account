@@ -1,5 +1,5 @@
 import 'package:angeleno_project/controllers/user_provider.dart';
-//import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,17 +7,18 @@ import '../../controllers/api_implementation.dart';
 import '../../models/user.dart';
 import '../../utils/constants.dart';
 
-class ProfileScreen extends StatefulWidget {
-  //final UserProfile? user;
-  const ProfileScreen({super.key});
-  // const ProfileScreen({required this.user, final Key? key}) : super(key: key);
+class ProfileScreenAuth0 extends StatefulWidget {
+  final UserProfile? user;
+  //const ProfileScreen({super.key});
+  const ProfileScreenAuth0({required this.user, final Key? key})
+      : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreenAuth0> createState() => _ProfileScreenAuth0();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  //late UserProfile? user;
+class _ProfileScreenAuth0 extends State<ProfileScreenAuth0> {
+  late UserProfile? user;
   UserApi userApi = UserApi();
   late User providerUser;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -25,14 +26,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    //user = widget.user!;
-    //print('The user from Auth0 is $user');
+    user = widget.user!;
+    print('The user from Auth0 is $user');
   }
 
-  void updateUser() {
-    print(providerUser.toString());
+  @override
+  Widget build(BuildContext context) {
+    final pictureUrl = user?.pictureUrl;
+    // id, name, email, email verified, updated_at
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (pictureUrl != null)
+        Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: CircleAvatar(
+              radius: 56,
+              child: ClipOval(child: Image.network(pictureUrl.toString())),
+            )),
+      Card(
+          child: Column(children: [
+        UserEntryWidget(propertyName: 'Id', propertyValue: user?.sub),
+        UserEntryWidget(propertyName: 'Name', propertyValue: user?.name),
+        UserEntryWidget(propertyName: 'Email', propertyValue: user?.email),
+        UserEntryWidget(
+            propertyName: 'Email Verified?',
+            propertyValue: user?.isEmailVerified.toString()),
+        UserEntryWidget(
+            propertyName: 'Updated at',
+            propertyValue: user?.updatedAt?.toIso8601String()),
+      ]))
+    ]);
+  }
+}
+
+class UserEntryWidget extends StatelessWidget {
+  final String propertyName;
+  final String? propertyValue;
+
+  const UserEntryWidget(
+      {required this.propertyName, required this.propertyValue, final Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.all(6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [Text(propertyName), Text(propertyValue ?? '')],
+        ));
   }
 
+/*
   @override
   Widget build(final BuildContext context) {
     final userProvider = context.watch<UserProvider>();
@@ -174,5 +218,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ))))
       ],
     );
-  }
+  }*/
 }
