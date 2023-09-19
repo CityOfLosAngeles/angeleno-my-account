@@ -2,9 +2,6 @@ import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/nav/app_bar.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
-import 'package:auth0_flutter/auth0_flutter.dart';
-import 'package:auth0_flutter/auth0_flutter_web.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,24 +15,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Auth0Web auth0Web = Auth0Web(auth0Domain,auth0ClientId);
-  Credentials? _credentials;
+
   late UserProvider userProvider;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    if (kIsWeb) {
-      auth0Web.onLoad().then((final credentials) async {
-        if (credentials != null) {
-          // Access token -> credentials.accessToken
+    userProvider.isLoggedIn().then((final loggedIn) {
+      if (loggedIn) {
+        userProvider.currentCredentials().then((final credentials) {
           userProvider.setUser(credentials.user);
-        } else {
-          await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   Future<void> _unsavedDataDialog(final int futureIndex) async =>
@@ -103,10 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: const MainAppBar(),
           body: Container(
               transformAlignment: Alignment.center,
-              /*
-          **  Add constraints when we figure out how to center
-          */
-              // constraints: const BoxConstraints(minWidth: 700, maxWidth: 1000),
               child: Center(
                 child: Row(
                   children: <Widget>[

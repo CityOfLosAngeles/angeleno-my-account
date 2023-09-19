@@ -1,9 +1,9 @@
 import 'package:angeleno_project/models/user.dart';
 
-abstract class Api {
-  final String baseUrl = 'https://jsonplaceholder.typicode.com/users';
+import '../utils/constants.dart';
 
-  Future<User> getUser(final String url);
+abstract class Api {
+  final String baseUrl = 'https://$auth0Domain/api/v2';
 
   Future<User> patchUser(final User user);
 }

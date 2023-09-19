@@ -14,8 +14,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  UserApi userApi = UserApi();
-  late User providerUser;
+  late UserProvider userProvider;
+  late User user;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -24,18 +24,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void updateUser() {
-    print(providerUser.toString());
-    UserApi().patchUser(providerUser);
+    print(user.toString());
+    UserApi().patchUser(user);
   }
 
   @override
   Widget build(final BuildContext context) {
     final userProvider = context.watch<UserProvider>();
     if (userProvider.user == null) {
-      // userProvider.fetchUser();
       return const LinearProgressIndicator();
     } else {
-      providerUser = userProvider.user!;
+      user = userProvider.user!;
     }
 
     return Column(
@@ -73,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 labelText: 'Full Name',
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.name,
-                            initialValue: providerUser.fullName,
+                            initialValue: user.fullName,
                           ),
                           const SizedBox(height: 25.0),
                           TextFormField(
@@ -81,10 +80,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             decoration: const InputDecoration(
                                 labelText: 'Email',
                                 border: OutlineInputBorder()),
-                            initialValue: providerUser.email,
+                            initialValue: user.email,
                             keyboardType: TextInputType.emailAddress,
                             onChanged: (final val) {
-                              providerUser.email = val;
+                              user.email = val;
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -93,10 +92,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             decoration: const InputDecoration(
                                 labelText: 'First Name',
                                 border: OutlineInputBorder()),
-                            initialValue: providerUser.firstName,
+                            initialValue: user.firstName,
                             keyboardType: TextInputType.name,
                             onChanged: (final val) {
-                              providerUser.firstName = val;
+                              user.firstName = val;
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -105,10 +104,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             decoration: const InputDecoration(
                                 labelText: 'Last Name',
                                 border: OutlineInputBorder()),
-                            initialValue: providerUser.lastName,
+                            initialValue: user.lastName,
                             keyboardType: TextInputType.name,
                             onChanged: (final val) {
-                              providerUser.lastName = val;
+                              user.lastName = val;
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -116,9 +115,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: userProvider.isEditing,
                             decoration: const InputDecoration(
                                 labelText: 'Zip', border: OutlineInputBorder()),
-                            initialValue: providerUser.zip,
+                            initialValue: user.zip,
                             onChanged: (final val) {
-                              providerUser.zip = val;
+                              user.zip = val;
                             },
                             keyboardType: TextInputType.number,
                           ),
@@ -129,9 +128,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 labelText: 'Address',
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.streetAddress,
-                            initialValue: providerUser.address,
+                            initialValue: user.address,
                             onChanged: (final val) {
-                              providerUser.address = val;
+                              user.address = val;
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -141,9 +140,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 labelText: 'City',
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.streetAddress,
-                            initialValue: providerUser.city,
+                            initialValue: user.city,
                             onChanged: (final val) {
-                              providerUser.city = val;
+                              user.city = val;
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -154,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.streetAddress,
                             onChanged: (final val) {
-                              providerUser.state = val;
+                              user.state = val;
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -163,9 +162,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             decoration: const InputDecoration(
                                 labelText: 'Mobile',
                                 border: OutlineInputBorder()),
-                            initialValue: providerUser.phone,
+                            initialValue: user.phone,
                             onChanged: (final val) {
-                              providerUser.phone = val;
+                              user.phone = val;
                             },
                           ),
                         ],

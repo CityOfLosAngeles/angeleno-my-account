@@ -1,16 +1,24 @@
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:auth0_flutter/auth0_flutter_web.dart';
 import 'package:flutter/foundation.dart';
 
-import 'api_implementation.dart';
+import '../utils/constants.dart';
 
-class UserProvider with ChangeNotifier {
+class UserProvider extends ChangeNotifier {
+  final Auth0Web auth0Web = Auth0Web(auth0Domain, auth0ClientId);
   User? _user;
   bool _isEditing = false;
 
-  Future<void> fetchUser() async {
-    _user = await UserApi().getUser('');
-    notifyListeners();
+  UserProvider() {
+    print('running');
+    auth0Web.onLoad().then((final credentials) {
+      if (credentials != null) {
+        setUser(credentials.user);
+      } else {
+        auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+      }
+    });
   }
 
   void setUser(final UserProfile user) {
@@ -33,6 +41,16 @@ class UserProvider with ChangeNotifier {
     _isEditing = !_isEditing;
     notifyListeners();
   }
+
+  void login() async {
+    await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+  }
+
+  Future<bool> isLoggedIn() async =>
+      await auth0Web.hasValidCredentials();
+
+  Future<Credentials> currentCredentials() async =>
+      await auth0Web.credentials();
 
   User? get user => _user;
 

@@ -21,18 +21,6 @@ class User {
       required this.phone
   });
 
-  factory User.fromJson(final Map<String, String> json) => User(
-      userId: json['id'].toString(),
-      email: json['email'].toString(),
-      firstName: json['name']!.split(' ')[0].toString(),
-      lastName: json['name']!.split(' ')[1].toString(),
-      zip: json['address'].toString(),
-      address: json['address'].toString(),
-      city: json['address'].toString(),
-      state: json['address'].toString(),
-      phone: json['phone'].toString()
-    );
-
   String get fullName => '$firstName $lastName';
 
   @override
