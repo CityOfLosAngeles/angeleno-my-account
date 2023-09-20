@@ -22,13 +22,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    userProvider.isLoggedIn().then((final loggedIn) {
-      if (loggedIn) {
-        userProvider.currentCredentials().then((final credentials) {
-          userProvider.setUser(credentials.user);
-        });
-      }
-    });
   }
 
   Future<void> _unsavedDataDialog(final int futureIndex) async =>
@@ -89,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(final BuildContext context) {
     final bool smallScreen = MediaQuery.of(context).size.width < 720;
     userProvider = context.watch<UserProvider>();
-
+    
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
       child: Scaffold(
