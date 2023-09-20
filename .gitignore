@@ -46,6 +46,7 @@ app.*.map.json
 
 
 api-keys.json
+.env
 #Firebase stuff
 firebase.json
 .firebaserc

@@ -1,5 +1,5 @@
 import 'package:angeleno_project/controllers/user_provider.dart';
-
+import 'package:auth0_flutter/auth0_flutter.dart';
 //import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,17 +8,17 @@ import '../../controllers/api_implementation.dart';
 import '../../models/user.dart';
 import '../../utils/constants.dart';
 
-class ProfileScreen extends StatefulWidget {
-  //final UserProfile? user;
-  const ProfileScreen({super.key, UserProfile? user});
-  // const ProfileScreen({required this.user, final Key? key}) : super(key: key);
+class ProfileScreen3 extends StatefulWidget {
+  final UserProfile? user;
+  //const ProfileScreen({super.key});
+  const ProfileScreen3({required this.user, final Key? key}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreen3> createState() => _ProfileScreen3State();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  //late UserProfile? user;
+class _ProfileScreen3State extends State<ProfileScreen3> {
+  late UserProfile? user;
   UserApi userApi = UserApi();
   late User providerUser;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -26,6 +26,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+
+    //Credentials creds =  auth0Web.credentials();
+    //final isLoggedIn = await auth0Web.hasValidCredentials();
+    //user = widget.user!;
+    //print('The user from Auth0 is $user');
   }
 
   void updateUser() {
@@ -48,9 +53,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Row(mainAxisAlignment: MainAxisAlignment.end, children: [
           ElevatedButton(
             onPressed: () {
+              /*
               if (userProvider.isEditing) {
                 updateUser();
-              }
+              }*/
               setState(() {
                 userProvider.toggleEditing();
               });
@@ -77,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               labelText: 'Full Name',
                               border: OutlineInputBorder()),
                           keyboardType: TextInputType.name,
-                          initialValue: providerUser.fullName,
+                          initialValue: widget.user!.email,
                         ),
                         const SizedBox(height: 25.0),
                         TextFormField(

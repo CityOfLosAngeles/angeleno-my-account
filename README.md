@@ -21,8 +21,9 @@ Running `flutter analyze` will check your code to make sure it aligns with our l
 ## Auth0 Login Testing
 In order to test with Auth0 app, we will need to get the port we configured in the console and declare it when we run flutter run and also inject the values for the environment variables:
 
+```
 flutter run -d chrome --web-port=3000 --dart-define-from-file=api-keys.json
-
+```
 
 
 Usage for environment variables:
