@@ -3,7 +3,7 @@ import 'dart:js_interop';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/nav/app_bar.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
-import 'package:angeleno_project/views/screens/profile_screen.dart';
+
 import 'package:angeleno_project/views/screens/profile_screen3.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/user_provider.dart';
-import 'login_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   // final Auth0? auth0;
