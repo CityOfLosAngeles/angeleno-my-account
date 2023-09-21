@@ -1,7 +1,3 @@
-# Runs Static Analysis
-# Used to prevent bugs and ensure that code conforms to style guidelines.
-# Based on https://github.com/marketplace/actions/dart-analyzer-sarif
-
 name: Dart Analyzer
 
 on:
@@ -9,6 +5,8 @@ on:
 
 jobs:
   analyze:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
 
     permissions:
       # For actions/checkout to fetch code
@@ -60,16 +58,27 @@ jobs:
       #  with:
       #   sarif_file: dart_analyze.sarif
 
+  tests:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
+
+    name: flutter unit tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run Flutter Tests
+        run: flutter test
+
   semgrep:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
     name: semgrep/ci
 
     runs-on: ubuntu-latest
 
     container:
       image: returntocorp/semgrep
-
-    # Skip any PR created by dependabot to avoid permission issues:
-    if: (github.actor != 'dependabot[bot]')
 
     steps:
       - uses: actions/checkout@v3
