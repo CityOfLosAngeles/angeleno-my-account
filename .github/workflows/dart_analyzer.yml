@@ -1,14 +1,12 @@
-# Runs Static Analysis
-# Used to prevent bugs and ensure that code conforms to style guidelines.
-# Based on https://github.com/marketplace/actions/dart-analyzer-sarif
-
-name: Dart Analyzer
+name: Flutter/Dart Test Suite
 
 on:
-  pull_request:
+  pull_request: {}
 
 jobs:
-  analyze:
+  analyze_and_test:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
 
     permissions:
       # For actions/checkout to fetch code
@@ -27,15 +25,22 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
 
+      # https://github.com/marketplace/actions/flutter-action
       - name: Setup Flutter
-        uses: subosito/flutter-action@v1
+        # SHA for v2.10.0
+        uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa
         with:
           flutter-version: '3.13.2'
           channel: 'stable'
+          cache: true
 
       - run: flutter pub get
 
-      # Re-run to see output in console until we have access
+      # Unit Tests
+      - name: Run Flutter Tests
+        run: flutter test
+
+      # See output in console until we have access
       # to sarif file
       - name: Dart Analyze
         run: dart analyze
@@ -56,3 +61,21 @@ jobs:
       # uses: github/codeql-action/upload-sarif@v2
       #  with:
       #   sarif_file: dart_analyze.sarif
+
+
+  semgrep:
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
+    name: semgrep/ci
+
+    runs-on: ubuntu-latest
+
+    container:
+      image: returntocorp/semgrep
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: semgrep ci
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
