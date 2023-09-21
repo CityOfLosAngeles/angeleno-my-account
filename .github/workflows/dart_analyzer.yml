@@ -1,10 +1,10 @@
-name: Dart Analyzer
+name: Flutter/Dart Test Suite
 
 on:
   pull_request: {}
 
 jobs:
-  analyze:
+  analyze_and_test:
     # Skip any PR created by dependabot to avoid permission issues:
     if: (github.actor != 'dependabot[bot]')
 
@@ -36,6 +36,10 @@ jobs:
 
       - run: flutter pub get
 
+      # Unit Tests
+      - name: Run Flutter Tests
+        run: flutter test
+
       # See output in console until we have access
       # to sarif file
       - name: Dart Analyze
@@ -58,17 +62,6 @@ jobs:
       #  with:
       #   sarif_file: dart_analyze.sarif
 
-  tests:
-    # Skip any PR created by dependabot to avoid permission issues:
-    if: (github.actor != 'dependabot[bot]')
-
-    name: flutter unit tests
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Run Flutter Tests
-        run: flutter test
 
   semgrep:
     # Skip any PR created by dependabot to avoid permission issues:
