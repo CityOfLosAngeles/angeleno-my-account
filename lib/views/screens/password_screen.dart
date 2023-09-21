@@ -56,7 +56,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
           children: [
             ElevatedButton(
               onPressed: _isButtonDisabled ? null : () => submitRequest(),
-              style: actionButtonStyle,
+              // style: actionButtonStyle,
               child: const Text('Change Password'),
             )
           ],

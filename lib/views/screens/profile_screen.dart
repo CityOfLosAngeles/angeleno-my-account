@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 userProvider.toggleEditing();
               });
             },
-            style: actionButtonStyle,
+            // style: actionButtonStyle,
             child: Text(userProvider.isEditing ? 'Save' : 'Edit'),
           )
         ]),

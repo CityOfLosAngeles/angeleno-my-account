@@ -101,23 +101,28 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: NavigationRail(
                                 selectedIndex: _selectedIndex,
                                 labelType: NavigationRailLabelType.all,
-                                indicatorColor: colorGreen,
+                                // indicatorColor: colorGreen,
                                 onDestinationSelected: _navigationSelected,
                                 destinations: const <NavigationRailDestination>[
                                 NavigationRailDestination(
                                     icon: Icon(Icons.person_outline_outlined),
                                     selectedIcon:
-                                        Icon(Icons.person, color: Colors.white),
+                                        Icon(Icons.person,
+                                            // color: Colors.white
+                                        ),
                                     label: Text('Profile')),
                                 NavigationRailDestination(
                                     icon: Icon(Icons.password_outlined),
                                     selectedIcon: Icon(Icons.password,
-                                        color: Colors.white),
+                                        // color: Colors.white
+                                        ),
                                     label: Text('Password')),
                                 NavigationRailDestination(
                                     icon: Icon(Icons.lock_outline),
                                     selectedIcon:
-                                        Icon(Icons.lock, color: Colors.white),
+                                        Icon(Icons.lock,
+                                            // color: Colors.white
+                                        ),
                                     label: Text('Security'))
                               ])),
                     Expanded(
@@ -131,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
           bottomNavigationBar: smallScreen
               ? BottomNavigationBar(
                   currentIndex: _selectedIndex,
-                  selectedItemColor: colorGreen,
+                  // selectedItemColor: colorGreen,
                   onTap: _navigationSelected,
                   items: const <BottomNavigationBarItem>[
                       BottomNavigationBarItem(
@@ -144,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           icon: Icon(Icons.lock_outline), label: 'Security')
                     ])
               : Container(
-                  color: footerBlue,
+                  // color: footerBlue,
                   padding: const EdgeInsets.all(16.0),
                   child: const Wrap(
                         alignment: WrapAlignment.center,
@@ -152,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text(
                             '© Copyright 2023 City of Los Angeles. '
                             'All rights reserved. Disclaimer | Privacy Policy',
-                            style: TextStyle(color: Colors.white),
+                            // style: TextStyle(color: Colors.white),
                             textDirection: TextDirection.ltr,
                           )
                         ],
