@@ -61,7 +61,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
             )
           ],
         ),
-        const SizedBox(height: 10.0),
+        const SizedBox(height: 30.0),
         TextFormField(
           obscureText: !viewPassword,
           autocorrect: false,
