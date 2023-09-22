@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:html' as html;
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
@@ -14,11 +14,12 @@ class UserProvider extends ChangeNotifier {
 
   UserProvider() {
     print('running');
-    auth0Web.onLoad().then((final credentials) {
+    auth0Web.onLoad().then((final credentials) async {
       if (credentials != null) {
+        html.window.history.pushState(null, 'home', '/');
         setUser(credentials.user);
       } else {
-        auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+        await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
       }
     });
   }

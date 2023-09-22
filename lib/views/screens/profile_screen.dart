@@ -152,6 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 labelText: 'State',
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.streetAddress,
+                            initialValue: user.state,
                             onChanged: (final val) {
                               user.state = val;
                             },
