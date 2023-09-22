@@ -22,7 +22,7 @@ class UserApi extends Api {
       'Authorization': 'Bearer $auth0Token'
     };
 
-    final body = <String, String>{};
+    final body = <String, dynamic>{};
 
     if (user.firstName != null && user.firstName!.isNotEmpty) {
       body["name"] = user.firstName!;
@@ -32,26 +32,50 @@ class UserApi extends Api {
       body["family_name"] = user.lastName!;
     }
 
-    if (user.phone != null && user.phone!.isNotEmpty) {
-      // Phone numbers need to be in E.164
-
-      // Replace anything that's not a number
-      var phoneNumber = user.phone?.replaceAll(RegExp(r"\D"), "");
-
-      // Make international
-      phoneNumber = "+1${user.phone!}";
-
-      // Ensure it passes Auth0's RegEx
-      final authRegEx = RegExp("^\\+[0-9]{1,15}\$");
-
-      if (!authRegEx.hasMatch(phoneNumber)) {
-        return throw const FormatException('Invalid phone number.');
-      }
-
-      // "Cannot update phone_number for non-sms user"
-
-      body["phone_number"] = phoneNumber;
+    final metadata = <String, String>{};
+    if (user.zip != null && user.zip!.isNotEmpty) {
+      metadata["zip"] = user.zip!;
     }
+
+    if (user.address != null && user.address!.isNotEmpty) {
+      metadata["address"] = user.address!;
+    }
+
+    if (user.state != null && user.state!.isNotEmpty) {
+      metadata["state"] = user.state!;
+    }
+
+    if (user.city != null && user.city!.isNotEmpty) {
+      metadata["city"] = user.city!;
+    }
+
+    body["user_metadata"] = {
+      "addresses" : {
+        "primary" : metadata
+      }
+    };
+
+    // Might move phone to user_metadata
+    // if (user.phone != null && user.phone!.isNotEmpty) {
+    //   // Phone numbers need to be in E.164
+    //
+    //   // Replace anything that's not a number
+    //   var phoneNumber = user.phone?.replaceAll(RegExp(r"\D"), "");
+    //
+    //   // Make international
+    //   phoneNumber = "+1${user.phone!}";
+    //
+    //   // Ensure it passes Auth0's RegEx
+    //   final authRegEx = RegExp("^\\+[0-9]{1,15}\$");
+    //
+    //   if (!authRegEx.hasMatch(phoneNumber)) {
+    //     return throw const FormatException('Invalid phone number.');
+    //   }
+    //
+    //   // "Cannot update phone_number for non-sms user"
+    //
+    //   body["phone_number"] = phoneNumber;
+    // }
 
     final data = json.encode(body);
 

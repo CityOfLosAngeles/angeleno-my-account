@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
@@ -22,16 +24,19 @@ class UserProvider extends ChangeNotifier {
   }
 
   void setUser(final UserProfile user) {
+    final metadata = user.customClaims!['user_metadata'];
+    final primaryAddress = metadata['addresses']?['primary'];
+
     _user = User(
         userId: user.sub,
         email: user.email,
         firstName: user.name ?? '',
         lastName: user.familyName ?? '',
-        zip: user.address?[''],
-        address: user.address?[''],
-        city: user.address?[''],
-        state: user.address?[''],
-        phone: user.phoneNumber
+        zip: primaryAddress['zip'] as String,
+        address: primaryAddress['address'] as String,
+        city: primaryAddress['city'] as String,
+        state: primaryAddress['state'] as String,
+        phone: user.phoneNumber,
     );
 
     notifyListeners();
