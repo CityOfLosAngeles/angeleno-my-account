@@ -6,20 +6,51 @@ import 'dart:io';
 
 import 'package:angeleno_project/controllers/api.dart';
 import 'package:angeleno_project/models/user.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:http/http.dart' as http;
-
-import '../utils/constants.dart';
 
 
 class UserApi extends Api {
 
   @override
+  Future<String> getAccessToken() async {
+    late String accessToken;
+
+    final headers = {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
+
+    final body = {
+      "grant_type": "client_credentials",
+      "client_id": auth0MachineClientId,
+      "client_secret": auth0MachineSecret,
+      "audience": "$baseUrl/api/v2/"
+    };
+
+    final response = await http.post(
+        Uri.parse('$baseUrl/oauth/token'),
+        headers: headers,
+        body: body
+    );
+
+    if (response.statusCode == HttpStatus.ok) {
+      final res = jsonDecode(response.body);
+      accessToken = res["access_token"] as String;
+    }
+
+    return accessToken;
+  }
+
+  @override
   Future<User> patchUser(final User user) async {
+
+    //TODO: use valid token within 24 hour time span.
+    final Object token = await getAccessToken();
 
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer $auth0Token'
+      'Authorization': 'Bearer $token'
     };
 
     final body = <String, dynamic>{};
@@ -32,28 +63,26 @@ class UserApi extends Api {
       body["family_name"] = user.lastName!;
     }
 
-    final metadata = <String, String>{};
+    final primaryAddress = <String, String>{};
     if (user.zip != null && user.zip!.isNotEmpty) {
-      metadata["zip"] = user.zip!;
+      primaryAddress["zip"] = user.zip!;
     }
 
     if (user.address != null && user.address!.isNotEmpty) {
-      metadata["address"] = user.address!;
+      primaryAddress["address"] = user.address!;
     }
 
     if (user.state != null && user.state!.isNotEmpty) {
-      metadata["state"] = user.state!;
+      primaryAddress["state"] = user.state!;
     }
 
     if (user.city != null && user.city!.isNotEmpty) {
-      metadata["city"] = user.city!;
+      primaryAddress["city"] = user.city!;
     }
 
-    body["user_metadata"] = {
-      "addresses" : {
-        "primary" : metadata
-      }
-    };
+    user.metadata?["addresses"]["primary"] = primaryAddress;
+
+    body["user_metadata"] = user.metadata;
 
     // Might move phone to user_metadata
     // if (user.phone != null && user.phone!.isNotEmpty) {
@@ -81,7 +110,7 @@ class UserApi extends Api {
 
     final String userId = user.userId;
     final response = await http.patch(
-        Uri.parse('$baseUrl/users/$userId'),
+        Uri.parse('$baseUrl/api/v2/users/$userId'),
         headers: headers,
         body: data
     );

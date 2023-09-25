@@ -23,9 +23,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userProvider = context.watch<UserProvider>();
+  }
+
   void updateUser() {
     print(user.toString());
-    UserApi().patchUser(user);
+
+    // Only submit patch if data has been updated
+    if (user != userProvider.cleanUser) {
+      UserApi().patchUser(user);
+    }
   }
 
   @override

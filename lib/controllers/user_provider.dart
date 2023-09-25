@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:html' as html;
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
@@ -10,6 +9,7 @@ import '../utils/constants.dart';
 class UserProvider extends ChangeNotifier {
   final Auth0Web auth0Web = Auth0Web(auth0Domain, auth0ClientId);
   User? _user;
+  User? _cleanUser;
   bool _isEditing = false;
 
   UserProvider() {
@@ -18,6 +18,7 @@ class UserProvider extends ChangeNotifier {
       if (credentials != null) {
         html.window.history.pushState(null, 'home', '/');
         setUser(credentials.user);
+        _cleanUser = User.copy(_user!);
       } else {
         await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
       }
@@ -25,7 +26,8 @@ class UserProvider extends ChangeNotifier {
   }
 
   void setUser(final UserProfile user) {
-    final metadata = user.customClaims!['user_metadata'];
+    final metadata = user.customClaims!['user_metadata']
+                                  as Map<String, dynamic>;
     final primaryAddress = metadata['addresses']?['primary'];
 
     _user = User(
@@ -38,6 +40,7 @@ class UserProvider extends ChangeNotifier {
         city: primaryAddress['city'] as String,
         state: primaryAddress['state'] as String,
         phone: user.phoneNumber,
+        metadata: metadata
     );
 
     notifyListeners();
@@ -59,6 +62,8 @@ class UserProvider extends ChangeNotifier {
       await auth0Web.credentials();
 
   User? get user => _user;
+
+  User? get cleanUser => _cleanUser;
 
   bool get isEditing => _isEditing;
 }

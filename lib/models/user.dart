@@ -1,4 +1,6 @@
-class User {
+import 'package:equatable/equatable.dart';
+
+class User extends Equatable {
   late String userId;
   late String? email;
   late String? firstName;
@@ -8,6 +10,7 @@ class User {
   late String? city;
   late String? state;
   late String? phone;
+  late Map<String, dynamic>? metadata;
 
    User({
       required this.userId,
@@ -18,8 +21,21 @@ class User {
       required this.address,
       required this.city,
       required this.state,
-      required this.phone
+      required this.phone,
+      required this.metadata
   });
+
+  User.copy(final User copy) :
+        userId = copy.userId,
+        email = copy.email,
+        firstName = copy.firstName,
+        lastName = copy.lastName,
+        zip = copy.zip,
+        address = copy.address,
+        city = copy.city,
+        state = copy.state,
+        phone = copy.phone,
+        metadata = copy.metadata;
 
   String get fullName => '$firstName $lastName';
 
@@ -28,4 +44,8 @@ class User {
       '{id: $userId, email: $email, firstName: $firstName, lastName: $lastName,'
       ' zip: $zip, address: $address, city: $city, state: $state, '
         'phone: $phone}';
+
+  @override
+  List<Object?> get props => [firstName, lastName,
+    zip, address, city, state, phone];
 }
