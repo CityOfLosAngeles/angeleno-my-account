@@ -7,8 +7,7 @@ const redirectUri = String.fromEnvironment('REDIRECT_URI');
 const auth0Token = String.fromEnvironment('AUTH0_API_TOKEN');
 const auth0Secret = String.fromEnvironment('CLIENT_SECRET');
 const auth0MachineClientId = String.fromEnvironment('MM_CLIENT_ID');
-const auth0MachineSecret =
-    String.fromEnvironment('P8jnf3bn0YfZdobv4M3kC9TL4prmtiV4Sq0');
+const auth0MachineSecret = String.fromEnvironment('MM_CLIENT_SECRET');
 
 /* Colors */
 const footerBlue = Color(0xFF1f4c73);

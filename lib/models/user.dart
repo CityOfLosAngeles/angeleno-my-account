@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-class User extends Equatable {
+class User {
   late String userId;
   late String? email;
   late String? firstName;
@@ -37,6 +35,16 @@ class User extends Equatable {
         phone = copy.phone,
         metadata = copy.metadata;
 
+  @override
+  bool operator ==(final Object other) => other is User &&
+      other.firstName == firstName &&
+      other.lastName == lastName &&
+      other.zip == zip &&
+      other.address == address &&
+      other.city == city &&
+      other.phone == phone &&
+      other.state == state;
+
   String get fullName => '$firstName $lastName';
 
   @override
@@ -45,8 +53,10 @@ class User extends Equatable {
       ' zip: $zip, address: $address, city: $city, state: $state, '
         'phone: $phone}';
 
-  // props is required for Equatable
   @override
-  List<Object?> get props => [firstName, lastName,
-    zip, address, city, state, phone];
+  int get hashCode => firstName.hashCode ^ lastName.hashCode ^
+    zip.hashCode ^ address.hashCode ^ city.hashCode ^ state.hashCode ^
+    phone.hashCode;
+
+
 }
