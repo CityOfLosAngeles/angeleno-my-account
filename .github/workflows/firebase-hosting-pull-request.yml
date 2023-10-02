@@ -19,7 +19,8 @@ jobs:
           channel: 'stable'
           cache: true
       - run: flutter pub get
-      - run: flutter config --enable-web --dart-define=AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }} --dart-define=CLIENT_ID=${{ secrets.CLIENT_ID }} --dart-define=MM_CLIENT_ID=${{ secrets.MM_CLIENT_ID }} --dart-define=MM_CLIENT_SECRET=${{ secrets.MM_CLIENT_SECRET }}
+      - run: flutter config --enable-web
+      - run: flutter run --dart-define=AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }} --dart-define=CLIENT_ID=${{ secrets.CLIENT_ID }} --dart-define=MM_CLIENT_ID=${{ secrets.MM_CLIENT_ID }} --dart-define=MM_CLIENT_SECRET=${{ secrets.MM_CLIENT_SECRET }}
       - run: flutter build web
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
