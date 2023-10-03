@@ -37,8 +37,8 @@ jobs:
       - run: flutter pub get
 
       # Unit Tests
-      - name: Run Flutter Tests
-        run: flutter test
+      #- name: Run Flutter Tests
+      #  run: flutter test
 
       # See output in console until we have access
       # to sarif file

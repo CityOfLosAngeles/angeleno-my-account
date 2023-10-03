@@ -26,6 +26,7 @@ jobs:
               echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
               echo MM_CLIENT_ID=${{ secrets.MM_CLIENT_ID }} >> .env
               echo MM_CLIENT_SECRET=${{ secrets.MM_CLIENT_SECRET }} >> .env
+              echo REDIRECT_URI=${{ secrets.REDIRECT_URI }} >> .env
             cat .env
       - run: flutter build web --dart-define-from-file=.env
       - uses: FirebaseExtended/action-hosting-deploy@v0

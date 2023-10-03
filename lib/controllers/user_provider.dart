@@ -20,7 +20,7 @@ class UserProvider extends ChangeNotifier {
         setUser(credentials.user);
         _cleanUser = User.copy(_user!);
       } else {
-        await auth0Web.loginWithRedirect();
+        await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
       }
     });
   }
@@ -52,7 +52,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   void login() async {
-    await auth0Web.loginWithRedirect();
+    await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
   }
 
   Future<bool> isLoggedIn() async =>
