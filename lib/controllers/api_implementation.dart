@@ -81,7 +81,7 @@ class UserApi extends Api {
     }
 
     user.metadata?["addresses"]["primary"] = primaryAddress;
-
+    user.metadata?["phone"] = user.phone;
     body["user_metadata"] = user.metadata;
 
     // Might move phone to user_metadata

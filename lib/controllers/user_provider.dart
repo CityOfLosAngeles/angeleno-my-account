@@ -26,7 +26,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   void setUser(final UserProfile user) {
-    final metadata = user.customClaims!['user_metadata']
+    final metadata = user.customClaims?['user_metadata']
                                   as Map<String, dynamic>;
     final primaryAddress = metadata['addresses']?['primary'];
 
@@ -39,7 +39,7 @@ class UserProvider extends ChangeNotifier {
         address: primaryAddress['address'] as String,
         city: primaryAddress['city'] as String,
         state: primaryAddress['state'] as String,
-        phone: user.phoneNumber,
+        phone: metadata['phone'] as String,
         metadata: metadata
     );
 
