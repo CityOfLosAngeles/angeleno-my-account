@@ -38,10 +38,9 @@ class UserProvider extends ChangeNotifier {
                                   as Map<String, dynamic>;
 
     if (metadata.isNotEmpty) {
-      final primaryAddress = metadata['addresses']?['primary']
-        as Map<String, dynamic>;
+      final primaryAddress = metadata['addresses']?['primary'];
 
-      if (primaryAddress.isNotEmpty) {
+      if (primaryAddress != null) {
         zip = primaryAddress['zip'] as String ?? '';
         address = primaryAddress['address'] as String ?? '';
         city =  primaryAddress['city'] as String ?? '';
