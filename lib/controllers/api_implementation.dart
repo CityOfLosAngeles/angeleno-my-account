@@ -80,7 +80,18 @@ class UserApi extends Api {
       primaryAddress["city"] = user.city!;
     }
 
-    user.metadata?["addresses"]?["primary"] = primaryAddress;
+    final metaAddresses = user.metadata?["addresses"];
+
+    if (metaAddresses != null) {
+      metaAddresses["primary"] = primaryAddress;
+    } else {
+      user.metadata = {
+        "addresses" : {
+          "primary": primaryAddress
+        }
+      };
+    }
+
     user.metadata?["phone"] = user.phone;
     body["user_metadata"] = user.metadata;
 

@@ -1,5 +1,4 @@
 import 'dart:html' as html;
-import 'dart:js_util';
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
@@ -41,10 +40,14 @@ class UserProvider extends ChangeNotifier {
       final primaryAddress = metadata['addresses']?['primary'];
 
       if (primaryAddress != null) {
-        zip = primaryAddress['zip'] as String ?? '';
-        address = primaryAddress['address'] as String ?? '';
-        city =  primaryAddress['city'] as String ?? '';
-        state = primaryAddress['state'] as String ?? '';
+        zip = primaryAddress['zip'] != null ?
+          primaryAddress['zip'] as String : '';
+        address = primaryAddress['address'] != null ?
+          primaryAddress['address'] as String : '';
+        city =  primaryAddress['city'] != null ?
+          primaryAddress['city'] as String : '';
+        state = primaryAddress['state'] != null ?
+          primaryAddress['state'] as String : '';
       }
 
       phone = metadata['phone'] as String;
