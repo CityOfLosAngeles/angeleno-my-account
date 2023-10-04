@@ -1,4 +1,5 @@
 import 'dart:html' as html;
+import 'dart:js_util';
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
@@ -26,20 +27,40 @@ class UserProvider extends ChangeNotifier {
   }
 
   void setUser(final UserProfile user) {
+
+    String zip = '';
+    String address = '';
+    String city = '';
+    String state = '';
+    String phone = '';
+
     final metadata = user.customClaims?['user_metadata']
                                   as Map<String, dynamic>;
-    final primaryAddress = metadata['addresses']?['primary'];
+
+    if (metadata.isNotEmpty) {
+      final primaryAddress = metadata['addresses']?['primary']
+        as Map<String, dynamic>;
+
+      if (primaryAddress.isNotEmpty) {
+        zip = primaryAddress['zip'] as String ?? '';
+        address = primaryAddress['address'] as String ?? '';
+        city =  primaryAddress['city'] as String ?? '';
+        state = primaryAddress['state'] as String ?? '';
+      }
+
+      phone = metadata['phone'] as String;
+    }
 
     _user = User(
         userId: user.sub,
         email: user.email,
         firstName: user.name ?? '',
         lastName: user.familyName ?? '',
-        zip: primaryAddress['zip'] as String,
-        address: primaryAddress['address'] as String,
-        city: primaryAddress['city'] as String,
-        state: primaryAddress['state'] as String,
-        phone: metadata['phone'] as String,
+        zip: zip,
+        address: address,
+        city: city,
+        state: state,
+        phone: phone,
         metadata: metadata
     );
 
