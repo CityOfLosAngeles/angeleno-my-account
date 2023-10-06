@@ -23,18 +23,18 @@ class UserApi extends Api {
         'aud': 'https://www.googleapis.com/oauth2/v4/token',
         'target_audience': '$cloudFunctionURL/updateUser'
       },
-      issuer: serviceAccountSecret,
-      subject: serviceAccountSecret,
+      issuer: serviceAccountEmail,
+      subject: serviceAccountEmail,
       header: {
         "alg":"RS256",
         "typ":"JWT"
       }
     );
 
+    final privKey = serviceAccountSecret
+        .replaceAll(r'\n', '\n');
 
-    final rsaPrivKey = RSAPrivateKey(
-        serviceAccountSecret.replaceAll(r'\n', '\n')
-    );
+    final rsaPrivKey = RSAPrivateKey(privKey);
 
     return jwt.sign(rsaPrivKey, algorithm: JWTAlgorithm.RS256);
 
@@ -45,18 +45,22 @@ class UserApi extends Api {
 
     final createdToken = createJwt();
 
-    final response = await http.post(
-      Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer $createdToken'
-      },
-      body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
-    );
+    try {
+      final response = await http.post(
+          Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer $createdToken'
+          },
+          body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
+      );
 
-    if (response.statusCode == HttpStatus.ok) {
-      final jsonRes = jsonDecode(response.body);
-      newToken = jsonRes["id_token"] as String;
+      if (response.statusCode == HttpStatus.ok) {
+        final jsonRes = jsonDecode(response.body);
+        newToken = jsonRes["id_token"] as String;
+      }
+    } catch (err) {
+      print(err);
     }
 
     return newToken;
@@ -80,16 +84,22 @@ class UserApi extends Api {
 
     final body = json.encode(user);
 
-    final response = await http.post(
-      Uri.parse('$baseUrl/$url'),
-      headers: headers,
-      body: body
-    );
+    try {
+      final response = await http.post(
+          Uri.parse('$baseUrl/$url'),
+          headers: headers,
+          body: body
+      );
 
-    if (response.statusCode == HttpStatus.ok) {
-      print(response.body);
-    } else {
-      print(response);
+      if (response.statusCode == HttpStatus.ok) {
+        print(response.body);
+      } else {
+        print(response);
+      }
+    } catch (err) {
+      print (err);
     }
+
+
   }
 }
