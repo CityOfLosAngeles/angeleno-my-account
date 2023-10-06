@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void updateUser() {
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
-      UserApi().patchUser(user);
+      UserApi().updateUser(user);
     }
   }
 

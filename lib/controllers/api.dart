@@ -4,9 +4,7 @@ import '../utils/constants.dart';
 
 abstract class Api {
 
-  final String baseUrl = 'https://$auth0Domain';
+  final String baseUrl = cloudFunctionURL;
 
-  Future<String> getAccessToken();
-
-  Future<User> patchUser(final User user);
+  void updateUser(final User user, {final String url = 'updateUser'});
 }

@@ -3,49 +3,74 @@
 
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:html';
+import 'package:angeleno_project/utils/constants.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:http/http.dart' as http;
 import 'package:angeleno_project/controllers/api.dart';
 import 'package:angeleno_project/models/user.dart';
-import 'package:angeleno_project/utils/constants.dart';
-import 'package:http/http.dart' as http;
 
 
 class UserApi extends Api {
 
-  @override
-  Future<String> getAccessToken() async {
-    late String accessToken;
+  String createJwt() {
+    final jwt = JWT(
+      {
+        'exp': DateTime.now()
+            .add(const Duration(hours: 1))
+            .millisecondsSinceEpoch ~/ 1000,
+        'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        'aud': 'https://www.googleapis.com/oauth2/v4/token',
+        'target_audience': '$cloudFunctionURL/updateUser'
+      },
+      issuer: serviceAccountSecret,
+      subject: serviceAccountSecret,
+      header: {
+        "alg":"RS256",
+        "typ":"JWT"
+      }
+    );
 
-    final headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
 
-    final body = {
-      "grant_type": "client_credentials",
-      "client_id": auth0MachineClientId,
-      "client_secret": auth0MachineSecret,
-      "audience": "$baseUrl/api/v2/"
-    };
+    final rsaPrivKey = RSAPrivateKey(
+        serviceAccountSecret.replaceAll(r'\n', '\n')
+    );
+
+    return jwt.sign(rsaPrivKey, algorithm: JWTAlgorithm.RS256);
+
+  }
+
+  Future<String> getOAuthToken() async {
+    String newToken = '';
+
+    final createdToken = createJwt();
 
     final response = await http.post(
-        Uri.parse('$baseUrl/oauth/token'),
-        headers: headers,
-        body: body
+      Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer $createdToken'
+      },
+      body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
     );
 
     if (response.statusCode == HttpStatus.ok) {
-      final res = jsonDecode(response.body);
-      accessToken = res["access_token"] as String;
+      final jsonRes = jsonDecode(response.body);
+      newToken = jsonRes["id_token"] as String;
     }
 
-    return accessToken;
+    return newToken;
   }
 
-  @override
-  Future<User> patchUser(final User user) async {
 
-    //TODO: use valid token within 24 hour time span.
-    final Object token = await getAccessToken();
+  @override
+  void updateUser(final User user, {final String url = 'updateUser'}) async {
+
+    final token = await getOAuthToken();
+
+    if (token.isEmpty) {
+      throw const FormatException('Empty token received');
+    }
 
     final headers = {
       'Content-Type': 'application/json',
@@ -53,84 +78,18 @@ class UserApi extends Api {
       'Authorization': 'Bearer $token'
     };
 
-    final body = <String, dynamic>{};
+    final body = json.encode(user);
 
-    if (user.firstName != null && user.firstName!.isNotEmpty) {
-      body["name"] = user.firstName!;
-    }
-
-    if (user.lastName != null && user.lastName!.isNotEmpty) {
-      body["family_name"] = user.lastName!;
-    }
-
-    final primaryAddress = <String, String>{};
-    if (user.zip != null && user.zip!.isNotEmpty) {
-      primaryAddress["zip"] = user.zip!;
-    }
-
-    if (user.address != null && user.address!.isNotEmpty) {
-      primaryAddress["address"] = user.address!;
-    }
-
-    if (user.state != null && user.state!.isNotEmpty) {
-      primaryAddress["state"] = user.state!;
-    }
-
-    if (user.city != null && user.city!.isNotEmpty) {
-      primaryAddress["city"] = user.city!;
-    }
-
-    final metaAddresses = user.metadata?["addresses"];
-
-    if (metaAddresses != null) {
-      metaAddresses["primary"] = primaryAddress;
-    } else {
-      user.metadata = {
-        "addresses" : {
-          "primary": primaryAddress
-        }
-      };
-    }
-
-    user.metadata?["phone"] = user.phone;
-    body["user_metadata"] = user.metadata;
-
-    // Might move phone to user_metadata
-    // if (user.phone != null && user.phone!.isNotEmpty) {
-    //   // Phone numbers need to be in E.164
-    //
-    //   // Replace anything that's not a number
-    //   var phoneNumber = user.phone?.replaceAll(RegExp(r"\D"), "");
-    //
-    //   // Make international
-    //   phoneNumber = "+1${user.phone!}";
-    //
-    //   // Ensure it passes Auth0's RegEx
-    //   final authRegEx = RegExp("^\\+[0-9]{1,15}\$");
-    //
-    //   if (!authRegEx.hasMatch(phoneNumber)) {
-    //     return throw const FormatException('Invalid phone number.');
-    //   }
-    //
-    //   // "Cannot update phone_number for non-sms user"
-    //
-    //   body["phone_number"] = phoneNumber;
-    // }
-
-    final data = json.encode(body);
-
-    final String userId = user.userId;
-    final response = await http.patch(
-        Uri.parse('$baseUrl/api/v2/users/$userId'),
-        headers: headers,
-        body: data
+    final response = await http.post(
+      Uri.parse('$baseUrl/$url'),
+      headers: headers,
+      body: body
     );
 
     if (response.statusCode == HttpStatus.ok) {
-       print(response.body);
+      print(response.body);
+    } else {
+      print(response);
     }
-
-    return user;
-
   }
 }

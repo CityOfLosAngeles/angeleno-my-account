@@ -24,10 +24,10 @@ jobs:
             touch .env
               echo AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }} >> .env
               echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
-              echo MM_CLIENT_ID=${{ secrets.MM_CLIENT_ID }} >> .env
-              echo MM_CLIENT_SECRET=${{ secrets.MM_CLIENT_SECRET }} >> .env
               echo REDIRECT_URI=${{ secrets.REDIRECT_URI }} >> .env
-            cat .env
+              echo CLOUD_FUNCTIONS_URL=${{ secrets.CLOUD_FUNCTIONS_URL }} >> .env
+              echo SA_EMAIL=${{ secrets.SA_EMAIL }} >> .env
+              echo SA_SECRET_KEY=${{ secrets.SA_SECRET_KEY }} >> .env
       - run: flutter build web --dart-define-from-file=.env
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

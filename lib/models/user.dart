@@ -10,15 +10,17 @@ class User {
   late String? phone;
   late Map<String, dynamic>? metadata;
 
-   User({
+  String get fullName => '$firstName $lastName';
+
+  User({
       required this.userId,
       required this.email,
       required this.firstName,
       required this.lastName,
-      required this.zip,
       required this.address,
       required this.city,
       required this.state,
+      required this.zip,
       required this.phone,
       required this.metadata
   });
@@ -28,10 +30,10 @@ class User {
         email = copy.email,
         firstName = copy.firstName,
         lastName = copy.lastName,
-        zip = copy.zip,
         address = copy.address,
         city = copy.city,
         state = copy.state,
+        zip = copy.zip,
         phone = copy.phone,
         metadata = copy.metadata;
 
@@ -45,7 +47,18 @@ class User {
       other.phone == phone &&
       other.state == state;
 
-  String get fullName => '$firstName $lastName';
+  Map<String, dynamic> toJson() => {
+      'userId': userId,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zip': zip,
+      'phone': phone,
+      'metadata': metadata
+    };
 
   @override
   String toString() =>
