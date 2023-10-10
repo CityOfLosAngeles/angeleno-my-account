@@ -78,7 +78,6 @@ class UserApi extends Api {
 
     final headers = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
       'Authorization': 'Bearer $token'
     };
 
@@ -99,7 +98,5 @@ class UserApi extends Api {
     } catch (err) {
       print (err);
     }
-
-
   }
 }
