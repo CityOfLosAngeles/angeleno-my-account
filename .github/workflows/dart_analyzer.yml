@@ -81,9 +81,10 @@ jobs:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
   
   # SCA - find existing vulnerabilities affecting your project’s dependencies.
-  osv-scanner:
-    name: OSV Scanner
-    uses: "google/osv-scanner/.github/workflows/osv-scanner-reusable-pr.yml@main"
+  # REPO NEEDS TO BE PUBLIC
+  #osv-scanner:
+  #  name: OSV Scanner
+  #  uses: "google/osv-scanner/.github/workflows/osv-scanner-reusable-pr.yml@main"
 
   # Dart SAST
   horusec-security:
@@ -96,5 +97,5 @@ jobs:
         fetch-depth: 0
     - name: Running Horusec Security
       run: |
-        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
+        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest-beta
         horusec start -p="./" -e="true"  
