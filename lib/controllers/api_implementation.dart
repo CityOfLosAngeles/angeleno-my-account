@@ -77,6 +77,7 @@ class UserApi extends Api {
     }
 
     final headers = {
+      'Content-Type': 'application/json',
       'Authorization': 'Bearer $token'
     };
 
