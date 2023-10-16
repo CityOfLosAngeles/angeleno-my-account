@@ -6,8 +6,9 @@ Only the latest release is supported. All versions not indicated as the latest G
 
 ## Reporting a Vulnerability
 
-We greatly appreciate all efforts from the community in helping us report and resolve security vulnerabilities that may be associated with this project.
-Please proceed to privately disclose a security vulnerability to us by following the instructions [here](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability) for our repository. To accelerate the review
+We greatly appreciate all efforts from the community in helping us report and resolve security vulnerabilities that may be associated with this project. Please read about our vulnerability disclosure policy [here](https://hackerone.com/city_of_los_angeles_vdp) to have a better understanding of our guidelines, program rules, and what falls within our scope.
+
+Proceed to privately disclose a security vulnerability to us by following the instructions [here](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability) for our repository. To accelerate the review
 and resolution of the security issue, please be detailed with your vulnerability report. The [GitHub Security Lab](https://securitylab.github.com/) has provided a template
 [here](https://github.com/github/securitylab/blob/main/docs/report-template.md) that can be used as inspiration for drafting a vulnerability report.
 
