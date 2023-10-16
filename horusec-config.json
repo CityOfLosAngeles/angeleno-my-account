@@ -1,0 +1,21 @@
+{
+  "horusec": {
+    "projectName": "Angeleno My Account Flutter",
+    "analysis": {
+      "tools": [
+        {
+          "language": "Dart",
+          "customPath": "./lib/", 
+          "isToIgnore": false,
+          "isLocal": true,
+          "config": {
+            "DartCmd": "dart",
+            "Severity": "low",
+            "FilesOrPaths": "./**/*.dart",
+            "OutputFile": "./horusec-output-dart.json"
+          }
+        }
+      ]
+    }
+  }
+}
