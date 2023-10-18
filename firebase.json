@@ -8,8 +8,10 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/updateUser",
+        "function": "updateUser",
+        "region": "us-central1",
+        "pinTag": true
       }
     ]
   },
@@ -24,11 +26,5 @@
         "firebase-debug.*.log"
       ]
     }
-  ],
-  "rewrites": [ {
-    "source": "/updateUser",
-    "function": "updateUser",
-    "region": "us-central1",
-    "pinTag": true           
-  } ]
+  ]
 }
