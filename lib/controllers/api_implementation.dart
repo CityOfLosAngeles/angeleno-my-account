@@ -85,7 +85,7 @@ class UserApi extends Api {
 
     try {
       final response = await http.post(
-          Uri.parse('$baseUrl/$url'),
+          Uri.parse('/$url'),
           headers: headers,
           body: body
       );
