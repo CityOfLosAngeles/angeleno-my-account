@@ -31,7 +31,6 @@
   "horusecCliHeaders": {},
   "horusecCliHorusecApiUri": "http://0.0.0.0:8000",
   "horusecCliJsonOutputFilepath": "",
-  "horusecCliLogFilePath": "C:\\Users\\506474\\AppData\\Local\\Temp\\horusec-2023-10-16-16-04-09.log",
   "horusecCliMonitorRetryInSeconds": 15,
   "horusecCliPrintOutputType": "",
   "horusecCliProjectPath": "./",
