@@ -1,4 +1,3 @@
-import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/nav/app_bar.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
@@ -101,28 +100,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: NavigationRail(
                                 selectedIndex: _selectedIndex,
                                 labelType: NavigationRailLabelType.all,
-                                // indicatorColor: colorGreen,
                                 onDestinationSelected: _navigationSelected,
                                 destinations: const <NavigationRailDestination>[
                                 NavigationRailDestination(
                                     icon: Icon(Icons.person_outline_outlined),
                                     selectedIcon:
-                                        Icon(Icons.person,
-                                            // color: Colors.white
-                                        ),
+                                        Icon(Icons.person),
                                     label: Text('Profile')),
                                 NavigationRailDestination(
                                     icon: Icon(Icons.password_outlined),
-                                    selectedIcon: Icon(Icons.password,
-                                        // color: Colors.white
-                                        ),
+                                    selectedIcon: Icon(Icons.password),
                                     label: Text('Password')),
                                 NavigationRailDestination(
                                     icon: Icon(Icons.lock_outline),
                                     selectedIcon:
-                                        Icon(Icons.lock,
-                                            // color: Colors.white
-                                        ),
+                                        Icon(Icons.lock),
                                     label: Text('Security'))
                               ])),
                     Expanded(
@@ -136,7 +128,6 @@ class _MyHomePageState extends State<MyHomePage> {
           bottomNavigationBar: smallScreen
               ? BottomNavigationBar(
                   currentIndex: _selectedIndex,
-                  // selectedItemColor: colorGreen,
                   onTap: _navigationSelected,
                   items: const <BottomNavigationBarItem>[
                       BottomNavigationBarItem(
@@ -149,7 +140,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           icon: Icon(Icons.lock_outline), label: 'Security')
                     ])
               : Container(
-                  // color: footerBlue,
                   padding: const EdgeInsets.all(16.0),
                   child: const Wrap(
                         alignment: WrapAlignment.center,
@@ -157,7 +147,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text(
                             '© Copyright 2023 City of Los Angeles. '
                             'All rights reserved. Disclaimer | Privacy Policy',
-                            // style: TextStyle(color: Colors.white),
                             textDirection: TextDirection.ltr,
                           )
 

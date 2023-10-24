@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../utils/constants.dart';
-
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   const MainAppBar({super.key});
 
@@ -11,11 +9,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(final context) => AppBar(
-      // backgroundColor: colorGreen,
       title: const Text('Angeleno Account',
-        style: TextStyle(
-            // color: Colors.white,
-            fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
       actions:
       <Widget>[
@@ -25,15 +20,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Uri.parse('https://angeleno.lacity.org/')
               );
             },
-            icon: const Icon(
-              Icons.home,
-              // color: Colors.white
-            ),
-            label: const Text('Home',
-                // style: TextStyle(color: Colors.white)
-            ),
-            // style: angelenoAccountButtonStyle
-        ),
+            icon: const Icon(Icons.home,),
+            label: const Text('Home')),
         const SizedBox(width: 5.0),
         ElevatedButton.icon(
             onPressed: () async {
@@ -41,13 +29,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Uri.parse('https://angeleno.lacity.org/apps')
               );
             },
-            icon: const Icon(Icons.grid_view_rounded,
-                // color: Colors.white
-            ),
-            label: const Text('Services',
-                // style: TextStyle(color: Colors.white)
-            ),
-            // style: angelenoAccountButtonStyle
+            icon: const Icon(Icons.grid_view_rounded ),
+            label: const Text('Services')
         ),
         const SizedBox(width: 5.0),
         ElevatedButton.icon(
@@ -56,13 +39,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Uri.parse('https://angeleno.lacity.org/help')
               );
             },
-            icon: const Icon(Icons.question_mark,
-              // color: Colors.white,
-            ),
-            label: const Text('Help',
-                // style: TextStyle(color: Colors.white)
-            ),
-            // style: angelenoAccountButtonStyle
+            icon: const Icon(Icons.question_mark),
+            label: const Text('Help')
         ),
         const SizedBox(width: 5.0),
       ],
