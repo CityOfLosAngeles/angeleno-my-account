@@ -5,12 +5,15 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+<<<<<<< Updated upstream
     ],
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
       }
+=======
+>>>>>>> Stashed changes
     ]
   }
 }
