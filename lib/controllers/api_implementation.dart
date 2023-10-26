@@ -21,7 +21,7 @@ class UserApi extends Api {
             .millisecondsSinceEpoch ~/ 1000,
         'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
         'aud': 'https://www.googleapis.com/oauth2/v4/token',
-        'target_audience': '$cloudFunctionURL/updateUser'
+        'target_audience': cloudFunctionURL
       },
       issuer: serviceAccountEmail,
       subject: serviceAccountEmail,
