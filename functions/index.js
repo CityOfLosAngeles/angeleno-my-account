@@ -10,16 +10,15 @@ admin.initializeApp();
 let auth0Domain, clientId, clientSecret;
 
 const getSecret = async (name) => {
-  const secret = await client.getSecret({name});
-  console.log(secret);
-  return secret;
+  const [version] = await client.accessSecretVersion({name});
+  return version.payload.data.toString('utf8');
 };
 
 (async () => {
   const secrets = await Promise.all([
-    getSecret("AUTH0_DOMAIN"),
-    getSecret("AUTH0_CLIENT_ID"),
-    getSecret("AUTH0_CLIENT_SECRET")
+    getSecret("projects/732293309178/secrets/AUTH0_DOMAIN/versions/latest"),
+    getSecret("projects/732293309178/secrets/AUTH0_CLIENT_ID/versions/latest"),
+    getSecret("projects/732293309178/secrets/AUTH0_CLIENT_SECRET/versions/latest")
   ]);
 
   const [secretAuth0Domain, secretClientId, secretClientSecret] = secrets;
