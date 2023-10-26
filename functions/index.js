@@ -1,32 +1,14 @@
 const {onRequest} = require("firebase-functions/v2/https");
-const {SecretManagerServiceClient} = require("@google-cloud/secret-manager");
 const axios = require("axios");
 const admin = require("firebase-admin");
 
-const client = new SecretManagerServiceClient();
-
 admin.initializeApp();
 
-let auth0Domain, clientId, clientSecret;
-
-const getSecret = async (name) => {
-  const [version] = await client.accessSecretVersion({name});
-  return version.payload.data.toString('utf8');
-};
-
-(async () => {
-  const secrets = await Promise.all([
-    getSecret("projects/732293309178/secrets/AUTH0_DOMAIN/versions/latest"),
-    getSecret("projects/732293309178/secrets/AUTH0_CLIENT_ID/versions/latest"),
-    getSecret("projects/732293309178/secrets/AUTH0_CLIENT_SECRET/versions/latest")
-  ]);
-
-  const [secretAuth0Domain, secretClientId, secretClientSecret] = secrets;
-
-  auth0Domain = secretAuth0Domain;
-  clientId = secretClientId;
-  clientSecret = secretClientSecret;
-})();
+const {
+  auth0ClientId,
+  auth0ClientSecret,
+  auth0Domain
+} = process.env;
 
 class User {
   constructor(
@@ -61,8 +43,8 @@ const getAccesToken = async () => {
 
   const body = {
     "grant_type": "client_credentials",
-    "client_id": clientId,
-    "client_secret": clientSecret,
+    "client_id": auth0ClientId,
+    "client_secret": auth0ClientSecret,
     "audience": `https://${auth0Domain}/api/v2/`
   };
 
