@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 /* Colors */
-
 ColorScheme colorScheme = const ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xFF006B59),
@@ -68,33 +67,4 @@ const darkColorScheme = ColorScheme(
   surfaceTint: Color(0xFF5CDBBE),
   outlineVariant: Color(0xFF3F4945),
   scrim: Color(0xFF000000),
-);
-
-
-const footerBlue = Color(0xFF1f4c73);
-const colorBlue = Color(0xFF0f2940);
-const colorGreen = Color(0xFF03a751);
-
-/* Button Styles */
-final angelenoAccountButtonStyle =  ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    foregroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    surfaceTintColor: MaterialStateProperty.all<Color>(Colors.transparent),
-    overlayColor: MaterialStateProperty.all<Color>(const Color(0xff0daa58)),
-    alignment: Alignment.center,
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        const RoundedRectangleBorder()
-    )
-);
-
-final actionButtonStyle = ElevatedButton.styleFrom(
-    backgroundColor: colorGreen,
-    disabledBackgroundColor: const Color(0xFF81d3a8),
-    disabledForegroundColor: Colors.white,
-    alignment: Alignment.center,
-    textStyle: const TextStyle(
-        color: Colors.white
-    ),
-    foregroundColor: Colors.white,
 );
