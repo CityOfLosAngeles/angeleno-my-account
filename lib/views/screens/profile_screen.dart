@@ -17,6 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late UserProvider userProvider;
   late User user;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -43,6 +44,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return const LinearProgressIndicator();
     } else {
       user = userProvider.user!;
+      _controller.value = _controller.value.copyWith(
+          text: '${user.firstName} ${user.lastName}'
+      );
     }
 
     return Column(
@@ -80,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 labelText: 'Full Name',
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.name,
-                            initialValue: user.fullName,
+                            controller: _controller,
                           ),
                           const SizedBox(height: 25.0),
                           TextFormField(
@@ -104,6 +108,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             keyboardType: TextInputType.name,
                             onChanged: (final val) {
                               user.firstName = val;
+                              _controller.value = _controller.value.copyWith(
+                                text: '$val ${user.lastName}'
+                              );
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -116,6 +123,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             keyboardType: TextInputType.name,
                             onChanged: (final val) {
                               user.lastName = val;
+                              _controller.value = _controller.value.copyWith(
+                                  text: '${user.firstName} $val'
+                              );
                             },
                           ),
                           const SizedBox(height: 25.0),
@@ -183,5 +193,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         )
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
