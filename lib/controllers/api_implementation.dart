@@ -9,14 +9,14 @@ import 'package:http/http.dart' as http;
 class UserApi extends Api {
 
   @override
-  Future<User> getUser(final String url) async {
+  Future<User> getUser(final http.Client client) async {
 
     try {
-      final response = await http.get(Uri.parse(baseUrl + url));
+      final response = await client.get(Uri.parse(baseUrl));
 
       if (response.statusCode == HttpStatus.ok) {
         final String rawJson = response.body;
-        final jsonMap = jsonDecode(rawJson)[0];
+        final jsonMap = jsonDecode(rawJson);
 
         return User(
             userId: jsonMap['id'].toString(),
