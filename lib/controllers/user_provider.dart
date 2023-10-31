@@ -54,7 +54,7 @@ class UserProvider extends ChangeNotifier {
     _user = User(
         userId: user.sub,
         email: user.email,
-        firstName: user.name ?? '',
+        firstName: user.givenName ?? '',
         lastName: user.familyName ?? '',
         zip: zip,
         address: address,
