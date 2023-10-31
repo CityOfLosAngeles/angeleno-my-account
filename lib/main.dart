@@ -1,4 +1,5 @@
 import 'package:angeleno_project/controllers/user_provider.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white60
+        colorScheme: colorScheme
       ),
       home: const MyHomePage(),
     );
