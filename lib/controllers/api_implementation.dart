@@ -1,6 +1,3 @@
-// ignore_for_file: prefer_single_quotes
-// Single quotes were causing issue when sending to Auth0
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:html';
@@ -26,8 +23,8 @@ class UserApi extends Api {
       issuer: serviceAccountEmail,
       subject: serviceAccountEmail,
       header: {
-        "alg":"RS256",
-        "typ":"JWT"
+        'alg':'RS256',
+        'typ':'JWT'
       }
     );
 
@@ -52,12 +49,13 @@ class UserApi extends Api {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Bearer $createdToken'
           },
+          // ignore: lines_longer_than_80_chars
           body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
       );
 
       if (response.statusCode == HttpStatus.ok) {
         final jsonRes = jsonDecode(response.body);
-        newToken = jsonRes["id_token"] as String;
+        newToken = jsonRes['id_token'] as String;
       }
     } catch (err) {
       print(err);

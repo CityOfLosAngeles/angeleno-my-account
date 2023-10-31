@@ -3,7 +3,6 @@ import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
 import 'package:flutter/foundation.dart';
-
 import '../utils/constants.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -13,7 +12,6 @@ class UserProvider extends ChangeNotifier {
   bool _isEditing = false;
 
   UserProvider() {
-    print('running');
     auth0Web.onLoad().then((final credentials) async {
       if (credentials != null) {
         html.window.history.pushState(null, 'home', '/');

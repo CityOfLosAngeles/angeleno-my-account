@@ -1,4 +1,3 @@
-import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class PasswordScreen extends StatefulWidget {
@@ -58,7 +57,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
           children: [
             ElevatedButton(
               onPressed: _isButtonDisabled ? null : () => submitRequest(),
-              style: actionButtonStyle,
               child: const Text('Change Password'),
             )
           ],

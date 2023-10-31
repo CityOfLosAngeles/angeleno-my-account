@@ -1,10 +1,8 @@
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../controllers/api_implementation.dart';
 import '../../models/user.dart';
-import '../../utils/constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -62,7 +60,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 userProvider.toggleEditing();
               });
             },
-            style: actionButtonStyle,
             child: Text(userProvider.isEditing ? 'Save' : 'Edit'),
           )
         ]),
