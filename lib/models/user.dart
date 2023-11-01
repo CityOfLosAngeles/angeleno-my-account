@@ -10,8 +10,6 @@ class User {
   late String? phone;
   late Map<String, dynamic>? metadata;
 
-  String get fullName => '$firstName $lastName';
-
   User({
       required this.userId,
       required this.email,
