@@ -1,45 +1,100 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'dart:html';
+import 'package:angeleno_project/utils/constants.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:http/http.dart' as http;
 import 'package:angeleno_project/controllers/api.dart';
 import 'package:angeleno_project/models/user.dart';
-import 'package:http/http.dart' as http;
 
 
 class UserApi extends Api {
 
-  @override
-  Future<User> getUser(final http.Client client) async {
+  String createJwt() {
+    final jwt = JWT(
+      {
+        'exp': DateTime.now()
+            .add(const Duration(hours: 1))
+            .millisecondsSinceEpoch ~/ 1000,
+        'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        'aud': 'https://www.googleapis.com/oauth2/v4/token',
+        'target_audience': cloudFunctionURL
+      },
+      issuer: serviceAccountEmail,
+      subject: serviceAccountEmail,
+      header: {
+        'alg':'RS256',
+        'typ':'JWT'
+      }
+    );
+
+    final privKey = serviceAccountSecret
+        .replaceAll(r'\n', '\n');
+
+    final rsaPrivKey = RSAPrivateKey(privKey);
+
+    return jwt.sign(rsaPrivKey, algorithm: JWTAlgorithm.RS256);
+
+  }
+
+  Future<String> getOAuthToken() async {
+    String newToken = '';
+
+    final createdToken = createJwt();
 
     try {
-      final response = await client.get(Uri.parse(baseUrl));
+      final response = await http.post(
+          Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer $createdToken'
+          },
+          // ignore: lines_longer_than_80_chars
+          body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
+      );
 
       if (response.statusCode == HttpStatus.ok) {
-        final String rawJson = response.body;
-        final jsonMap = jsonDecode(rawJson);
-
-        return User(
-            userId: jsonMap['id'].toString(),
-            email: jsonMap['email'].toString(),
-            firstName: jsonMap['name'].toString().split(' ')[0],
-            lastName: jsonMap['name'].toString().split(' ')[1],
-            zip: jsonMap['address']['zipcode'].toString(),
-            address: jsonMap['address']['street'].toString(),
-            city: jsonMap['address']['city'].toString(),
-            state: 'CA',
-            phone: jsonMap['phone'].toString()
-        );
+        final jsonRes = jsonDecode(response.body);
+        newToken = jsonRes['id_token'] as String;
       }
-
-    } on SocketException {
-      throw 'No Internet Connection';
-    } catch (e) {
-      throw '$e';
+    } catch (err) {
+      print(err);
     }
 
-    return User(userId: '', email: '', firstName: '', lastName: '',
-        zip: '', address: '', city: '', state: '', phone: '');
+    return newToken;
   }
 
 
+  @override
+  void updateUser(final User user, {final String url = 'updateUser'}) async {
+
+    final token = await getOAuthToken();
+
+    if (token.isEmpty) {
+      throw const FormatException('Empty token received');
+    }
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+
+    final body = json.encode(user);
+
+    try {
+      final response = await http.post(
+          Uri.parse('/$url'),
+          headers: headers,
+          body: body
+      );
+
+      if (response.statusCode == HttpStatus.ok) {
+        print(response.body);
+      } else {
+        print(response);
+      }
+    } catch (err) {
+      print (err);
+    }
+  }
 }

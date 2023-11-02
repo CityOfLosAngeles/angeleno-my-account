@@ -28,6 +28,7 @@ void main() {
         )
     );
 
+    // ignore: unused_local_variable
     final client = MockClient(
       (final request) async {
         final response = {
@@ -48,7 +49,6 @@ void main() {
     );
 
     final userProvider = UserProvider();
-    await userProvider.fetchUser(client);
     expect(userProvider.user, isA<User>());
 
     await tester.pump(const Duration(seconds: 5));

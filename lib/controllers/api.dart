@@ -1,8 +1,10 @@
 import 'package:angeleno_project/models/user.dart';
-import 'package:http/http.dart' as http;
+import '../utils/constants.dart';
 
 abstract class Api {
-  final String baseUrl = 'https://jsonplaceholder.typicode.com/users/1';
 
-  Future<User> getUser(final http.Client client);
+  final String baseUrl = cloudFunctionURL;
+
+  void updateUser(final User user, {final String url = 'updateUser'});
+
 }

@@ -14,6 +14,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
   int _selectedIndex = 0;
@@ -156,18 +157,22 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          body: Container(
+          body: Center(
+            child: Container(
               transformAlignment: Alignment.center,
+              width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 1280),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: screens[_selectedIndex]))
-                  ],
-                ),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: screens[_selectedIndex]))
+                ],
               ),
+            )
+          ),
           bottomNavigationBar: Container(
             padding: const EdgeInsets.all(16.0),
             child: const Wrap(
