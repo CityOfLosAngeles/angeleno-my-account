@@ -13,10 +13,13 @@ class UserProvider extends ChangeNotifier {
 
   UserProvider() {
     auth0Web.onLoad().then((final credentials) async {
-      if (credentials != null) {
+      if (credentials != null
+          && credentials.expiresAt.isAfter(DateTime.now())) {
+
         html.window.history.pushState(null, 'home', '/');
         setUser(credentials.user);
         _cleanUser = User.copy(_user!);
+
       } else {
         await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
       }
