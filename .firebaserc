@@ -1,12 +1,12 @@
 {
   "projects": {
-    "default": "my-account-dev-402917"
+    "default": "DEFAULT_PROJECT"
   },
   "targets": {
-    "my-account-dev-402917": {
+    "DEFAULT_PROJECT": {
       "hosting": {
-        "angeleno-my-account-dev-402917": [
-          "angeleno-my-account-dev-402917"
+        "HOSTING_PROJECT": [
+          "HOSTING_PROJECT"
         ]
       }
     }
