@@ -41,7 +41,6 @@ jobs:
           old_hosting="HOSTING_PROJECT"
           new_hosting="${{secrets.HOSTING_PROJECT}}"
           sed -i "s/$old_hosting/$new_hosting/g" .firebaserc
-          cat .firebaserc
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
