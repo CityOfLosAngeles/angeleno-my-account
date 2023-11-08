@@ -1,7 +1,6 @@
 const {onRequest} = require("firebase-functions/v2/https");
 const axios = require("axios");
 const admin = require("firebase-admin");
-const {User} = require("./models/user")
 
 admin.initializeApp();
 
@@ -11,109 +10,128 @@ const {
   auth0Domain
 } = process.env;
 
-// const getAccesToken = async () => {
-//   const options = {
-//     "Content-Type": "application/x-www-form-urlencoded"
-//   };
+class User {
+  constructor(
+      userId,
+      email,
+      firstName,
+      lastName,
+      address,
+      city,
+      state,
+      zip,
+      phone,
+      metadata
+  ) {
+    this.userId = userId,
+    this.email = email,
+    this.firstName = firstName,
+    this.lastName = lastName,
+    this.address = address,
+    this.city = city,
+    this.state = state,
+    this.zip = zip,
+    this.phone = phone,
+    this.metadata = metadata;
+  }
+}
 
-//   const body = {
-//     "grant_type": "client_credentials",
-//     "client_id": auth0ClientId,
-//     "client_secret": auth0ClientSecret,
-//     "audience": `https://${auth0Domain}/api/v2/`
-//   };
+const getAccesToken = async () => {
+  const options = {
+    "Content-Type": "application/x-www-form-urlencoded"
+  };
 
-//   const request = await axios.post(
-//       `https://${auth0Domain}/oauth/token`,
-//       body, {
-//         headers: options
-//       }
-//   );
+  const body = {
+    "grant_type": "client_credentials",
+    "client_id": auth0ClientId,
+    "client_secret": auth0ClientSecret,
+    "audience": `https://${auth0Domain}/api/v2/`
+  };
 
-//   if (request.status === 200) {
-//     return request.data.access_token;
-//   }
-// };
+  const request = await axios.post(
+      `https://${auth0Domain}/oauth/token`,
+      body, {
+        headers: options
+      }
+  );
 
-// exports.updateUser = onRequest( async (req, res) => {
-//   let user;
+  if (request.status === 200) {
+    return request.data.access_token;
+  }
+};
 
-//   try {
-//     user = Object.assign(new User, req.body);
-//   } catch (err) {
-//     console.error(err);
-//     return res.send(400);
-//   }
+exports.updateUser = onRequest( async (req, res) => {
+  let user;
 
-//   const updatedUserObject = {};
+  try {
+    user = Object.assign(new User, req.body);
+  } catch (err) {
+    console.error(err);
+    return res.send(400);
+  }
 
-//   if (user.firstName) {
-//     updatedUserObject["given_name"] = user.firstName;
-//   }
+  const updatedUserObject = {};
 
-//   if (user.lastName) {
-//     updatedUserObject["family_name"] = user.lastName;
-//   }
+  if (user.firstName) {
+    updatedUserObject["given_name"] = user.firstName;
+  }
 
-//   const primaryAddress = {};
-//   if (user.zip) {
-//     primaryAddress["zip"] = user.zip;
-//   }
+  if (user.lastName) {
+    updatedUserObject["family_name"] = user.lastName;
+  }
 
-//   if (user.address) {
-//     primaryAddress["address"] = user.address;
-//   }
+  const primaryAddress = {};
+  if (user.zip) {
+    primaryAddress["zip"] = user.zip;
+  }
 
-//   if (user.state) {
-//     primaryAddress["state"] = user.state;
-//   }
+  if (user.address) {
+    primaryAddress["address"] = user.address;
+  }
 
-//   if (user.city) {
-//     primaryAddress["city"] = user.city;
-//   }
+  if (user.state) {
+    primaryAddress["state"] = user.state;
+  }
 
-//   const metaAddresses = user.metadata["addresses"];
+  if (user.city) {
+    primaryAddress["city"] = user.city;
+  }
 
-//   if (metaAddresses) {
-//     metaAddresses["primary"] = primaryAddress;
-//   } else {
-//     user.metadata = {
-//       "addresses": {
-//         "primary": primaryAddress
-//       }
-//     };
-//   }
+  const metaAddresses = user.metadata["addresses"];
 
-//   user.metadata["phone"] = user.phone;
-//   updatedUserObject["user_metadata"] = user.metadata;
+  if (metaAddresses) {
+    metaAddresses["primary"] = primaryAddress;
+  } else {
+    user.metadata = {
+      "addresses": {
+        "primary": primaryAddress
+      }
+    };
+  }
 
-//   const updateUserUrl = `https://${auth0Domain}/api/v2/users/${user.userId}`;
-//   const token = await getAccesToken();
-//   const headers = {
-//     "Content-Type": "application/json",
-//     "Accept": "application/json",
-//     "Authorization": `Bearer ${token}`
-//   };
+  user.metadata["phone"] = user.phone;
+  updatedUserObject["user_metadata"] = user.metadata;
 
-//   try {
-//     const request = await axios.patch(updateUserUrl, updatedUserObject, {
-//       headers
-//     });
+  const updateUserUrl = `https://${auth0Domain}/api/v2/users/${user.userId}`;
+  const token = await getAccesToken();
+  const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "Authorization": `Bearer ${token}`
+  };
 
-//     if (request.status === 200) {
-//       return res.status(200).send(request.data);
-//     } else {
-//       return res.sendStatus(request.status);
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     return res.send(err);
-//   }
-// });
+  try {
+    const request = await axios.patch(updateUserUrl, updatedUserObject, {
+      headers
+    });
 
-exports.updatePassword = onRequest( async (req, res) => {
-  // TODO: Validate the password and email fields before sending to Auth0
-  let body = req.body;
-  console.log(body);
-  res.send('hi')
-})
+    if (request.status === 200) {
+      return res.status(200).send(request.data);
+    } else {
+      return res.sendStatus(request.status);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+});

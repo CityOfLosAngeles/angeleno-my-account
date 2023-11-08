@@ -13,11 +13,6 @@
         "function": "updateUser",
         "region": "us-central1",
         "pinTag": true
-      },
-      {
-        "source": "/updatePassword",
-        "function": "updatePassword",
-        "region": "us-central1"
       }
     ]
   },

@@ -1,20 +1,5 @@
 {
   "projects": {
-<<<<<<< Updated upstream
     "default": "angeleno-my-account-dev-402917"
   }
-=======
-    "default": "my-account-dev-402917"
-  },
-  "targets": {
-    "my-account-dev-402917": {
-      "hosting": {
-        "angeleno-my-account-dev-402917": [
-          "angeleno-my-account-dev-402917"
-        ]
-      }
-    }
-  },
-  "etags": {}
->>>>>>> Stashed changes
 }
