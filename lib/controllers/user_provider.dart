@@ -16,13 +16,15 @@ class UserProvider extends ChangeNotifier {
       if (credentials != null
           && credentials.expiresAt.isAfter(DateTime.now())) {
 
-        html.window.history.pushState(null, 'home', '/');
         setUser(credentials.user);
         _cleanUser = User.copy(_user!);
 
       } else {
+        print('debug');
         await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
       }
+
+      html.window.history.pushState(null, 'home', '/');
     });
   }
 
