@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:angeleno_project/controllers/api.dart';
 import 'package:angeleno_project/models/user.dart';
 
-
 class UserApi extends Api {
 
   String createJwt() {
@@ -66,7 +65,8 @@ class UserApi extends Api {
 
 
   @override
-  void updateUser(final User user, {final String url = 'updateUser'}) async {
+  Future<int> updateUser(final User user, {final String url = 'updateUser'}) async {
+    late int statusCode;
 
     final token = await getOAuthToken();
 
@@ -90,11 +90,18 @@ class UserApi extends Api {
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
+
+        statusCode = response.statusCode;
       } else {
         print(response);
+        statusCode = response.statusCode;
       }
     } catch (err) {
       print (err);
+      // generic server error
+      statusCode = 500;
     }
+
+    return statusCode;
   }
 }

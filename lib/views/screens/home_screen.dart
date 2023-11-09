@@ -1,3 +1,4 @@
+import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +18,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
+  late LoadingOverlayProvider overlayProvider;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    overlayProvider = Provider.of<LoadingOverlayProvider>(context);
   }
 
   Future<void> _unsavedDataDialog(final int futureIndex) async =>
@@ -157,21 +164,40 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          body: Center(
-            child: Container(
-              transformAlignment: Alignment.center,
-              width: double.infinity,
-              constraints: const BoxConstraints(maxWidth: 1280),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: screens[_selectedIndex]))
-                ],
+          body: Stack(
+            children: [
+              Center(
+                  child: Container(
+                    transformAlignment: Alignment.center,
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxWidth: 1280),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                            child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: screens[_selectedIndex]))
+                      ],
+                    ),
+                  )
               ),
-            )
+              if (overlayProvider.isLoading)
+                Center(
+                  child: Container(
+                    transformAlignment: Alignment.center,
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxWidth: 1280),
+                    padding: const EdgeInsets.fromLTRB(
+                        10, 0, 10, 0
+                    ),
+                    color: Colors.black.withOpacity(0.3), // Semi-transparent black
+                    child: const Center(
+                      child: LinearProgressIndicator(),
+                    ),
+                  )
+                ),
+            ],
           ),
           bottomNavigationBar: Container(
             padding: const EdgeInsets.all(16.0),
