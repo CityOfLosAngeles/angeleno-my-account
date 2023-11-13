@@ -20,7 +20,6 @@ class UserProvider extends ChangeNotifier {
         _cleanUser = User.copy(_user!);
 
       } else {
-        print('debug');
         await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
       }
 
