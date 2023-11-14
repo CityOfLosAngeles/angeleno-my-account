@@ -11,4 +11,10 @@ class PasswordBody {
     required this.userId
   });
 
+  Map<String, dynamic> toJson() => {
+    'email': email,
+    'oldPassword': oldPassword,
+    'newPassword': newPassword,
+    'userId': userId
+  };
 }
