@@ -1,4 +1,9 @@
+import 'package:angeleno_project/models/password_reset.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../controllers/api_implementation.dart';
+import '../../controllers/user_provider.dart';
 
 class PasswordScreen extends StatefulWidget {
   const PasswordScreen({super.key});
@@ -8,7 +13,7 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
-
+  late UserProvider userProvider;
   late String currentPassword;
   late String newPassword;
   late String passwordMatch;
@@ -30,6 +35,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
     _isButtonDisabled = true;
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userProvider = context.watch<UserProvider>();
+  }
+
   String? validatePasswords (final String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Password is required';
@@ -39,7 +50,15 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   void submitRequest() {
     if (newPassword == passwordMatch) {
-      //submit request to finalize updated
+      final body = PasswordBody(
+        email: userProvider.user!.email,
+        oldPassword: currentPassword,
+        newPassword: newPassword,
+        userId: userProvider.user!.userId
+      );
+
+      UserApi().updatePassword(body);
+
     } else {
 
     }

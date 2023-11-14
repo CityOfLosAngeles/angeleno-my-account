@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:html';
+import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
@@ -66,7 +67,7 @@ class UserApi extends Api {
 
 
   @override
-  void updateUser(final User user, {final String url = 'updateUser'}) async {
+  void updateUser(final User user) async {
 
     final token = await getOAuthToken();
 
@@ -83,9 +84,34 @@ class UserApi extends Api {
 
     try {
       final response = await http.post(
-          Uri.parse('/$url'),
+          Uri.parse('/updateUser'),
           headers: headers,
           body: body
+      );
+
+      if (response.statusCode == HttpStatus.ok) {
+        print(response.body);
+      } else {
+        print(response);
+      }
+    } catch (err) {
+      print (err);
+    }
+  }
+
+  @override
+  Future<void> updatePassword(final PasswordBody body) async {
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final response = await http.post(
+          Uri.parse('/updatePassword'),
+          headers: headers,
+          body: reqBody
       );
 
       if (response.statusCode == HttpStatus.ok) {
