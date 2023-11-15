@@ -1,5 +1,15 @@
 {
   "projects": {
-    "default": "my-account-dev-402917"
-  }
+    "default": "DEFAULT_PROJECT"
+  },
+  "targets": {
+    "DEFAULT_PROJECT": {
+      "hosting": {
+        "HOSTING_PROJECT": [
+          "HOSTING_PROJECT"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
