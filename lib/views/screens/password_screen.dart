@@ -1,4 +1,5 @@
 import 'package:angeleno_project/models/password_reset.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -41,13 +42,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
     userProvider = context.watch<UserProvider>();
   }
 
-  String? validatePasswords (final String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Password is required';
-    }
-    return null;
-  }
-
   void submitRequest() {
     if (newPassword == passwordMatch) {
       final body = PasswordBody(
@@ -86,7 +80,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
           autocorrect: false,
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: validatePasswords,
+          validator: (final value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Password is required';
+            }
+            return null;
+          },
           decoration: InputDecoration(
               border: const OutlineInputBorder(),
               labelText: 'Current Password',
@@ -114,7 +113,23 @@ class _PasswordScreenState extends State<PasswordScreen> {
           autocorrect: false,
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: validatePasswords,
+          validator: (final value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Password is required';
+            }
+
+            final RegExp passwordRegex = RegExp(
+              r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$',
+            );
+
+            if (!passwordRegex.hasMatch(value)) {
+              return 'Password must fulfill the following requirements\n'
+                  '  - Greater than 8 characters\n  - Must contain an uppercase'
+                  ' letter, number, and special character';
+            }
+
+            return null;
+          },
           decoration: InputDecoration(
               border: const OutlineInputBorder(),
               labelText: 'New Password',
