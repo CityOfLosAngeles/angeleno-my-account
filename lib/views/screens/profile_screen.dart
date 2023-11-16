@@ -1,6 +1,9 @@
+import 'dart:html';
+
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../controllers/api_implementation.dart';
 import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
 
@@ -12,44 +15,43 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late UserProvider userProvider;
-  late LoadingOverlayProvider overlayProvider;
-  late User user;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late LoadingOverlayProvider overlayProvider;
+  late UserProvider userProvider;
+  late User user;
 
   @override
   void initState() {
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    userProvider = context.watch<UserProvider>();
-    overlayProvider = Provider.of<LoadingOverlayProvider>(context);
-  }
-
   void updateUser() async {
-    // Only submit patch if data has been updated
-
     overlayProvider.showLoading();
 
-    Future.delayed(const Duration(seconds: 2), () {
+    // Only submit patch if data has been updated
+    if (!(user == userProvider.cleanUser)) {
+      final response = await UserApi().updateUser(user);
+      final success = response == HttpStatus.ok;
       overlayProvider.hideLoading();
-    });
-
-    // if (!(user == userProvider.cleanUser)) {
-    //
-    //   final response = await UserApi().updateUser(user);
-    //   if (response == HttpStatus.ok) {
-    //     overlayProvider.hideLoading();
-    //   }
-    // }
+      ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+          behavior: SnackBarBehavior.floating,
+          width: 280.0,
+          content: Text(success ?'User updated' : 'User update failed'),
+          action: success ? null : SnackBarAction(
+              label: 'Retry',
+              onPressed: () {
+                updateUser();
+              }
+          )
+      ));
+    }
   }
 
   @override
   Widget build(final BuildContext context) {
-    final userProvider = context.watch<UserProvider>();
+    overlayProvider = context.watch<LoadingOverlayProvider>();
+    userProvider = context.watch<UserProvider>();
+
     if (userProvider.user == null) {
       return const LinearProgressIndicator();
     } else {

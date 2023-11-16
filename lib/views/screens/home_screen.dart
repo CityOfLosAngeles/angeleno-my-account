@@ -26,11 +26,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    overlayProvider = Provider.of<LoadingOverlayProvider>(context);
-  }
-
   Future<void> _unsavedDataDialog(final int futureIndex) async =>
     showDialog<void>(
       context: context,
@@ -110,7 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(final BuildContext context) {
-     userProvider = context.watch<UserProvider>();
+    overlayProvider = Provider.of<LoadingOverlayProvider>(context);
+    userProvider = context.watch<UserProvider>();
 
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
@@ -185,16 +181,14 @@ class _MyHomePageState extends State<MyHomePage> {
               if (overlayProvider.isLoading)
                 Center(
                   child: Container(
-                    transformAlignment: Alignment.center,
+                    alignment: Alignment.topCenter,
                     width: double.infinity,
                     constraints: const BoxConstraints(maxWidth: 1280),
                     padding: const EdgeInsets.fromLTRB(
                         10, 0, 10, 0
                     ),
-                    color: Colors.black.withOpacity(0.3), // Semi-transparent black
-                    child: const Center(
-                      child: LinearProgressIndicator(),
-                    ),
+                    color: Colors.black.withOpacity(0.25),
+                    child: const LinearProgressIndicator(),
                   )
                 ),
             ],
