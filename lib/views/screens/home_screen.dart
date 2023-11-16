@@ -18,7 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
-  late LoadingOverlayProvider overlayProvider;
+  late OverlayProvider overlayProvider;
   int _selectedIndex = 0;
 
   @override
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(final BuildContext context) {
-    overlayProvider = Provider.of<LoadingOverlayProvider>(context);
+    overlayProvider = Provider.of<OverlayProvider>(context);
     userProvider = context.watch<UserProvider>();
 
     return Container(

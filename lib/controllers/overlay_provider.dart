@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class LoadingOverlayProvider with ChangeNotifier {
+class OverlayProvider with ChangeNotifier {
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;

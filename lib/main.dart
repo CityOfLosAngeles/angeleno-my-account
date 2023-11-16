@@ -11,7 +11,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (final _) => UserProvider()),
-        ChangeNotifierProvider(create: (final _) => LoadingOverlayProvider())
+        ChangeNotifierProvider(create: (final _) => OverlayProvider())
       ],
       child: const MyApp()
     )

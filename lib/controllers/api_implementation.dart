@@ -65,7 +65,7 @@ class UserApi extends Api {
 
 
   @override
-  Future<int> updateUser(final User user, {final String url = 'updateUser'}) async {
+  Future<int> updateUser(final User user) async {
     late int statusCode;
 
     final token = await getOAuthToken();
@@ -83,7 +83,7 @@ class UserApi extends Api {
 
     try {
       final response = await http.post(
-          Uri.parse('/$url'),
+          Uri.parse('/updateUser'),
           headers: headers,
           body: body
       );
@@ -99,7 +99,7 @@ class UserApi extends Api {
     } catch (err) {
       print (err);
       // generic server error
-      statusCode = 500;
+      statusCode = HttpStatus.internalServerError;
     }
 
     return statusCode;

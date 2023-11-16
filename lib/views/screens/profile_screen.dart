@@ -16,7 +16,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  late LoadingOverlayProvider overlayProvider;
+  late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
 
@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(final BuildContext context) {
-    overlayProvider = context.watch<LoadingOverlayProvider>();
+    overlayProvider = context.watch<OverlayProvider>();
     userProvider = context.watch<UserProvider>();
 
     if (userProvider.user == null) {
