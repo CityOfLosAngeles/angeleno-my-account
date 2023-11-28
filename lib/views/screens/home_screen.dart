@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../controllers/user_provider.dart';
+import '../../models/user.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -17,6 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
+  late User user;
   int _selectedIndex = 0;
 
   @override
@@ -103,7 +105,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(final BuildContext context) {
+     var userEmail = '';
      userProvider = context.watch<UserProvider>();
+     if (userProvider.user != null) {
+       user = userProvider.user!;
+       userEmail = user.email;
+     }
 
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
@@ -117,41 +124,41 @@ class _MyHomePageState extends State<MyHomePage> {
           drawer: NavigationDrawer(
             onDestinationSelected: _navigationSelected,
             selectedIndex: _selectedIndex,
-            children: const <Widget>[
+            children:  <Widget>[
               Padding(
-                padding: EdgeInsets.fromLTRB(28, 16, 16, 10),
-                child: Text('My Account'),
+                padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+                child: Text('My Account - $userEmail'),
               ),
-              NavigationDrawerDestination(
+              const NavigationDrawerDestination(
                   label: Text('Profile'),
                   icon: Icon(Icons.person)
               ),
-              NavigationDrawerDestination(
+              const NavigationDrawerDestination(
                   label: Text('Password'),
                   icon: Icon(Icons.password)
               ),
-              NavigationDrawerDestination(
+              const NavigationDrawerDestination(
                   label: Text('Security'),
                   icon: Icon(Icons.security)
               ),
-              Divider(),
-              Padding(
+              const Divider(),
+              const Padding(
                 padding: EdgeInsets.fromLTRB(28, 16, 16, 10),
                 child: Text('Angeleno'),
               ),
-              NavigationDrawerDestination(
+              const NavigationDrawerDestination(
                   label: Text('Home'),
                   icon: Icon(Icons.home)
               ),
-              NavigationDrawerDestination(
+              const NavigationDrawerDestination(
                   label: Text('Services'),
                   icon: Icon(Icons.grid_view)
               ),
-              NavigationDrawerDestination(
+              const NavigationDrawerDestination(
                   label: Text('Help'),
                   icon: Icon(Icons.question_mark)
               ),
-              Padding(
+              const Padding(
                 padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
                 child: Divider(),
               ),

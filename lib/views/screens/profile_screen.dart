@@ -46,20 +46,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          ElevatedButton(
-            onPressed: () {
-              if (userProvider.isEditing) {
-                updateUser();
-              }
-              setState(() {
-                userProvider.toggleEditing();
-              });
-            },
-            child: Text(userProvider.isEditing ? 'Save' : 'Edit'),
-          )
-        ]),
-        const SizedBox(height: 20.0),
         Expanded(
             child: SingleChildScrollView(
                 child: Form(
@@ -71,17 +57,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                         children: [
                           const SizedBox(height: 10.0),
-                          TextFormField(
-                            enabled: false,
-                            decoration: const InputDecoration(
-                                labelText: 'Email',
-                                border: OutlineInputBorder()),
-                            initialValue: user.email,
-                            keyboardType: TextInputType.emailAddress,
-                            onChanged: (final val) {
-                              user.email = val;
-                            },
-                          ),
+                          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                if (userProvider.isEditing) {
+                                  updateUser();
+                                }
+                                setState(() {
+                                  userProvider.toggleEditing();
+                                });
+                              },
+                              child: Text(userProvider.isEditing ? 'Save' : 'Edit'),
+                            )
+                          ]),
                           const SizedBox(height: 25.0),
                           TextFormField(
                             enabled: userProvider.isEditing,

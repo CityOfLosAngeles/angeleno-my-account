@@ -22,6 +22,10 @@ class _PasswordScreenState extends State<PasswordScreen> {
   late bool viewNewPassword;
   late bool viewPasswordMatch;
   late bool _isButtonDisabled;
+  late bool acceptableLength;
+  late bool hasSpecialCharacter;
+  late bool hasUppercaseCharacter;
+  late bool hasNumberCharacter;
 
   @override
   void initState() {
@@ -34,6 +38,10 @@ class _PasswordScreenState extends State<PasswordScreen> {
     viewNewPassword = false;
     viewPasswordMatch = false;
     _isButtonDisabled = true;
+    acceptableLength = false;
+    hasSpecialCharacter = false;
+    hasUppercaseCharacter = false;
+    hasNumberCharacter = false;
   }
 
   @override
@@ -65,16 +73,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
   @override
   Widget build(final BuildContext context) => ListView(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: _isButtonDisabled ? null : () => submitRequest(),
-              child: const Text('Change Password'),
-            )
-          ],
-        ),
-        const SizedBox(height: 30.0),
         TextFormField(
           obscureText: !viewPassword,
           autocorrect: false,
@@ -119,13 +117,11 @@ class _PasswordScreenState extends State<PasswordScreen> {
             }
 
             final RegExp passwordRegex = RegExp(
-              r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$',
+              r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{12,}$',
             );
 
             if (!passwordRegex.hasMatch(value)) {
-              return 'Password must fulfill the following requirements\n'
-                  '  - Greater than 8 characters\n  - Must contain an uppercase'
-                  ' letter, number, and special character';
+              return 'Password doesn\'t meet requirements';
             }
 
             return null;
@@ -148,8 +144,42 @@ class _PasswordScreenState extends State<PasswordScreen> {
             setState(() {
               newPassword = value;
               _isButtonDisabled = enablePasswordSubmit();
+              acceptableLength = value.length >= 12;
+              hasNumberCharacter = value.contains(RegExp(r'[0-9]'));
+              hasSpecialCharacter = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+              hasUppercaseCharacter = value.contains(RegExp(r'[A-Z]'));
             });
           },
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Password must:'),
+            Text(
+              '  - Be greater than 8 characters',
+              style: TextStyle(
+                color: acceptableLength ? colorScheme.primary : colorScheme.error
+              )
+            ),
+            Text(
+                '  - Contain a number character',
+                style: TextStyle(
+                    color: hasNumberCharacter ? colorScheme.primary : colorScheme.error
+                )
+            ),
+            Text(
+                '  - Contain a special character',
+                style: TextStyle(
+                    color: hasSpecialCharacter ? colorScheme.primary : colorScheme.error
+                )
+            ),
+            Text(
+                '  - Contain an uppercase letter',
+                style: TextStyle(
+                    color: hasUppercaseCharacter ? colorScheme.primary : colorScheme.error
+                )
+            )
+          ]
         ),
         const SizedBox(height: 10.0),
         TextFormField(
@@ -186,6 +216,16 @@ class _PasswordScreenState extends State<PasswordScreen> {
               _isButtonDisabled = enablePasswordSubmit();
             });
           },
+        ),
+        const SizedBox(height: 10.0),
+        Row(
+          children: [
+            const Spacer(),
+            ElevatedButton(
+              onPressed: _isButtonDisabled ? null : () => submitRequest(),
+              child: const Text('Update Password and Logout'),
+            )
+          ],
         ),
       ],
     );
