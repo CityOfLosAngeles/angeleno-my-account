@@ -25,25 +25,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
   }
 
-  void updateUser() async {
+  void updateUser() {
     overlayProvider.showLoading();
 
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
-      final response = await UserApi().updateUser(user);
-      final success = response == HttpStatus.ok;
-      overlayProvider.hideLoading();
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar(
-          behavior: SnackBarBehavior.floating,
-          width: 280.0,
-          content: Text(success ?'User updated' : 'User update failed'),
-          action: success ? null : SnackBarAction(
-              label: 'Retry',
-              onPressed: () {
-                updateUser();
-              }
-          )
-      ));
+      UserApi().updateUser(user).then((final response) {
+          final success = response == HttpStatus.ok;
+          overlayProvider.hideLoading();
+          ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+              behavior: SnackBarBehavior.floating,
+              width: 280.0,
+              content: Text(success ?'User updated' : 'User update failed'),
+              action: success ? null : SnackBarAction(
+                  label: 'Retry',
+                  onPressed: () {
+                    updateUser();
+                  }
+              )
+          ));
+      });
     }
   }
 
