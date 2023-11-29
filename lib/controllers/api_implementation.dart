@@ -86,7 +86,7 @@ class UserApi extends Api {
           Uri.parse('/updateUser'),
           headers: headers,
           body: body
-      );
+      ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
