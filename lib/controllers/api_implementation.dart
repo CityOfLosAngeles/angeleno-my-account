@@ -50,7 +50,7 @@ class UserApi extends Api {
           },
           // ignore: lines_longer_than_80_chars
           body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
-      );
+      ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == HttpStatus.ok) {
         final jsonRes = jsonDecode(response.body);
