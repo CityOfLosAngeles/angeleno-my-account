@@ -68,20 +68,20 @@ class UserApi extends Api {
   Future<int> updateUser(final User user) async {
     late int statusCode;
 
-    final token = await getOAuthToken();
-
-    if (token.isEmpty) {
-      throw const FormatException('Empty token received');
-    }
-
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    };
-
-    final body = json.encode(user);
-
     try {
+      final token = await getOAuthToken();
+
+      if (token.isEmpty) {
+        throw const FormatException('Empty token received');
+      }
+
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+
+      final body = json.encode(user);
+
       final response = await http.post(
           Uri.parse('/updateUser'),
           headers: headers,
