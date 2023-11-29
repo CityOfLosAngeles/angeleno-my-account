@@ -1,9 +1,8 @@
-import 'package:angeleno_project/utils/constants.dart';
-import 'package:angeleno_project/views/nav/app_bar.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../controllers/user_provider.dart';
 
@@ -15,6 +14,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
   int _selectedIndex = 0;
 
@@ -57,15 +58,38 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-  void _navigationSelected(final int index) {
+  Future<void> _navigationSelected(final int index) async {
 
     if (userProvider.isEditing && index != 0) {
       _unsavedDataDialog(index);
     } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+      // Could use a cleaner implementation
+      if ([3, 4, 5].contains(index)) {
+        switch(index) {
+          case 3:
+            await launchUrl(
+              Uri.parse('https://angeleno.lacity.org/')
+            );
+            break;
+          case 4:
+            await launchUrl(
+              Uri.parse('https://angeleno.lacity.org/apps')
+            );
+            break;
+          case 5:
+            await launchUrl(
+              Uri.parse('https://angeleno.lacity.org/help')
+            );
+            break;
+        }
+      } else {
+        setState(() {
+          _selectedIndex = index;
+        });
+      }
     }
+
+    scaffoldKey.currentState!.closeDrawer();
   }
 
   List<Widget> get screens => <Widget>[
@@ -79,86 +103,91 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(final BuildContext context) {
-    final bool smallScreen = MediaQuery.of(context).size.width < 720;
      userProvider = context.watch<UserProvider>();
 
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
       child: Scaffold(
-          appBar: const MainAppBar(),
-          body: Container(
+          key: scaffoldKey,
+          appBar: AppBar(
+              title: const Text('Angeleno Account',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+          ),
+          drawer: NavigationDrawer(
+            onDestinationSelected: _navigationSelected,
+            selectedIndex: _selectedIndex,
+            children: const <Widget>[
+              Padding(
+                padding: EdgeInsets.fromLTRB(28, 16, 16, 10),
+                child: Text('My Account'),
+              ),
+              NavigationDrawerDestination(
+                  label: Text('Profile'),
+                  icon: Icon(Icons.person)
+              ),
+              NavigationDrawerDestination(
+                  label: Text('Password'),
+                  icon: Icon(Icons.password)
+              ),
+              NavigationDrawerDestination(
+                  label: Text('Security'),
+                  icon: Icon(Icons.security)
+              ),
+              Divider(),
+              Padding(
+                padding: EdgeInsets.fromLTRB(28, 16, 16, 10),
+                child: Text('Angeleno'),
+              ),
+              NavigationDrawerDestination(
+                  label: Text('Home'),
+                  icon: Icon(Icons.home)
+              ),
+              NavigationDrawerDestination(
+                  label: Text('Services'),
+                  icon: Icon(Icons.grid_view)
+              ),
+              NavigationDrawerDestination(
+                  label: Text('Help'),
+                  icon: Icon(Icons.question_mark)
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
+                child: Divider(),
+              ),
+            ],
+          ),
+          body: Center(
+            child: Container(
               transformAlignment: Alignment.center,
-              /*
-          **  Add constraints when we figure out how to center
-          */
-              // constraints: const BoxConstraints(minWidth: 700, maxWidth: 1000),
-              child: Center(
-                child: Row(
-                  children: <Widget>[
-                    smallScreen
-                        ? const SizedBox.shrink()
-                        : Expanded(
-                            child: NavigationRail(
-                                selectedIndex: _selectedIndex,
-                                labelType: NavigationRailLabelType.all,
-                                indicatorColor: colorGreen,
-                                onDestinationSelected: _navigationSelected,
-                                destinations: const <NavigationRailDestination>[
-                                NavigationRailDestination(
-                                    icon: Icon(Icons.person_outline_outlined),
-                                    selectedIcon:
-                                        Icon(Icons.person, color: Colors.white),
-                                    label: Text('Profile')),
-                                NavigationRailDestination(
-                                    icon: Icon(Icons.password_outlined),
-                                    selectedIcon: Icon(Icons.password,
-                                        color: Colors.white),
-                                    label: Text('Password')),
-                                NavigationRailDestination(
-                                    icon: Icon(Icons.lock_outline),
-                                    selectedIcon:
-                                        Icon(Icons.lock, color: Colors.white),
-                                    label: Text('Security'))
-                              ])),
-                    Expanded(
-                        flex: 8,
-                        child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: screens[_selectedIndex]))
-                  ],
-                ),
-              )),
-          bottomNavigationBar: smallScreen
-              ? BottomNavigationBar(
-                  currentIndex: _selectedIndex,
-                  selectedItemColor: colorGreen,
-                  onTap: _navigationSelected,
-                  items: const <BottomNavigationBarItem>[
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.person_outline_outlined),
-                          label: 'Profile'),
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.password_outlined),
-                          label: 'Password'),
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.lock_outline), label: 'Security')
-                    ])
-              : Container(
-                  color: footerBlue,
-                  padding: const EdgeInsets.all(16.0),
-                  child: const Wrap(
-                        alignment: WrapAlignment.center,
-                        children: [
-                          Text(
-                            '© Copyright 2023 City of Los Angeles. '
-                            'All rights reserved. Disclaimer | Privacy Policy',
-                            style: TextStyle(color: Colors.white),
-                            textDirection: TextDirection.ltr,
-                          )
-
-                        ],
-                      )
-                    )),
+              width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 1280),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: screens[_selectedIndex]))
+                ],
+              ),
+            )
+          ),
+          bottomNavigationBar: Container(
+            padding: const EdgeInsets.all(16.0),
+            child: const Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Text(
+                  '© Copyright 2023 City of Los Angeles. '
+                  'All rights reserved. Disclaimer | Privacy Policy',
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.center,
+                )
+              ],
+            )
+          )
+      ),
     );
   }
 }

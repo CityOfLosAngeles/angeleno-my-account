@@ -1,43 +1,73 @@
 class User {
   late String userId;
-  late String email;
-  late String firstName;
-  late String lastName;
-  late String zip;
-  late String address;
-  late String city;
-  late String state;
-  late String phone;
+  late String? email;
+  late String? firstName;
+  late String? lastName;
+  late String? zip;
+  late String? address;
+  late String? city;
+  late String? state;
+  late String? phone;
+  late Map<String, dynamic>? metadata;
 
-   User({
+  User({
       required this.userId,
       required this.email,
       required this.firstName,
       required this.lastName,
-      required this.zip,
       required this.address,
       required this.city,
       required this.state,
-      required this.phone
+      required this.zip,
+      required this.phone,
+      required this.metadata
   });
 
-  factory User.fromJson(final Map<String, String> json) => User(
-      userId: json['id'].toString(),
-      email: json['email'].toString(),
-      firstName: json['name']!.split(' ')[0].toString(),
-      lastName: json['name']!.split(' ')[1].toString(),
-      zip: json['address'].toString(),
-      address: json['address'].toString(),
-      city: json['address'].toString(),
-      state: json['address'].toString(),
-      phone: json['phone'].toString()
-    );
+  User.copy(final User copy) :
+        userId = copy.userId,
+        email = copy.email,
+        firstName = copy.firstName,
+        lastName = copy.lastName,
+        address = copy.address,
+        city = copy.city,
+        state = copy.state,
+        zip = copy.zip,
+        phone = copy.phone,
+        metadata = copy.metadata;
 
-  String get fullName => '$firstName $lastName';
+  @override
+  bool operator ==(final Object other) => other is User &&
+      other.firstName == firstName &&
+      other.lastName == lastName &&
+      other.zip == zip &&
+      other.address == address &&
+      other.city == city &&
+      other.phone == phone &&
+      other.state == state;
+
+  Map<String, dynamic> toJson() => {
+      'userId': userId,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zip': zip,
+      'phone': phone,
+      'metadata': metadata
+    };
 
   @override
   String toString() =>
       '{id: $userId, email: $email, firstName: $firstName, lastName: $lastName,'
       ' zip: $zip, address: $address, city: $city, state: $state, '
         'phone: $phone}';
+
+  @override
+  int get hashCode => firstName.hashCode ^ lastName.hashCode ^
+    zip.hashCode ^ address.hashCode ^ city.hashCode ^ state.hashCode ^
+    phone.hashCode;
+
+
 }
