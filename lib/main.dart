@@ -1,3 +1,4 @@
+import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/screens/home_screen.dart';
@@ -9,7 +10,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (final _) => UserProvider())
+        ChangeNotifierProvider(create: (final _) => UserProvider()),
+        ChangeNotifierProvider(create: (final _) => OverlayProvider())
       ],
       child: const MyApp()
     )
