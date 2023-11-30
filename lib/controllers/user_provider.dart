@@ -1,3 +1,4 @@
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';

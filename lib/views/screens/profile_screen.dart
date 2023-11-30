@@ -1,3 +1,4 @@
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 
 import 'package:angeleno_project/controllers/user_provider.dart';
@@ -73,8 +74,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                         children: [
                           const SizedBox(height: 10.0),
-                          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                            ElevatedButton(
+                          Row(mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
                               onPressed: () {
                                 if (userProvider.isEditing) {
                                   updateUser();
@@ -83,7 +85,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   userProvider.toggleEditing();
                                 });
                               },
-                              child: Text(userProvider.isEditing ? 'Save' : 'Edit'),
+                              child: Text(
+                                  userProvider.isEditing ? 'Save' : 'Edit'
+                              ),
                             )
                           ]),
                           const SizedBox(height: 25.0),

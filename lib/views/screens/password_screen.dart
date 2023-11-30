@@ -1,9 +1,9 @@
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/api_implementation.dart';
@@ -73,6 +73,11 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   void submitRequest() {
     if (newPassword == passwordMatch) {
+
+      setState(() {
+        errorMsg = '';
+      });
+
       overlayProvider.showLoading();
 
       final body = PasswordBody(
@@ -103,8 +108,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
   }
 
   bool enablePasswordSubmit() => !(currentPassword.trim() != ''
-      && newPassword.trim() != ''
-      && passwordMatch.trim() != '');
+      && newPassword.trim() != '' && passwordMatch.trim() != ''
+      && acceptableLength && hasUppercaseCharacter && hasSpecialCharacter
+      && hasNumberCharacter);
 
   @override
   Widget build(final BuildContext context) {
@@ -162,6 +168,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
             );
 
             if (!passwordRegex.hasMatch(value)) {
+              // ignore: avoid_escaping_inner_quotes
               return 'Password doesn\'t meet requirements';
             }
 
@@ -199,7 +206,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
               Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Password must:', style: TextStyle(fontWeight: FontWeight.bold),),
+                    const Text('Password must:',
+                      style: TextStyle(fontWeight: FontWeight.bold)
+                    ),
                     Text(
                         'Be at least 12 characters',
                         style: TextStyle(
@@ -280,12 +289,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
             });
           },
         ),
-        const SizedBox(height: 10.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (errorMsg.isNotEmpty)
               Text(errorMsg, style: TextStyle(color: colorScheme.error)),
+            const SizedBox(height: 10.0),
             ElevatedButton(
               onPressed: _isButtonDisabled ? null : () => submitRequest(),
               child: const Text('Update Password and Logout'),

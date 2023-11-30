@@ -158,7 +158,13 @@ exports.updatePassword = onRequest( async (req, res) => {
     }
   } catch (err) {
     console.error(`Error: ${err.message}`);
-    res.status(500).send();
+
+    const {
+        error_description,
+        message
+    } = err?.response?.data
+
+    res.status(500).send(message || error_description || 'Error encountered');
     return;
   }
 });
