@@ -91,12 +91,11 @@ class UserApi extends Api {
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
-
-        statusCode = response.statusCode;
       } else {
         print(response);
-        statusCode = response.statusCode;
       }
+
+      statusCode = response.statusCode;
     } catch (err) {
       print (err);
       // generic server error
@@ -107,7 +106,9 @@ class UserApi extends Api {
   }
 
   @override
-  Future<void> updatePassword(final PasswordBody body) async {
+  Future<Map<String, dynamic>> updatePassword(final PasswordBody body) async {
+    late Map<String, dynamic> response;
+
     final headers = {
       'Content-Type': 'application/json'
     };
@@ -115,19 +116,31 @@ class UserApi extends Api {
     final reqBody = json.encode(body);
 
     try {
-      final response = await http.post(
+      final request = await http.post(
           Uri.parse('/updatePassword'),
           headers: headers,
           body: reqBody
       );
 
-      if (response.statusCode == HttpStatus.ok) {
-        print(response.body);
+      if (request.statusCode == HttpStatus.ok) {
+        print(request.body);
       } else {
-        print(response);
+        print(request.body);
       }
+
+      response = {
+        'status': request.statusCode,
+        'body': request.body.isNotEmpty ? request.body : 'Error Encountered'
+      };
     } catch (err) {
       print (err);
+      // generic server error
+      response = {
+        'status': HttpStatus.internalServerError,
+        'body': 'Error Encountered'
+      };
     }
+
+    return response;
   }
 }

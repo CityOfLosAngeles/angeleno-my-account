@@ -1,9 +1,13 @@
+import 'dart:html';
+
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/api_implementation.dart';
+import '../../controllers/overlay_provider.dart';
 import '../../controllers/user_provider.dart';
 
 class PasswordScreen extends StatefulWidget {
@@ -14,22 +18,34 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
+  late OverlayProvider overlayProvider;
   late UserProvider userProvider;
+
   late String currentPassword;
   late String newPassword;
   late String passwordMatch;
+
   late bool viewPassword;
   late bool viewNewPassword;
   late bool viewPasswordMatch;
+
   late bool _isButtonDisabled;
+
   late bool acceptableLength;
   late bool hasSpecialCharacter;
   late bool hasUppercaseCharacter;
   late bool hasNumberCharacter;
+  late bool displayPasswordReqs;
+
+  late String errorMsg;
+
+  final FocusNode _focus = FocusNode();
+
 
   @override
   void initState() {
     super.initState();
+    _focus.addListener(_onFocusChange);
 
     currentPassword = '';
     newPassword = '';
@@ -42,16 +58,23 @@ class _PasswordScreenState extends State<PasswordScreen> {
     hasSpecialCharacter = false;
     hasUppercaseCharacter = false;
     hasNumberCharacter = false;
+    displayPasswordReqs = false;
+    errorMsg = '';
+
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    userProvider = context.watch<UserProvider>();
+  void _onFocusChange() {
+    if (_focus.hasFocus) {
+      setState(() {
+        displayPasswordReqs = true;
+      });
+    }
   }
 
   void submitRequest() {
     if (newPassword == passwordMatch) {
+      overlayProvider.showLoading();
+
       final body = PasswordBody(
         email: userProvider.user!.email,
         oldPassword: currentPassword,
@@ -59,9 +82,22 @@ class _PasswordScreenState extends State<PasswordScreen> {
         userId: userProvider.user!.userId
       );
 
-      UserApi().updatePassword(body);
+      UserApi().updatePassword(body).then((final response) {
+        final success = response['status'] == HttpStatus.ok;
+        overlayProvider.hideLoading();
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+            behavior: SnackBarBehavior.floating,
+            width: 280.0,
+            content: Text(success ? 'Password updated'
+                : 'Password update failed')
+        ));
 
-    } else {
+        if (!success) {
+          setState(() {
+            errorMsg = response['body'].toString();
+          });
+        }
+      });
 
     }
   }
@@ -71,7 +107,11 @@ class _PasswordScreenState extends State<PasswordScreen> {
       && passwordMatch.trim() != '');
 
   @override
-  Widget build(final BuildContext context) => ListView(
+  Widget build(final BuildContext context) {
+    overlayProvider = context.watch<OverlayProvider>();
+    userProvider = context.watch<UserProvider>();
+
+    return ListView(
       children: [
         TextFormField(
           obscureText: !viewPassword,
@@ -94,7 +134,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     });
                   },
                   icon: Icon(
-                      viewPassword ? Icons.visibility  : Icons.visibility_off
+                      viewPassword ? Icons.visibility : Icons.visibility_off
                   )
               )
           ),
@@ -107,6 +147,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         ),
         const SizedBox(height: 10.0),
         TextFormField(
+          focusNode: _focus,
           obscureText: !viewNewPassword,
           autocorrect: false,
           enableSuggestions: false,
@@ -136,7 +177,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     });
                   },
                   icon: Icon(
-                      viewNewPassword ? Icons.visibility  : Icons.visibility_off
+                      viewNewPassword ? Icons.visibility : Icons.visibility_off
                   )
               )
           ),
@@ -146,41 +187,62 @@ class _PasswordScreenState extends State<PasswordScreen> {
               _isButtonDisabled = enablePasswordSubmit();
               acceptableLength = value.length >= 12;
               hasNumberCharacter = value.contains(RegExp(r'[0-9]'));
-              hasSpecialCharacter = value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+              hasSpecialCharacter =
+                  value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
               hasUppercaseCharacter = value.contains(RegExp(r'[A-Z]'));
             });
           },
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Password must:'),
-            Text(
-              '  - Be greater than 8 characters',
-              style: TextStyle(
-                color: acceptableLength ? colorScheme.primary : colorScheme.error
+        if (displayPasswordReqs)
+          Row(
+            children: [
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Password must:', style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text(
+                        'Be at least 12 characters',
+                        style: TextStyle(
+                            color: acceptableLength
+                                ? colorScheme.primary
+                                : colorScheme.error
+                        )
+                    ),
+                    Text(
+                        'Contain a number character',
+                        style: TextStyle(
+                            color: hasNumberCharacter
+                                ? colorScheme.primary
+                                : colorScheme.error
+                        )
+                    ),
+
+                  ]
+              ),
+              const SizedBox(width: 10.0),
+              Column(
+                children: [
+                  const Text(''),
+                  Text(
+                      'Contain a special character',
+                      style: TextStyle(
+                          color: hasSpecialCharacter
+                              ? colorScheme.primary
+                              : colorScheme.error
+                      )
+                  ),
+                  Text(
+                      'Contain an uppercase letter',
+                      style: TextStyle(
+                          color: hasUppercaseCharacter
+                              ? colorScheme.primary
+                              : colorScheme.error
+                      )
+                  )
+                ],
               )
-            ),
-            Text(
-                '  - Contain a number character',
-                style: TextStyle(
-                    color: hasNumberCharacter ? colorScheme.primary : colorScheme.error
-                )
-            ),
-            Text(
-                '  - Contain a special character',
-                style: TextStyle(
-                    color: hasSpecialCharacter ? colorScheme.primary : colorScheme.error
-                )
-            ),
-            Text(
-                '  - Contain an uppercase letter',
-                style: TextStyle(
-                    color: hasUppercaseCharacter ? colorScheme.primary : colorScheme.error
-                )
-            )
-          ]
-        ),
+            ],
+          ),
         const SizedBox(height: 10.0),
         TextFormField(
           obscureText: !viewPasswordMatch,
@@ -206,7 +268,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     });
                   },
                   icon: Icon(
-                    viewPasswordMatch ? Icons.visibility : Icons.visibility_off
+                      viewPasswordMatch ? Icons.visibility : Icons
+                          .visibility_off
                   )
               )
           ),
@@ -218,9 +281,11 @@ class _PasswordScreenState extends State<PasswordScreen> {
           },
         ),
         const SizedBox(height: 10.0),
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Spacer(),
+            if (errorMsg.isNotEmpty)
+              Text(errorMsg, style: TextStyle(color: colorScheme.error)),
             ElevatedButton(
               onPressed: _isButtonDisabled ? null : () => submitRequest(),
               child: const Text('Update Password and Logout'),
@@ -229,5 +294,5 @@ class _PasswordScreenState extends State<PasswordScreen> {
         ),
       ],
     );
-
+  }
 }

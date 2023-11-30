@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ScaffoldMessenger.of(context).showSnackBar( SnackBar(
               behavior: SnackBarBehavior.floating,
               width: 280.0,
-              content: Text(success ?'User updated' : 'User update failed'),
+              content: Text(success ? 'User updated' : 'User update failed'),
               action: success ? null : SnackBarAction(
                   label: 'Retry',
                   onPressed: () {
