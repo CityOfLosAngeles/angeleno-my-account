@@ -1,7 +1,10 @@
+import 'dart:html';
+
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/api_implementation.dart';
+import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -12,31 +15,44 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    userProvider = context.watch<UserProvider>();
-  }
-
   void updateUser() {
+    overlayProvider.showLoading();
+
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
-      UserApi().updateUser(user);
+      UserApi().updateUser(user).then((final response) {
+          final success = response == HttpStatus.ok;
+          overlayProvider.hideLoading();
+          ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+              behavior: SnackBarBehavior.floating,
+              width: 280.0,
+              content: Text(success ?'User updated' : 'User update failed'),
+              action: success ? null : SnackBarAction(
+                  label: 'Retry',
+                  onPressed: () {
+                    updateUser();
+                  }
+              )
+          ));
+      });
     }
   }
 
   @override
   Widget build(final BuildContext context) {
-    final userProvider = context.watch<UserProvider>();
+    overlayProvider = context.watch<OverlayProvider>();
+    userProvider = context.watch<UserProvider>();
+
     if (userProvider.user == null) {
       return const LinearProgressIndicator();
     } else {

@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:angeleno_project/controllers/api.dart';
 import 'package:angeleno_project/models/user.dart';
 
-
 class UserApi extends Api {
 
   String createJwt() {
@@ -52,7 +51,7 @@ class UserApi extends Api {
           },
           // ignore: lines_longer_than_80_chars
           body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
-      );
+      ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == HttpStatus.ok) {
         final jsonRes = jsonDecode(response.body);
@@ -67,36 +66,44 @@ class UserApi extends Api {
 
 
   @override
-  void updateUser(final User user) async {
-
-    final token = await getOAuthToken();
-
-    if (token.isEmpty) {
-      throw const FormatException('Empty token received');
-    }
-
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    };
-
-    final body = json.encode(user);
+  Future<int> updateUser(final User user) async {
+    late int statusCode;
 
     try {
+      final token = await getOAuthToken();
+
+      if (token.isEmpty) {
+        throw const FormatException('Empty token received');
+      }
+
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      };
+
+      final body = json.encode(user);
+
       final response = await http.post(
           Uri.parse('/updateUser'),
           headers: headers,
           body: body
-      );
+      ).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
+
+        statusCode = response.statusCode;
       } else {
         print(response);
+        statusCode = response.statusCode;
       }
     } catch (err) {
       print (err);
+      // generic server error
+      statusCode = HttpStatus.internalServerError;
     }
+
+    return statusCode;
   }
 
   @override

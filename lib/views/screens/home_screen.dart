@@ -1,3 +1,4 @@
+import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
   late User user;
+  late OverlayProvider overlayProvider;
   int _selectedIndex = 0;
 
   @override
@@ -106,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(final BuildContext context) {
      var userEmail = '';
+     overlayProvider = Provider.of<OverlayProvider>(context);
      userProvider = context.watch<UserProvider>();
      if (userProvider.user != null) {
        user = userProvider.user!;
@@ -164,21 +167,38 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-          body: Center(
-            child: Container(
-              transformAlignment: Alignment.center,
-              width: double.infinity,
-              constraints: const BoxConstraints(maxWidth: 1280),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: screens[_selectedIndex]))
-                ],
+          body: Stack(
+            children: [
+              Center(
+                  child: Container(
+                    transformAlignment: Alignment.center,
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxWidth: 1280),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                            child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: screens[_selectedIndex]))
+                      ],
+                    ),
+                  )
               ),
-            )
+              if (overlayProvider.isLoading)
+                Center(
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxWidth: 1280),
+                    padding: const EdgeInsets.fromLTRB(
+                        10, 0, 10, 0
+                    ),
+                    color: Colors.black.withOpacity(0.25),
+                    child: const LinearProgressIndicator(),
+                  )
+                ),
+            ],
           ),
           bottomNavigationBar: Container(
             padding: const EdgeInsets.all(16.0),
