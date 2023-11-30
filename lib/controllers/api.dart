@@ -5,6 +5,6 @@ abstract class Api {
 
   final String baseUrl = cloudFunctionURL;
 
-  void updateUser(final User user, {final String url = 'updateUser'});
+  void updateUser(final User user);
 
 }
