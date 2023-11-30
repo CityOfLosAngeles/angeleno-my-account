@@ -41,7 +41,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   final FocusNode _focus = FocusNode();
 
-
   @override
   void initState() {
     super.initState();
@@ -62,6 +61,14 @@ class _PasswordScreenState extends State<PasswordScreen> {
     errorMsg = '';
 
   }
+
+  @override
+  void dispose() {
+    _focus.removeListener(_onFocusChange);
+    _focus.dispose();
+    super.dispose();
+  }
+
 
   void _onFocusChange() {
     if (_focus.hasFocus) {
@@ -93,13 +100,17 @@ class _PasswordScreenState extends State<PasswordScreen> {
         ScaffoldMessenger.of(context).showSnackBar( SnackBar(
             behavior: SnackBarBehavior.floating,
             width: 280.0,
-            content: Text(success ? 'Password updated'
+            content: Text(success ? 'Password updated. Logging out...'
                 : 'Password update failed')
         ));
 
         if (!success) {
           setState(() {
             errorMsg = response['body'].toString();
+          });
+        } else {
+          Future.delayed(const Duration(seconds: 3), () {
+            userProvider.logout();
           });
         }
       });

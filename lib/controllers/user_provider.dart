@@ -87,6 +87,11 @@ class UserProvider extends ChangeNotifier {
   Future<Credentials> currentCredentials() async =>
       await auth0Web.credentials();
 
+  Future<void> logout() => auth0Web.logout(
+      federated: false,
+      returnToUrl: 'https://angeleno.lacity.org/'
+  );
+
   User? get user => _user;
 
   User? get cleanUser => _cleanUser;
