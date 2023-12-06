@@ -123,12 +123,6 @@ class UserApi extends Api {
           body: reqBody
       );
 
-      if (request.statusCode == HttpStatus.ok) {
-        print(request.body);
-      } else {
-        print(request.body);
-      }
-
       response = {
         'status': request.statusCode,
         'body': request.body.isNotEmpty ? request.body : 'Error Encountered'

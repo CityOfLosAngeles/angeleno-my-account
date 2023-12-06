@@ -35,16 +35,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
   late bool hasSpecialCharacter;
   late bool hasUppercaseCharacter;
   late bool hasNumberCharacter;
-  late bool displayPasswordReqs;
 
   late String errorMsg;
-
-  final FocusNode _focus = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _focus.addListener(_onFocusChange);
 
     currentPassword = '';
     newPassword = '';
@@ -57,25 +53,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
     hasSpecialCharacter = false;
     hasUppercaseCharacter = false;
     hasNumberCharacter = false;
-    displayPasswordReqs = false;
     errorMsg = '';
 
-  }
-
-  @override
-  void dispose() {
-    _focus.removeListener(_onFocusChange);
-    _focus.dispose();
-    super.dispose();
-  }
-
-
-  void _onFocusChange() {
-    if (_focus.hasFocus) {
-      setState(() {
-        displayPasswordReqs = true;
-      });
-    }
   }
 
   void submitRequest() {
@@ -164,7 +143,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
         ),
         const SizedBox(height: 10.0),
         TextFormField(
-          focusNode: _focus,
           obscureText: !viewNewPassword,
           autocorrect: false,
           enableSuggestions: false,
@@ -211,8 +189,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
             });
           },
         ),
-        if (displayPasswordReqs)
-          Row(
+        Row(
             children: [
               Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
