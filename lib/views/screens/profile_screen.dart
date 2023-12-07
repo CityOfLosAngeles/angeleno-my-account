@@ -20,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
+  bool thirdPartyUserSource = false;
 
   @override
   void initState() {
@@ -27,10 +28,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void updateUser() {
-    overlayProvider.showLoading();
-
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
+       overlayProvider.showLoading();
       UserApi().updateUser(user).then((final response) {
           final success = response == HttpStatus.ok;
           overlayProvider.hideLoading();
@@ -49,6 +49,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  ElevatedButton get editButton => ElevatedButton(
+    onPressed: thirdPartyUserSource ? null : () {
+      if (userProvider.isEditing) {
+        updateUser();
+      }
+      setState(() {
+        userProvider.toggleEditing();
+      });
+    },
+    child: Text(
+        userProvider.isEditing ? 'Save' : 'Edit'
+    ),
+  );
+
   @override
   Widget build(final BuildContext context) {
     overlayProvider = context.watch<OverlayProvider>();
@@ -58,6 +72,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return const LinearProgressIndicator();
     } else {
       user = userProvider.user!;
+      if (user.userId.contains('google-oauth2')) {
+        thirdPartyUserSource = true;
+      }
     }
 
     return Column(
@@ -72,107 +89,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     autovalidateMode: AutovalidateMode.disabled,
                     child: Column(
-                        children: [
-                          const SizedBox(height: 10.0),
-                          Row(mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                              onPressed: () {
-                                if (userProvider.isEditing) {
-                                  updateUser();
-                                }
-                                setState(() {
-                                  userProvider.toggleEditing();
-                                });
-                              },
-                              child: Text(
-                                  userProvider.isEditing ? 'Save' : 'Edit'
-                              ),
-                            )
-                          ]),
-                          const SizedBox(height: 25.0),
-                          TextFormField(
-                            enabled: userProvider.isEditing,
-                            decoration: const InputDecoration(
-                                labelText: 'First Name',
-                                border: OutlineInputBorder()),
-                            initialValue: user.firstName,
-                            keyboardType: TextInputType.name,
-                            onChanged: (final val) {
-                              user.firstName = val;
-                            },
-                          ),
-                          const SizedBox(height: 25.0),
-                          TextFormField(
-                            enabled: userProvider.isEditing,
-                            decoration: const InputDecoration(
-                                labelText: 'Last Name',
-                                border: OutlineInputBorder()),
-                            initialValue: user.lastName,
-                            keyboardType: TextInputType.name,
-                            onChanged: (final val) {
-                              user.lastName = val;
-                            },
-                          ),
-                          const SizedBox(height: 25.0),
-                          TextFormField(
-                            enabled: userProvider.isEditing,
-                            decoration: const InputDecoration(
-                                labelText: 'Zip', border: OutlineInputBorder()),
-                            initialValue: user.zip,
-                            onChanged: (final val) {
-                              user.zip = val;
-                            },
-                            keyboardType: TextInputType.number,
-                          ),
-                          const SizedBox(height: 25.0),
-                          TextFormField(
-                            enabled: userProvider.isEditing,
-                            decoration: const InputDecoration(
-                                labelText: 'Address',
-                                border: OutlineInputBorder()),
-                            keyboardType: TextInputType.streetAddress,
-                            initialValue: user.address,
-                            onChanged: (final val) {
-                              user.address = val;
-                            },
-                          ),
-                          const SizedBox(height: 25.0),
-                          TextFormField(
-                            enabled: userProvider.isEditing,
-                            decoration: const InputDecoration(
-                                labelText: 'City',
-                                border: OutlineInputBorder()),
-                            keyboardType: TextInputType.streetAddress,
-                            initialValue: user.city,
-                            onChanged: (final val) {
-                              user.city = val;
-                            },
-                          ),
-                          const SizedBox(height: 25.0),
-                          TextFormField(
-                            enabled: userProvider.isEditing,
-                            decoration: const InputDecoration(
-                                labelText: 'State',
-                                border: OutlineInputBorder()),
-                            keyboardType: TextInputType.streetAddress,
-                            initialValue: user.state,
-                            onChanged: (final val) {
-                              user.state = val;
-                            },
-                          ),
-                          const SizedBox(height: 25.0),
-                          TextFormField(
-                            enabled: userProvider.isEditing,
-                            decoration: const InputDecoration(
-                                labelText: 'Mobile',
-                                border: OutlineInputBorder()),
-                            initialValue: user.phone,
-                            onChanged: (final val) {
-                              user.phone = val;
-                            },
-                          ),
-                        ],
+                      children: [
+                        const SizedBox(height: 10.0),
+                        Row(mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            thirdPartyUserSource ?
+                            Tooltip(
+                              message: 
+                                'This data is sourced from Google.',
+                              child: editButton,
+                          ) : editButton
+                        ]),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'First Name',
+                              border: OutlineInputBorder()),
+                          initialValue: user.firstName,
+                          keyboardType: TextInputType.name,
+                          onChanged: (final val) {
+                            user.firstName = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'Last Name',
+                              border: OutlineInputBorder()),
+                          initialValue: user.lastName,
+                          keyboardType: TextInputType.name,
+                          onChanged: (final val) {
+                            user.lastName = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'Zip', border: OutlineInputBorder()),
+                          initialValue: user.zip,
+                          onChanged: (final val) {
+                            user.zip = val;
+                          },
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'Address',
+                              border: OutlineInputBorder()),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.address,
+                          onChanged: (final val) {
+                            user.address = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'City',
+                              border: OutlineInputBorder()),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.city,
+                          onChanged: (final val) {
+                            user.city = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'State',
+                              border: OutlineInputBorder()),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.state,
+                          onChanged: (final val) {
+                            user.state = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'Mobile',
+                              border: OutlineInputBorder()),
+                          initialValue: user.phone,
+                          onChanged: (final val) {
+                            user.phone = val;
+                          },
+                        ),
+                      ],
                     )
                 )
             )
