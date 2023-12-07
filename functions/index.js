@@ -1,6 +1,7 @@
 const {onRequest} = require("firebase-functions/v2/https");
 const axios = require("axios");
 const admin = require("firebase-admin");
+const {User} = require("./models/user");
 
 admin.initializeApp();
 
@@ -10,33 +11,7 @@ const {
   auth0Domain
 } = process.env;
 
-class User {
-  constructor(
-      userId,
-      email,
-      firstName,
-      lastName,
-      address,
-      city,
-      state,
-      zip,
-      phone,
-      metadata
-  ) {
-    this.userId = userId,
-    this.email = email,
-    this.firstName = firstName,
-    this.lastName = lastName,
-    this.address = address,
-    this.city = city,
-    this.state = state,
-    this.zip = zip,
-    this.phone = phone,
-    this.metadata = metadata;
-  }
-}
-
-const getAccesToken = async () => {
+const getAccessToken = async () => {
   const options = {
     "Content-Type": "application/x-www-form-urlencoded"
   };
@@ -113,7 +88,7 @@ exports.updateUser = onRequest( async (req, res) => {
   updatedUserObject["user_metadata"] = user.metadata;
 
   const updateUserUrl = `https://${auth0Domain}/api/v2/users/${user.userId}`;
-  const token = await getAccesToken();
+  const token = await getAccessToken();
   const headers = {
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -133,5 +108,63 @@ exports.updateUser = onRequest( async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.send(err);
+  }
+});
+
+exports.updatePassword = onRequest( async (req, res) => {
+  const body = req.body;
+
+  try {
+    const passwordValidationRequest = {
+      method: "POST",
+      url: `https://${auth0Domain}/oauth/token`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      data: new URLSearchParams({
+        "grant_type": "password",
+        "username": body.email,
+        "password": body.oldPassword,
+        "client_id": auth0ClientId,
+        "client_secret": auth0ClientSecret,
+        "audience": `https://${auth0Domain}/api/v2/`,
+        "scope": "openid",
+      })
+    };
+
+    const validateResponse = await axios.request(passwordValidationRequest);
+
+    if (validateResponse.status === 200) {
+      const auth0Token = await getAccessToken();
+      const passwordUpdateRequest = {
+        method: "PATCH",
+        url: `https://${auth0Domain}/api/v2/users/${body.userId}`,
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": `Bearer ${auth0Token}`
+        },
+        data: {
+          password: body.newPassword,
+          connection: "Username-Password-Authentication"
+        }
+      };
+
+      const updateResponse = await axios.request(passwordUpdateRequest);
+
+      if (updateResponse.status === 200) {
+        res.status(200).send();
+        return;
+      }
+    }
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+
+    const {
+        error_description,
+        message
+    } = err?.response?.data
+
+    res.status(500).send(message || error_description || 'Error encountered');
+    return;
   }
 });

@@ -1,3 +1,4 @@
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
@@ -57,7 +58,7 @@ class UserProvider extends ChangeNotifier {
 
     _user = User(
         userId: user.sub,
-        email: user.email,
+        email: user.email!,
         firstName: user.givenName ?? '',
         lastName: user.familyName ?? '',
         zip: zip,
@@ -85,6 +86,11 @@ class UserProvider extends ChangeNotifier {
 
   Future<Credentials> currentCredentials() async =>
       await auth0Web.credentials();
+
+  Future<void> logout() => auth0Web.logout(
+      federated: false,
+      returnToUrl: 'https://angeleno.lacity.org/'
+  );
 
   User? get user => _user;
 

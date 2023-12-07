@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
+import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
@@ -90,12 +92,11 @@ class UserApi extends Api {
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
-
-        statusCode = response.statusCode;
       } else {
         print(response);
-        statusCode = response.statusCode;
       }
+
+      statusCode = response.statusCode;
     } catch (err) {
       print (err);
       // generic server error
@@ -103,5 +104,38 @@ class UserApi extends Api {
     }
 
     return statusCode;
+  }
+
+  @override
+  Future<Map<String, dynamic>> updatePassword(final PasswordBody body) async {
+    late Map<String, dynamic> response;
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final request = await http.post(
+          Uri.parse('/updatePassword'),
+          headers: headers,
+          body: reqBody
+      );
+
+      response = {
+        'status': request.statusCode,
+        'body': request.body.isNotEmpty ? request.body : 'Error Encountered'
+      };
+    } catch (err) {
+      print (err);
+      // generic server error
+      response = {
+        'status': HttpStatus.internalServerError,
+        'body': 'Error Encountered'
+      };
+    }
+
+    return response;
   }
 }

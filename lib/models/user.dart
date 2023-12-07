@@ -1,6 +1,6 @@
 class User {
   late String userId;
-  late String? email;
+  late String email;
   late String? firstName;
   late String? lastName;
   late String? zip;
