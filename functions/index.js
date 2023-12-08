@@ -5,15 +5,11 @@ const {User} = require("./models/user");
 
 admin.initializeApp();
 
-// const {
-//   auth0ClientId,
-//   auth0ClientSecret,
-//   auth0Domain
-// } = process.env;
-
-  const auth0ClientId = 'RZ88A4S9eDVF8pZbdnQViahZToBsCFAt',
-  auth0ClientSecret = 'P8jnf3bn0YfZdobv4M3kC9TL4prmtiV4Sq0-d_JE02SsxL5B71ABokDillHhM2C6',
-  auth0Domain = 'cristian-sandbox.us.auth0.com'
+const {
+  auth0ClientId,
+  auth0ClientSecret,
+  auth0Domain
+} = process.env;
 
 const getAccessToken = async () => {
   const options = {
