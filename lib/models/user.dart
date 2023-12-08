@@ -5,6 +5,7 @@ class User {
   late String? lastName;
   late String? zip;
   late String? address;
+  late String? address2;
   late String? city;
   late String? state;
   late String? phone;
@@ -16,6 +17,7 @@ class User {
       required this.firstName,
       required this.lastName,
       required this.address,
+      required this.address2,
       required this.city,
       required this.state,
       required this.zip,
@@ -29,6 +31,7 @@ class User {
         firstName = copy.firstName,
         lastName = copy.lastName,
         address = copy.address,
+        address2 = copy.address2,
         city = copy.city,
         state = copy.state,
         zip = copy.zip,
@@ -41,6 +44,7 @@ class User {
       other.lastName == lastName &&
       other.zip == zip &&
       other.address == address &&
+      other.address2 == address2 && 
       other.city == city &&
       other.phone == phone &&
       other.state == state;
@@ -51,6 +55,7 @@ class User {
       'firstName': firstName,
       'lastName': lastName,
       'address': address,
+      'address2': address2,
       'city': city,
       'state': state,
       'zip': zip,
@@ -61,12 +66,12 @@ class User {
   @override
   String toString() =>
       '{id: $userId, email: $email, firstName: $firstName, lastName: $lastName,'
-      ' zip: $zip, address: $address, city: $city, state: $state, '
-        'phone: $phone}';
+      ' zip: $zip, address: $address, address2: $address2, city: $city,' 
+      ' state: $state, phone: $phone}';
 
   @override
   int get hashCode => firstName.hashCode ^ lastName.hashCode ^
-    zip.hashCode ^ address.hashCode ^ city.hashCode ^ state.hashCode ^
+    zip.hashCode ^ address.hashCode ^ address2.hashCode ^ city.hashCode ^ state.hashCode ^
     phone.hashCode;
 
 

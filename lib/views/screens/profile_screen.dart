@@ -141,6 +141,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           TextFormField(
                             enabled: userProvider.isEditing,
                             decoration: const InputDecoration(
+                                labelText: 'Address 2',
+                                border: OutlineInputBorder()),
+                            keyboardType: TextInputType.streetAddress,
+                            initialValue: user.address2,
+                            onChanged: (final val) {
+                              user.address2 = val;
+                            },
+                          ),
+                          const SizedBox(height: 25.0),
+                          TextFormField(
+                            enabled: userProvider.isEditing,
+                            decoration: const InputDecoration(
                                 labelText: 'City',
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.streetAddress,
