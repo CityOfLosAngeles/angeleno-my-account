@@ -118,6 +118,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         TextFormField(
                           enabled: userProvider.isEditing,
                           decoration: const InputDecoration(
+                              labelText: 'Zip', border: OutlineInputBorder()),
+                          initialValue: user.zip,
+                          onChanged: (final val) {
+                            user.zip = val;
+                          },
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
                               labelText: 'Address',
                               border: OutlineInputBorder()),
                           keyboardType: TextInputType.streetAddress,
@@ -128,8 +139,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 25.0),
                         TextFormField(
-                          enabled: false,
-                          //enabled: userProvider.isEditing,
+                          enabled: userProvider.isEditing,
+                          decoration: const InputDecoration(
+                              labelText: 'Address 2',
+                              border: OutlineInputBorder()),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.address2,
+                          onChanged: (final val) {
+                            user.address2 = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: userProvider.isEditing,
                           decoration: const InputDecoration(
                               labelText: 'City', border: OutlineInputBorder()),
                           keyboardType: TextInputType.streetAddress,
@@ -140,8 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 25.0),
                         TextFormField(
-                          enabled: false,
-                          //enabled: userProvider.isEditing,
+                          enabled: userProvider.isEditing,
                           decoration: const InputDecoration(
                               labelText: 'State', border: OutlineInputBorder()),
                           keyboardType: TextInputType.streetAddress,
@@ -149,18 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onChanged: (final val) {
                             user.state = val;
                           },
-                        ),
-                        const SizedBox(height: 25.0),
-                        TextFormField(
-                          //enabled: userProvider.isEditing,
-                          enabled: false,
-                          decoration: const InputDecoration(
-                              labelText: 'Zip', border: OutlineInputBorder()),
-                          initialValue: user.zip,
-                          onChanged: (final val) {
-                            user.zip = val;
-                          },
-                          keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 25.0),
                         TextFormField(

@@ -32,6 +32,7 @@ class UserProvider extends ChangeNotifier {
 
     String zip = '';
     String address = '';
+    String address2 = '';
     String city = '';
     String state = '';
     String phone = '';
@@ -47,6 +48,8 @@ class UserProvider extends ChangeNotifier {
           primaryAddress['zip'] as String : '';
         address = primaryAddress['address'] != null ?
           primaryAddress['address'] as String : '';
+        address2 = primaryAddress['address2'] != null ?
+          primaryAddress['address2'] as String : '';
         city =  primaryAddress['city'] != null ?
           primaryAddress['city'] as String : '';
         state = primaryAddress['state'] != null ?
@@ -63,6 +66,7 @@ class UserProvider extends ChangeNotifier {
         lastName: user.familyName ?? '',
         zip: zip,
         address: address,
+        address2: address2,
         city: city,
         state: state,
         phone: phone,
