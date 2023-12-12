@@ -64,6 +64,10 @@ exports.updateUser = onRequest( async (req, res) => {
     primaryAddress["address"] = user.address;
   }
 
+  if (user.address2) {
+    primaryAddress["address2"] = user.address2;
+  }
+
   if (user.state) {
     primaryAddress["state"] = user.state;
   }
