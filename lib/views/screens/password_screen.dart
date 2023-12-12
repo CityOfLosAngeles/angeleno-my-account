@@ -107,7 +107,21 @@ class _PasswordScreenState extends State<PasswordScreen> {
     overlayProvider = context.watch<OverlayProvider>();
     userProvider = context.watch<UserProvider>();
 
-    return ListView(
+    return userProvider.isThirdParty ?
+        Center(
+          child: Container(
+            transformAlignment: Alignment.center,
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 1280),
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Password is managed by your Google Account.')
+              ],
+            )
+          )
+        )
+        : ListView(
       children: [
         TextFormField(
           obscureText: !viewPassword,

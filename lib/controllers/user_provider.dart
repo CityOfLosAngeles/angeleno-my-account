@@ -11,6 +11,7 @@ class UserProvider extends ChangeNotifier {
   User? _user;
   User? _cleanUser;
   bool _isEditing = false;
+  bool _isThirdParty = false;
 
   UserProvider() {
     auth0Web.onLoad().then((final credentials) async {
@@ -73,6 +74,10 @@ class UserProvider extends ChangeNotifier {
         metadata: metadata
     );
 
+    if (_user!.userId.contains('google')) {
+      _isThirdParty = true;
+    }
+
     notifyListeners();
   }
 
@@ -101,4 +106,6 @@ class UserProvider extends ChangeNotifier {
   User? get cleanUser => _cleanUser;
 
   bool get isEditing => _isEditing;
+
+  bool get isThirdParty => _isThirdParty;
 }

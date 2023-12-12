@@ -20,7 +20,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
-  bool thirdPartyUserSource = false;
 
   @override
   void initState() {
@@ -50,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   ElevatedButton get editButton => ElevatedButton(
-    onPressed: thirdPartyUserSource ? null : () {
+    onPressed: userProvider.isThirdParty ? null : () {
       if (userProvider.isEditing) {
         updateUser();
       }
@@ -72,9 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return const LinearProgressIndicator();
     } else {
       user = userProvider.user!;
-      if (user.userId.contains('google-oauth2')) {
-        thirdPartyUserSource = true;
-      }
     }
 
     return Column(
@@ -93,10 +89,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 10.0),
                         Row(mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            thirdPartyUserSource ?
+                            userProvider.isThirdParty ?
                             Tooltip(
                               message: 
-                                'This data is sourced from Google.',
+                              'This information comes from your Google Account.',
                               child: editButton,
                           ) : editButton
                         ]),
