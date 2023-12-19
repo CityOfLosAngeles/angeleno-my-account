@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 const auth0ClientId = String.fromEnvironment('CLIENT_ID');
 const auth0Domain = String.fromEnvironment('AUTH0_DOMAIN');
 const redirectUri = String.fromEnvironment('REDIRECT_URI');
-const cloudFunctionURL =
-    String.fromEnvironment('CLOUD_FUNCTIONS_URL');
+const cloudFunctionURL = String.fromEnvironment('CLOUD_FUNCTIONS_URL');
 const serviceAccountSecret = String.fromEnvironment('SA_SECRET_KEY');
 const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
+const placesAPI = String.fromEnvironment('PLACES_API_KEY');
 
 /* Colors */
 ColorScheme colorScheme = const ColorScheme(

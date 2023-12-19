@@ -1,7 +1,13 @@
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
+//import 'dart:html';
+//Needed to declare this as there was an error with another library - material.dart
+import 'dart:async';
+import 'dart:html' as html;
 
+import 'package:angeleno_project/controllers/place_api_provider.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
+import 'package:angeleno_project/models/autofill_place.dart';
+import 'package:angeleno_project/models/autofill_suggestion.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/api_implementation.dart';
@@ -21,6 +27,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late UserProvider userProvider;
   late User user;
 
+//
+  TextEditingController usrAddressTextController = TextEditingController();
+  TextEditingController usrCityTextController = TextEditingController();
+  TextEditingController usrStateTextController = TextEditingController();
+  TextEditingController usrZipTextController = TextEditingController();
+  String sessionToken = "";
+  //This is needed since the user becomes overwritten to original user data. But if we check the autofill
+  bool autoFilled = false;
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
@@ -32,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
       UserApi().updateUser(user).then((final response) {
-        final success = response == HttpStatus.ok;
+        final success = response == html.HttpStatus.ok;
         overlayProvider.hideLoading();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             behavior: SnackBarBehavior.floating,
@@ -47,6 +63,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     })));
       });
     }
+  }
+
+//We need to create
+  Future<List<AutofillSuggestion>> fetchSuggestions(String input) async {
+    // Implement API call to fetch suggestions based on input
+    final PlaceAPIProvider apiClient = PlaceAPIProvider(sessionToken);
+
+    return await apiClient.fetchSuggestions(
+        input, Localizations.localeOf(context).languageCode);
+    // _timer?.cancel(); // Cancel any pending timer
+/*
+    _timer = Timer(const Duration(milliseconds: 1000), () async {
+      // Fetch and update suggestions here based on debounced text
+      //  usrAddressTextController.text = 'paz';
+    });
+    */
+  }
+
+  Future<AutofillPlace> getAutofillFullAddress(
+      AutofillSuggestion autocomplete) async {
+    print('The autocomplete is $autocomplete');
+
+    return await PlaceAPIProvider(sessionToken)
+        .getPlaceDetailFromId(autocomplete.placeId);
   }
 
   @override
@@ -115,17 +155,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                         ),
                         const SizedBox(height: 25.0),
-                        TextFormField(
-                          enabled: userProvider.isEditing,
-                          decoration: const InputDecoration(
-                              labelText: 'Zip', border: OutlineInputBorder()),
-                          initialValue: user.zip,
-                          onChanged: (final val) {
-                            user.zip = val;
+                        Autocomplete<AutofillSuggestion>(
+                          displayStringForOption:
+                              (final AutofillSuggestion option) =>
+                                  option.description,
+                          fieldViewBuilder: (final BuildContext context,
+                              controller,
+                              final FocusNode fieldFocusNode,
+                              VoidCallback onFieldSubmitted) {
+                            usrAddressTextController = controller;
+                            return TextFormField(
+                              controller: usrAddressTextController,
+                              focusNode: fieldFocusNode,
+                              decoration: const InputDecoration(
+                                  labelText: 'Address',
+                                  border: OutlineInputBorder()),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            );
                           },
-                          keyboardType: TextInputType.number,
+                          optionsBuilder:
+                              (final TextEditingValue textEditingValue) {
+                            if (textEditingValue.text == '' || autoFilled) {
+                              return const Iterable<AutofillSuggestion>.empty();
+                            }
+
+                            //return const Iterable<AutofillSuggestion>.empty();
+                            return fetchSuggestions(textEditingValue.text);
+                          },
+                          initialValue: TextEditingValue(text: user.address!),
+                          onSelected:
+                              (final AutofillSuggestion selection) async {
+                            print(
+                                '\n \n \n \n \n ==========================================================');
+                            final place =
+                                await getAutofillFullAddress(selection);
+
+                            setState(() {
+                              autoFilled = true;
+                              user.city = place.city;
+                              user.zip = place.zipCode;
+                              usrCityTextController.text = place.city!;
+                              usrStateTextController.text = place.state!;
+                              usrZipTextController.text = place.zipCode!;
+                              usrAddressTextController.text =
+                                  '${place.streetNumber} ${place.street}';
+                            });
+//This code is used for re-enabling the autofill as when we substitute the full
+//address with the street address it gets triggered again to show suggestion, so it is unnecessary to show it again
+                            Future.delayed(const Duration(milliseconds: 1500),
+                                () {
+                              setState(() {
+                                autoFilled = false;
+                              });
+                            });
+                            debugPrint('You just selected $selection');
+                          },
                         ),
-                        const SizedBox(height: 25.0),
+
+                        /*
                         TextFormField(
                           enabled: userProvider.isEditing,
                           decoration: const InputDecoration(
@@ -136,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onChanged: (final val) {
                             user.address = val;
                           },
-                        ),
+                        ),*/
                         const SizedBox(height: 25.0),
                         TextFormField(
                           enabled: userProvider.isEditing,
@@ -151,22 +239,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 25.0),
                         TextFormField(
-                          enabled: userProvider.isEditing,
+                          enabled: false,
+                          controller: usrCityTextController,
                           decoration: const InputDecoration(
                               labelText: 'City', border: OutlineInputBorder()),
                           keyboardType: TextInputType.streetAddress,
-                          initialValue: user.city,
+                          //initialValue: user.city,
                           onChanged: (final val) {
                             user.city = val;
                           },
                         ),
                         const SizedBox(height: 25.0),
                         TextFormField(
-                          enabled: userProvider.isEditing,
+                          enabled: false,
+                          controller: usrZipTextController,
+                          decoration: const InputDecoration(
+                              labelText: 'Zip', border: OutlineInputBorder()),
+                          //initialValue: user.zip,
+                          onChanged: (final val) {
+                            user.zip = val;
+                          },
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: false,
+                          controller: usrStateTextController,
                           decoration: const InputDecoration(
                               labelText: 'State', border: OutlineInputBorder()),
                           keyboardType: TextInputType.streetAddress,
-                          initialValue: user.state,
+                          //initialValue: user.state,
                           onChanged: (final val) {
                             user.state = val;
                           },
