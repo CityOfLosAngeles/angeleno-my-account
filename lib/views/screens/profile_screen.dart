@@ -1,15 +1,17 @@
 // ignore: avoid_web_libraries_in_flutter
 //import 'dart:html';
 //Needed to declare this as there was an error with another library - material.dart
+
 import 'dart:async';
 import 'dart:html' as html;
 
-import 'package:angeleno_project/controllers/place_api_provider.dart';
+import 'package:angeleno_project/controllers/place_api.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/models/autofill_place.dart';
 import 'package:angeleno_project/models/autofill_suggestion.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../controllers/Debouncer.dart';
 import '../../controllers/api_implementation.dart';
 import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
@@ -32,14 +34,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController usrCityTextController = TextEditingController();
   TextEditingController usrStateTextController = TextEditingController();
   TextEditingController usrZipTextController = TextEditingController();
+
   String sessionToken = "";
   //This is needed since the user becomes overwritten to original user data. But if we check the autofill
   bool autoFilled = false;
-  Timer? _timer;
+  final apiFetchDebouncer = Debouncer(milliseconds: 555);
+  Timer? timer;
+  List<AutofillSuggestion> suggestions = [];
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    usrAddressTextController.dispose();
+    usrCityTextController.dispose();
+    usrStateTextController.dispose();
+    usrZipTextController.dispose();
+    super.dispose();
   }
 
   void updateUser() {
@@ -65,28 +79,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-//We need to create
-  Future<List<AutofillSuggestion>> fetchSuggestions(String input) async {
+  Future<List<AutofillSuggestion>> fetchSuggestions(final String input) async {
     // Implement API call to fetch suggestions based on input
-    final PlaceAPIProvider apiClient = PlaceAPIProvider(sessionToken);
-
+    final PlaceAPI apiClient = PlaceAPI(sessionToken);
     return await apiClient.fetchSuggestions(
         input, Localizations.localeOf(context).languageCode);
-    // _timer?.cancel(); // Cancel any pending timer
-/*
-    _timer = Timer(const Duration(milliseconds: 1000), () async {
-      // Fetch and update suggestions here based on debounced text
-      //  usrAddressTextController.text = 'paz';
-    });
-    */
+    //return results;
   }
 
   Future<AutofillPlace> getAutofillFullAddress(
       AutofillSuggestion autocomplete) async {
     print('The autocomplete is $autocomplete');
 
-    return await PlaceAPIProvider(sessionToken)
-        .getPlaceDetailFromId(autocomplete.placeId);
+    return await PlaceAPI(sessionToken)
+        .getPlaceDetailFromId(autocomplete.placeId!);
   }
 
   @override
@@ -158,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Autocomplete<AutofillSuggestion>(
                           displayStringForOption:
                               (final AutofillSuggestion option) =>
-                                  option.description,
+                                  option.description!,
                           fieldViewBuilder: (final BuildContext context,
                               controller,
                               final FocusNode fieldFocusNode,
@@ -174,14 +180,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   const TextStyle(fontWeight: FontWeight.bold),
                             );
                           },
-                          optionsBuilder:
-                              (final TextEditingValue textEditingValue) {
+                          optionsBuilder: (TextEditingValue textEditingValue) {
                             if (textEditingValue.text == '' || autoFilled) {
                               return const Iterable<AutofillSuggestion>.empty();
                             }
 
-                            //return const Iterable<AutofillSuggestion>.empty();
-                            return fetchSuggestions(textEditingValue.text);
+                            apiFetchDebouncer.run(() async {
+                              final suggs =
+                                  await fetchSuggestions(textEditingValue.text);
+                              setState(() {
+                                // Update suggestions list with retrieved suggestions
+                                suggestions = suggs;
+                              });
+                            });
+                            return suggestions; // Prevent initial suggestions before delay
                           },
                           initialValue: TextEditingValue(text: user.address!),
                           onSelected:
@@ -199,7 +211,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               usrStateTextController.text = place.state!;
                               usrZipTextController.text = place.zipCode!;
                               usrAddressTextController.text =
-                                  '${place.streetNumber} ${place.street}';
+                                  selection.streetAddress!;
+                              //usrAddressTextController.text =
+                              //  '${place.streetNumber} ${place.street}';
                             });
 //This code is used for re-enabling the autofill as when we substitute the full
 //address with the street address it gets triggered again to show suggestion, so it is unnecessary to show it again
@@ -288,10 +302,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ))))
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

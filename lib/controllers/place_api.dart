@@ -2,6 +2,7 @@
 
 import 'dart:html';
 
+import 'package:angeleno_project/controllers/Debouncer.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 //import 'dart:io';
@@ -10,12 +11,13 @@ import '../models/autofill_place.dart';
 import '../models/autofill_suggestion.dart';
 import '../utils/constants.dart';
 
-class PlaceAPIProvider {
+class PlaceAPI {
   final client = Client();
 
-  PlaceAPIProvider(this.sessionToken);
+  PlaceAPI(this.sessionToken);
 
   final sessionToken;
+  int count = 0;
 
   final apiKey = placesAPI;
 
@@ -33,12 +35,13 @@ class PlaceAPIProvider {
     } catch (e) {
       print(e.toString());
     }
-
-    print('client Our response is ${json.decode(response!.body)}');
+    count++;
+    print('the count of times we call the API is $count');
+    //print('client Our response is ${json.decode(response!.body)}');
     // print('client The link is $request');
 
     if (response!.statusCode == 200) {
-      final result = json.decode(response.body);
+      final result = json.decode(response!.body);
       if (result['status'] == 'OK') {
         places = result['predictions']
             .map<AutofillSuggestion>((p) => AutofillSuggestion(
