@@ -10,4 +10,7 @@ abstract class Api {
 
   void updatePassword(final PasswordBody body);
 
+  void enrollOTP(final Map<String, String> body);
+
+  void confirmOTP(final Map<String, String> body);
 }

@@ -138,4 +138,75 @@ class UserApi extends Api {
 
     return response;
   }
+
+  @override
+  Future<Map<String, dynamic>> enrollOTP(final Map<String, String> body) async {
+    late Map<String, dynamic> response;
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final request = await http.post(
+          Uri.parse('/enrollOTP'),
+          headers: headers,
+          body: reqBody
+      );
+
+      final jsonBody = jsonDecode(request.body);
+      final barcode = jsonBody['barcode_uri'];
+      final token = jsonBody['token'];
+      final tokenSecret = jsonBody['secret'];
+
+      response = {
+        'status': request.statusCode,
+        'body': request.body.isNotEmpty ? request.body : 'Error Encountered',
+        'barcode': barcode,
+        'token': token,
+        'barcode_string': tokenSecret
+      };
+
+    } catch (err) {
+      response = {
+        'status': HttpStatus.internalServerError,
+        'body': 'Error Encountered'
+      };
+    }
+
+    return response;
+  }
+
+  @override
+  Future<Map<String, dynamic>> confirmOTP(final Map<String, String> body) async {
+    late Map<String, dynamic> response;
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final request = await http.post(
+          Uri.parse('/confirmOTP'),
+          headers: headers,
+          body: reqBody
+      );
+
+      response = {
+        'status': request.statusCode
+      };
+
+    } catch (err) {
+      response = {
+        'status': HttpStatus.internalServerError,
+        'body': 'Error Encountered'
+      };
+    }
+
+    return response;
+  }
 }

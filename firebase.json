@@ -18,6 +18,16 @@
         "source": "/updatePassword",
         "function": "updatePassword",
         "region": "us-central1"
+      },
+      {
+        "source": "/enrollOTP",
+        "function": "enrollOTP",
+        "region": "us-central1"
+      },
+      {
+        "source": "/confirmOTP",
+        "function": "confirmOTP",
+        "region": "us-central1"
       }
     ]
   },

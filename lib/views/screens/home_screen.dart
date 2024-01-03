@@ -1,4 +1,5 @@
 import 'package:angeleno_project/controllers/overlay_provider.dart';
+import 'package:angeleno_project/views/screens/advanced_security_screen.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -99,10 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> get screens => <Widget>[
         const ProfileScreen(),
         const PasswordScreen(),
-        //Security
-        ListView(
-          children: const [Text('This looks like an external script.')],
-        )
+        const AdvancedSecurityScreen()
       ];
 
   @override
@@ -170,20 +168,20 @@ class _MyHomePageState extends State<MyHomePage> {
           body: Stack(
             children: [
               Center(
-                  child: Container(
-                    transformAlignment: Alignment.center,
-                    width: double.infinity,
-                    constraints: const BoxConstraints(maxWidth: 1280),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                            child: Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: screens[_selectedIndex]))
-                      ],
-                    ),
-                  )
+                child: Container(
+                  transformAlignment: Alignment.center,
+                  width: double.infinity,
+                  constraints: const BoxConstraints(maxWidth: 1280),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: screens[_selectedIndex]))
+                    ],
+                  ),
+                )
               ),
               if (overlayProvider.isLoading)
                 Center(

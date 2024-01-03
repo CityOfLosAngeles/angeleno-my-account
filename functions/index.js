@@ -35,6 +35,43 @@ const getAccessToken = async () => {
   }
 };
 
+const authorizeUser = async (email, password, audience = '/api/v2/') => {
+  
+  try {
+    const passwordValidationRequest = {
+      method: "POST",
+      url: `https://${auth0Domain}/oauth/token`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      data: new URLSearchParams({
+        "grant_type": "password",
+        "username": email,
+        "password": password,
+        "client_id": auth0ClientId,
+        "client_secret": auth0ClientSecret,
+        "audience": `https://${auth0Domain}${audience}`,
+        "scope": audience === '/api/v2/' ? "openid" : ''
+      })
+    };
+
+    return await axios.request(passwordValidationRequest);
+  } catch (err) {
+
+    const {
+      status,
+      data: {
+        error_description,
+      }
+    } = err?.response
+
+    const error = new Error(error_description || 'Auth0 Authorization Failed');
+    error.code = status || 500;
+
+    throw error;
+  }
+}
+
 exports.updateUser = onRequest( async (req, res) => {
   let user;
 
@@ -110,7 +147,7 @@ exports.updateUser = onRequest( async (req, res) => {
       return res.sendStatus(request.status);
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.send(err);
   }
 });
@@ -119,24 +156,8 @@ exports.updatePassword = onRequest( async (req, res) => {
   const body = req.body;
 
   try {
-    const passwordValidationRequest = {
-      method: "POST",
-      url: `https://${auth0Domain}/oauth/token`,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      data: new URLSearchParams({
-        "grant_type": "password",
-        "username": body.email,
-        "password": body.oldPassword,
-        "client_id": auth0ClientId,
-        "client_secret": auth0ClientSecret,
-        "audience": `https://${auth0Domain}/api/v2/`,
-        "scope": "openid",
-      })
-    };
-
-    const validateResponse = await axios.request(passwordValidationRequest);
+    
+    const validateResponse = await authorizeUser(body.email, body.oldPassword);
 
     if (validateResponse.status === 200) {
       const auth0Token = await getAccessToken();
@@ -145,7 +166,7 @@ exports.updatePassword = onRequest( async (req, res) => {
         url: `https://${auth0Domain}/api/v2/users/${body.userId}`,
         headers: {
           "Content-Type": "application/json",
-          "authorization": `Bearer ${auth0Token}`
+          "Authorization": `Bearer ${auth0Token}`
         },
         data: {
           password: body.newPassword,
@@ -164,11 +185,96 @@ exports.updatePassword = onRequest( async (req, res) => {
     console.error(`Error: ${err.message}`);
 
     const {
+      status,
+      data: {
         error_description,
         message
-    } = err?.response?.data
+      }
+    } = err?.response
 
-    res.status(500).send(message || error_description || 'Error encountered');
+    res.status(status).send(message || error_description || 'Error encountered');
     return;
   }
 });
+
+exports.enrollOTP = onRequest( async (req, res) => {
+  const body = req.body;
+
+  try {
+    const validateResponse = await authorizeUser(body.email, body.password, '/mfa/');
+
+    if (validateResponse.status === 200) {
+     const mfaToken = validateResponse?.data?.access_token;
+      
+     const otpRequest = {
+      method: "POST",
+      url: `https://${auth0Domain}/mfa/associate`,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${mfaToken}`
+      },
+      data: {
+        "authenticator_types": ["otp"]
+      }
+     }
+
+     const otpResponse = await axios.request(otpRequest);
+     otpResponse.data.token = mfaToken;
+
+     if (otpResponse.status === 200) {
+      res.status(200).send(otpResponse?.data);
+     }
+
+    }
+  } catch (err) {
+
+    const {
+      code,
+      message
+    } = err;
+
+    res.status(code || 500).send(message || 'Error encountered');
+  }
+})
+
+exports.confirmOTP = onRequest( async (req, res) => {
+  const body = req.body;
+
+  try {
+
+    const {
+      mfaToken,
+      userOtpCode
+    } = body;
+
+    var options = {
+      method: 'POST',
+      url: `https://${auth0Domain}/oauth/token`,
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
+      data: new URLSearchParams({
+        grant_type: 'http://auth0.com/oauth/grant-type/mfa-otp',
+        client_id: `${auth0ClientId}`,
+        mfa_token: `${mfaToken}`,
+        client_secret: `${auth0ClientSecret}`,
+        otp: `${userOtpCode}`
+      })
+    };
+
+    const enrollment = await axios.request(options);
+
+    if (enrollment.status === 200) {
+      res.sendStatus(200);
+    }
+
+  } catch (err) {
+
+    const {
+      status,
+      data: {
+        error_description
+      }
+    } = err?.response;
+
+    res.status(status).send(error_description);
+  }
+})
