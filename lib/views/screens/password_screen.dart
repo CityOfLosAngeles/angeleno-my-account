@@ -21,6 +21,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
 
+  final minPasswordLength = 8;
+
   String currentPassword = '';
   String newPassword = '';
   String passwordMatch = '';
@@ -134,7 +136,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
               return 'Password is required';
             }
 
-            if (value.length < 8) {
+            if (value.length < minPasswordLength) {
               // ignore: avoid_escaping_inner_quotes
               return 'Password doesn\'t meet requirements';
             }
@@ -159,7 +161,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
             setState(() {
               newPassword = value;
               _isButtonDisabled = enablePasswordSubmit();
-              acceptableLength = value.length >= 8;
+              acceptableLength = value.length >= minPasswordLength;
             });
           },
         ),
@@ -171,7 +173,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                'Be at least 8 characters',
+                'Be at least $minPasswordLength characters',
                 style: TextStyle(
                 color: acceptableLength
                     ? colorScheme.primary
