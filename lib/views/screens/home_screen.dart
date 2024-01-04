@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> get screens => <Widget>[
         const ProfileScreen(),
         const PasswordScreen(),
-        const AdvancedSecurityScreen()
+        AdvancedSecurityScreen(userProvider: userProvider)
       ];
 
   @override

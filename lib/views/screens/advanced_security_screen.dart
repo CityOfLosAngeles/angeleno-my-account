@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:html';
 
 import 'package:angeleno_project/controllers/api_implementation.dart';
@@ -9,13 +10,61 @@ import '../../controllers/user_provider.dart';
 import '../../utils/constants.dart';
 
 class AdvancedSecurityScreen extends StatefulWidget {
-  const AdvancedSecurityScreen({super.key});
+  final UserProvider userProvider;
+  const AdvancedSecurityScreen({required this.userProvider, super.key});
 
   @override
   State<AdvancedSecurityScreen> createState() => _AdvancedSecurityState();
 }
 
 class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
+
+  late bool authenticatorEnabled = false;
+  late String totpAuthId = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    UserApi().getAuthenticationMethods(widget.userProvider.user!.userId).then((final response) {
+      final bool success = response['status'] == HttpStatus.ok;
+      if (success) {
+        final String jsonString = response['body'] as String;
+        final List<dynamic> dataList = jsonDecode(jsonString) as List<dynamic>;
+        // When additional MFA is added, we can filter out types
+        // then setState once and do typeArray.contains('totp')
+        // think more about methods to retrieve auth method id
+        for (final element in dataList) {
+          if (element['type'] == 'totp') {
+            setState(() {
+              totpAuthId = element['id'] as String;
+              authenticatorEnabled = true;
+            });
+          }
+        }
+      }
+    });
+  }
+
+  void disableAuthenticator() {
+    UserApi().unenrollAuthenticator({
+      'authFactorId': totpAuthId,
+      'userId': widget.userProvider.user!.userId
+    }).then((final response) {
+      final bool success = response['status'] == HttpStatus.ok;
+      if (success) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            width: 280.0,
+            content: Text('Authenticator app has been removed.')
+        ));
+        setState(() {
+          authenticatorEnabled = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(final BuildContext context) => Column(
@@ -26,12 +75,42 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
           const Text('Authenticator App (Timed One-Time Password)'),
           FilledButton(
             onPressed: () {
-              showDialog<String>(
+              authenticatorEnabled ?
+              showDialog<void>(
+                context: context,
+                builder: (final BuildContext context) => AlertDialog(
+                  title: const Text('Remove authenticator app?'),
+                  content: const SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        Text('You won\'t be able to use your authenticator '
+                        'app to sign into your Angeleno Account.')
+                      ],
+                    )
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('Cancel'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    TextButton(
+                     child: const Text('Ok'),
+                     onPressed: () {
+                       disableAuthenticator();
+                     },
+                    )
+                  ],
+                )
+              )
+              :
+              showDialog<void>(
                 context: context,
                 builder: (final BuildContext context) => const AuthenticatorDialog(),
               );
             },
-            child: const Text('Enable')
+            child: Text(authenticatorEnabled ? 'Disable' : 'Enable')
           ),
         ],
       )
@@ -96,7 +175,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'password': passwordField.text
     };
 
-    UserApi().enrollOTP(body).then((final response) {
+    UserApi().enrollAuthenticator(body).then((final response) {
       final bool success = response['status'] == HttpStatus.ok;
       if (success) {
         setState(() {
@@ -127,7 +206,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'mfaToken': mfaToken,
       'userOtpCode': totpCode
     };
-    UserApi().confirmOTP(body).then((final response) {
+    UserApi().confirmTOTP(body).then((final response) {
       if (response['status'] == HttpStatus.ok) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(

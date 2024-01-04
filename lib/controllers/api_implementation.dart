@@ -66,7 +66,6 @@ class UserApi extends Api {
     return newToken;
   }
 
-
   @override
   Future<int> updateUser(final User user) async {
     late int statusCode;
@@ -141,7 +140,50 @@ class UserApi extends Api {
   }
 
   @override
-  Future<Map<String, dynamic>> enrollOTP(final Map<String, String> body) async {
+  Future<Map<String, dynamic>> getAuthenticationMethods(final String userId) async {
+    late Map<String, dynamic> response;
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode({'userId': userId});
+
+    try {
+      final request = await http.post(
+          Uri.parse('/authMethods'),
+          headers: headers,
+          body: reqBody
+      );
+
+      final jsonBody = jsonDecode(request.body);
+
+      if (request.statusCode == HttpStatus.ok) {
+        response = {
+          'status': request.statusCode,
+          'body': request.body
+        };
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
+
+    } on ApiException catch(e) {
+      response = {
+        'status': e.statusCode,
+        'body': e.error
+      };
+    } catch (err) {
+      response = {
+        'status': HttpStatus.internalServerError,
+        'body': 'Error Encountered'
+      };
+    }
+
+    return response;
+  }
+
+  @override
+  Future<Map<String, dynamic>> enrollAuthenticator(final Map<String, String> body) async {
     late Map<String, dynamic> response;
 
     final headers = {
@@ -165,7 +207,7 @@ class UserApi extends Api {
       if (request.statusCode == HttpStatus.ok) {
         response = {
           'status': request.statusCode,
-          'body': request.body.isNotEmpty ? request.body : 'Error Encountered',
+          'body': request.body,
           'barcode': barcode,
           'token': token,
           'barcode_string': tokenSecret
@@ -190,7 +232,7 @@ class UserApi extends Api {
   }
 
   @override
-  Future<Map<String, dynamic>> confirmOTP(final Map<String, String> body) async {
+  Future<Map<String, dynamic>> confirmTOTP(final Map<String, String> body) async {
     late Map<String, dynamic> response;
 
     final headers = {
@@ -202,6 +244,46 @@ class UserApi extends Api {
     try {
       final request = await http.post(
           Uri.parse('/confirmOTP'),
+          headers: headers,
+          body: reqBody
+      );
+
+      if (request.statusCode == HttpStatus.ok) {
+        response = {
+          'status': request.statusCode
+        };
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
+
+    }  on ApiException catch(e) {
+      response = {
+        'status': e.statusCode,
+        'body': e.error
+      };
+    } catch (err) {
+      response = {
+        'status': HttpStatus.internalServerError,
+        'body': 'Error Encountered'
+      };
+    }
+
+    return response;
+  }
+
+  @override
+  Future<Map<String, dynamic>> unenrollAuthenticator(final Map<String, String> body) async {
+    late Map<String, dynamic> response;
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final request = await http.post(
+          Uri.parse('/unenrollMFA'),
           headers: headers,
           body: reqBody
       );

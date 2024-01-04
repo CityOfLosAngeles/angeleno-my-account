@@ -291,3 +291,52 @@ exports.confirmOTP = onRequest( async (req, res) => {
     res.status(status).send({error: customError || error_description});
   }
 })
+
+exports.authMethods = onRequest( async (req,res) => {
+  const body = req.body;
+
+  try {
+
+    const auth0Token = await getAccessToken();
+
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://${auth0Domain}/api/v2/users/${body.userId}/authentication-methods`,
+      headers: { 
+        'Accept': 'application/json', 
+        'Authorization': `Bearer ${auth0Token}`
+      }
+    };
+    
+    const request = await axios.request(config)
+    res.status(200).send(request.data);
+
+  } catch(err) {
+    console.error(err);
+  }
+})
+
+exports.unenrollMFA = onRequest( async (req, res) => {
+  const body = req.body;
+
+  try {
+
+    const auth0Token = await getAccessToken();
+
+    let config = {
+      method: 'delete',
+      maxBodyLength: Infinity,
+      url: `https://${auth0Domain}/api/v2/users/${body.userId}/authentication-methods/${body.authFactorId}`,
+      headers: { 
+        'Authorization': `Bearer ${auth0Token}`
+      }
+    };
+    
+    const request = await axios.request(config)
+    res.status(200).send(request.data);
+    
+  } catch (err) {
+    console.error(err);
+  }
+})
