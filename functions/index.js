@@ -228,12 +228,19 @@ exports.enrollOTP = onRequest( async (req, res) => {
     }
   } catch (err) {
 
-    const {
+    console.error(err);
+
+    let {
       code,
       message
     } = err;
 
-    res.status(code || 500).send(message || 'Error encountered');
+    // Status Code for failed Authorization
+    if (code === 403) {
+      message = 'Invalid Password.'
+    }
+
+    res.status(code || 500).send({error: message || 'Error encountered'});
   }
 })
 
@@ -267,6 +274,8 @@ exports.confirmOTP = onRequest( async (req, res) => {
     }
 
   } catch (err) {
+
+    console.error(err);
 
     const {
       status,

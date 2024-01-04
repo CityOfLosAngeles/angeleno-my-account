@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
+import 'package:angeleno_project/models/api_exception.dart';
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -161,14 +162,23 @@ class UserApi extends Api {
       final token = jsonBody['token'];
       final tokenSecret = jsonBody['secret'];
 
-      response = {
-        'status': request.statusCode,
-        'body': request.body.isNotEmpty ? request.body : 'Error Encountered',
-        'barcode': barcode,
-        'token': token,
-        'barcode_string': tokenSecret
-      };
+      if (request.statusCode == HttpStatus.ok) {
+        response = {
+          'status': request.statusCode,
+          'body': request.body.isNotEmpty ? request.body : 'Error Encountered',
+          'barcode': barcode,
+          'token': token,
+          'barcode_string': tokenSecret
+        };
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
 
+    } on ApiException catch(e) {
+      response = {
+        'status': e.statusCode,
+        'body': e.error
+      };
     } catch (err) {
       response = {
         'status': HttpStatus.internalServerError,
@@ -201,6 +211,7 @@ class UserApi extends Api {
       };
 
     } catch (err) {
+      // generic server error
       response = {
         'status': HttpStatus.internalServerError,
         'body': 'Error Encountered'
