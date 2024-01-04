@@ -1,5 +1,6 @@
-import 'dart:convert';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
+import 'dart:convert';
 
 import 'package:angeleno_project/controllers/api_implementation.dart';
 import 'package:flutter/material.dart';
@@ -26,23 +27,25 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   void initState() {
     super.initState();
 
-    UserApi().getAuthenticationMethods(widget.userProvider.user!.userId).then((final response) {
-      final bool success = response['status'] == HttpStatus.ok;
-      if (success) {
-        final String jsonString = response['body'] as String;
-        final List<dynamic> dataList = jsonDecode(jsonString) as List<dynamic>;
-        // When additional MFA is added, we can filter out types
-        // then setState once and do typeArray.contains('totp')
-        // think more about methods to retrieve auth method id
-        for (final element in dataList) {
-          if (element['type'] == 'totp') {
-            setState(() {
-              totpAuthId = element['id'] as String;
-              authenticatorEnabled = true;
-            });
+    UserApi().getAuthenticationMethods(widget.userProvider.user!.userId)
+        .then((final response) {
+          final bool success = response.statusCode == HttpStatus.ok;
+          if (success) {
+            final String jsonString = response.body;
+            final List<dynamic> dataList = jsonDecode(jsonString)
+              as List<dynamic>;
+            // When additional MFA is added, we can filter out types
+            // then setState once and do typeArray.contains('totp')
+            // think more about methods to retrieve auth method id
+            for (final element in dataList) {
+              if (element['type'] == 'totp') {
+                setState(() {
+                  totpAuthId = element['id'] as String;
+                  authenticatorEnabled = true;
+                });
+              }
+            }
           }
-        }
-      }
     });
   }
 
@@ -51,7 +54,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
       'authFactorId': totpAuthId,
       'userId': widget.userProvider.user!.userId
     }).then((final response) {
-      final bool success = response['status'] == HttpStatus.ok;
+      final bool success = response.statusCode == HttpStatus.ok;
       if (success) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
@@ -83,6 +86,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                   content: const SingleChildScrollView(
                     child: ListBody(
                       children: <Widget>[
+                        // ignore: avoid_escaping_inner_quotes
                         Text('You won\'t be able to use your authenticator '
                         'app to sign into your Angeleno Account.')
                       ],
@@ -107,7 +111,8 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
               :
               showDialog<void>(
                 context: context,
-                builder: (final BuildContext context) => const AuthenticatorDialog(),
+                builder: (final BuildContext context) =>
+                  const AuthenticatorDialog(),
               );
             },
             child: Text(authenticatorEnabled ? 'Disable' : 'Enable')
@@ -207,7 +212,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'userOtpCode': totpCode
     };
     UserApi().confirmTOTP(body).then((final response) {
-      if (response['status'] == HttpStatus.ok) {
+      if (response.statusCode == HttpStatus.ok) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
             behavior: SnackBarBehavior.floating,
@@ -216,7 +221,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
         ));
       } else {
         setState(() {
-          errMsg = response['body'] as String;
+          errMsg = response.body;
         });
       }
     });

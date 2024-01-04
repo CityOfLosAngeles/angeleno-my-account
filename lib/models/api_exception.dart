@@ -5,8 +5,12 @@ class ApiException implements Exception {
   final String? body;
 
   String get error {
-    final errJson = jsonDecode(body!);
-    return errJson['error'] as String;
+    try {
+      final errJson = jsonDecode(body!);
+      return errJson['error'] as String;
+    } catch (err) {
+      return 'Error encountered';
+    }
   }
 
   ApiException(this.statusCode, this.body);

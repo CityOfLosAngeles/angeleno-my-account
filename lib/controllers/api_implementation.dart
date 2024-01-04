@@ -3,6 +3,7 @@ import 'dart:io';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'package:angeleno_project/models/api_exception.dart';
+import 'package:angeleno_project/models/api_response.dart';
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -140,8 +141,7 @@ class UserApi extends Api {
   }
 
   @override
-  Future<Map<String, dynamic>> getAuthenticationMethods(final String userId) async {
-    late Map<String, dynamic> response;
+  Future<ApiResponse> getAuthenticationMethods(final String userId) async {
 
     final headers = {
       'Content-Type': 'application/json'
@@ -156,34 +156,22 @@ class UserApi extends Api {
           body: reqBody
       );
 
-      final jsonBody = jsonDecode(request.body);
-
       if (request.statusCode == HttpStatus.ok) {
-        response = {
-          'status': request.statusCode,
-          'body': request.body
-        };
+        return ApiResponse(request.statusCode, request.body);
       } else {
         throw ApiException(request.statusCode, request.body);
       }
 
     } on ApiException catch(e) {
-      response = {
-        'status': e.statusCode,
-        'body': e.error
-      };
+      return ApiResponse(e.statusCode, e.error);
     } catch (err) {
-      response = {
-        'status': HttpStatus.internalServerError,
-        'body': 'Error Encountered'
-      };
+      return ApiResponse(HttpStatus.internalServerError, 'Error Encountered');
     }
-
-    return response;
   }
 
   @override
-  Future<Map<String, dynamic>> enrollAuthenticator(final Map<String, String> body) async {
+  Future<Map<String, dynamic>>
+    enrollAuthenticator(final Map<String, String> body) async {
     late Map<String, dynamic> response;
 
     final headers = {
@@ -232,8 +220,7 @@ class UserApi extends Api {
   }
 
   @override
-  Future<Map<String, dynamic>> confirmTOTP(final Map<String, String> body) async {
-    late Map<String, dynamic> response;
+  Future<ApiResponse> confirmTOTP(final Map<String, String> body) async {
 
     final headers = {
       'Content-Type': 'application/json'
@@ -249,31 +236,21 @@ class UserApi extends Api {
       );
 
       if (request.statusCode == HttpStatus.ok) {
-        response = {
-          'status': request.statusCode
-        };
+        return ApiResponse(request.statusCode, '');
       } else {
         throw ApiException(request.statusCode, request.body);
       }
 
     }  on ApiException catch(e) {
-      response = {
-        'status': e.statusCode,
-        'body': e.error
-      };
+      return ApiResponse(e.statusCode, e.error);
     } catch (err) {
-      response = {
-        'status': HttpStatus.internalServerError,
-        'body': 'Error Encountered'
-      };
+      return ApiResponse(HttpStatus.internalServerError, 'Error Encountered.');
     }
-
-    return response;
   }
 
   @override
-  Future<Map<String, dynamic>> unenrollAuthenticator(final Map<String, String> body) async {
-    late Map<String, dynamic> response;
+  Future<ApiResponse> unenrollAuthenticator(final Map<String, String> body)
+  async {
 
     final headers = {
       'Content-Type': 'application/json'
@@ -289,25 +266,15 @@ class UserApi extends Api {
       );
 
       if (request.statusCode == HttpStatus.ok) {
-        response = {
-          'status': request.statusCode
-        };
+        return ApiResponse(request.statusCode, '');
       } else {
         throw ApiException(request.statusCode, request.body);
       }
 
     }  on ApiException catch(e) {
-      response = {
-        'status': e.statusCode,
-        'body': e.error
-      };
+      return ApiResponse(e.statusCode, e.error);
     } catch (err) {
-      response = {
-        'status': HttpStatus.internalServerError,
-        'body': 'Error Encountered'
-      };
+      return ApiResponse(HttpStatus.internalServerError, 'Error Encountered');
     }
-
-    return response;
   }
 }
