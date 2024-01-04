@@ -55,10 +55,11 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
   int _pageIndex = 0;
   String errMsg = '';
-  String otpQrCode = '';
+  String totpQrCode = '';
+  String totpCode = '';
   String qrCodeAltString = '';
   String mfaToken = '';
-  String otpCode = '';
+
   String userPassword = '';
   bool obscurePassword = true;
 
@@ -80,7 +81,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     }
   }
 
-  void enrollOTP() async {
+  void enrollTOTP() async {
 
     setState(() {
       errMsg = '';
@@ -99,11 +100,41 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       final bool success = response['status'] == HttpStatus.ok;
       if (success) {
         setState(() {
-          otpQrCode = response['barcode'] as String;
+          totpQrCode = response['barcode'] as String;
           mfaToken = response['token'] as String;
           qrCodeAltString = response['barcode_string'] as String;
         });
         _navigateToNextPage();
+      } else {
+        setState(() {
+          errMsg = response['body'] as String;
+        });
+      }
+    });
+  }
+
+  void confirmTOTP() async {
+
+    setState(() {
+      errMsg = '';
+    });
+
+    if (totpCode.isEmpty) {
+      return;
+    }
+
+    final Map<String, String> body = {
+      'mfaToken': mfaToken,
+      'userOtpCode': totpCode
+    };
+    UserApi().confirmOTP(body).then((final response) {
+      if (response['status'] == HttpStatus.ok) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
+            behavior: SnackBarBehavior.floating,
+            width: 280.0,
+            content: Text('Authenticator app has been set up.')
+        ));
       } else {
         setState(() {
           errMsg = response['body'] as String;
@@ -129,7 +160,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
           ),
           TextButton(
             onPressed: () {
-              enrollOTP();
+              enrollTOTP();
             },
             child: const Text('Continue'),
           )
@@ -153,7 +184,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                 child: TextFormField(
                   controller: passwordField,
                   onFieldSubmitted: (final value) {
-                    enrollOTP();
+                    enrollTOTP();
                   },
                   obscureText: obscurePassword,
                   enableSuggestions: false,
@@ -226,7 +257,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                   ),
                 ),
                 QrImageView(
-                  data: otpQrCode,
+                  data: totpQrCode,
                   size: 150
                 ),
                 Text(
@@ -262,20 +293,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
             ),
             TextButton(
               onPressed: () {
-                final Map<String, String> body = {
-                  'mfaToken': mfaToken,
-                  'userOtpCode': otpCode
-                };
-                UserApi().confirmOTP(body).then((final response) {
-                  if (response['status'] == HttpStatus.ok) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
-                        behavior: SnackBarBehavior.floating,
-                        width: 280.0,
-                        content: Text('Authenticator app has been set up.')
-                    ));
-                  }
-                });
+               confirmTOTP();
               },
               child: const Text('Finish'),
             )
@@ -292,14 +310,24 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                 ),
                 SizedBox(
                   width: 250,
-                  child: TextField(
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.always,
+                    validator: (final value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Code is required';
+                      }
+                      return null;
+                    },
                     onChanged: (final val) {
                       setState(() {
-                        otpCode = val;
+                        totpCode = val;
                       });
                     },
                   )
-                )
+                ),
+                const SizedBox(height: 15),
+                if (errMsg.isNotEmpty)
+                  Text(errMsg, style: TextStyle(color: colorScheme.error))
               ],
             )
           )

@@ -275,7 +275,7 @@ exports.confirmOTP = onRequest( async (req, res) => {
 
   } catch (err) {
 
-    console.error(err);
+    let customError = '';
 
     const {
       status,
@@ -284,6 +284,10 @@ exports.confirmOTP = onRequest( async (req, res) => {
       }
     } = err?.response;
 
-    res.status(status).send(error_description);
+    if (status === 403) {
+        customError = 'Invalid code.'
+    }
+
+    res.status(status).send({error: customError || error_description});
   }
 })

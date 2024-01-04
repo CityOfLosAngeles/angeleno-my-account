@@ -206,12 +206,20 @@ class UserApi extends Api {
           body: reqBody
       );
 
-      response = {
-        'status': request.statusCode
-      };
+      if (request.statusCode == HttpStatus.ok) {
+        response = {
+          'status': request.statusCode
+        };
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
 
+    }  on ApiException catch(e) {
+      response = {
+        'status': e.statusCode,
+        'body': e.error
+      };
     } catch (err) {
-      // generic server error
       response = {
         'status': HttpStatus.internalServerError,
         'body': 'Error Encountered'
