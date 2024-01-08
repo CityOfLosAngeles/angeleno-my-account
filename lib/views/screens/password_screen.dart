@@ -21,7 +21,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
 
-  final minPasswordLength = 8;
+  final minPasswordLength = 12;
 
   String currentPassword = '';
   String newPassword = '';
