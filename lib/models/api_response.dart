@@ -1,6 +1,6 @@
 class ApiResponse implements Exception {
-  late final int statusCode;
-  late final String body;
+  final int statusCode;
+  final String body;
 
-  ApiResponse(final int statusCode, final String body);
+  ApiResponse(this.statusCode, this.body);
 }
