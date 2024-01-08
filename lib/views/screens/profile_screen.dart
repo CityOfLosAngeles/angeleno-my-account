@@ -11,10 +11,11 @@ import 'package:angeleno_project/models/autofill_place.dart';
 import 'package:angeleno_project/models/autofill_suggestion.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../controllers/Debouncer.dart';
+import 'package:uuid/uuid.dart';
 import '../../controllers/api_implementation.dart';
 import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -29,7 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late UserProvider userProvider;
   late User user;
 
-//
   TextEditingController usrAddressTextController = TextEditingController();
   TextEditingController usrCityTextController = TextEditingController();
   TextEditingController usrStateTextController = TextEditingController();
@@ -38,13 +38,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String sessionToken = "";
   //This is needed since the user becomes overwritten to original user data. But if we check the autofill
   bool autoFilled = false;
-  final apiFetchDebouncer = Debouncer(milliseconds: 555);
-  Timer? timer;
   List<AutofillSuggestion> suggestions = [];
+  late PlaceAPI apiClient;
 
   @override
   void initState() {
     super.initState();
+    sessionToken = Uuid().v4(); //Create token for the session
+    apiClient = PlaceAPI(sessionToken);
   }
 
   @override
@@ -81,7 +82,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<List<AutofillSuggestion>> fetchSuggestions(final String input) async {
     // Implement API call to fetch suggestions based on input
-    final PlaceAPI apiClient = PlaceAPI(sessionToken);
+
+    apiClient.count++;
     return await apiClient.fetchSuggestions(
         input, Localizations.localeOf(context).languageCode);
     //return results;
@@ -93,6 +95,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return await PlaceAPI(sessionToken)
         .getPlaceDetailFromId(autocomplete.placeId!);
+  }
+
+  Future<void> onSuggestionSelected(AutofillSuggestion suggestion) async {
+    final place = await getAutofillFullAddress(suggestion);
+    try {
+      autoFilled = true;
+      usrAddressTextController.clear();
+      user.city = place.city;
+      user.zip = place.zipCode;
+      usrCityTextController.text = place.city!;
+      usrStateTextController.text = place.state!;
+      usrZipTextController.text = place.zipCode!;
+      usrAddressTextController.text = suggestion.streetAddress!;
+    } catch (e) {
+      print(e);
+    }
+
+    //usrAddressTextController.text = suggestion.placeId!;
+//We need this for the Autofill to become active after selecting and saving as the issue made the suggestion keep re-apperaring
+    Future.delayed(const Duration(milliseconds: 999), () {
+      setState(() {
+        autoFilled = false;
+        apiClient.count = 0;
+      });
+    });
   }
 
   @override
@@ -161,84 +188,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                         ),
                         const SizedBox(height: 25.0),
-                        Autocomplete<AutofillSuggestion>(
-                          displayStringForOption:
-                              (final AutofillSuggestion option) =>
-                                  option.description!,
-                          fieldViewBuilder: (final BuildContext context,
-                              controller,
-                              final FocusNode fieldFocusNode,
-                              VoidCallback onFieldSubmitted) {
-                            usrAddressTextController = controller;
-                            return TextFormField(
-                              controller: usrAddressTextController,
-                              focusNode: fieldFocusNode,
-                              decoration: const InputDecoration(
-                                  labelText: 'Address',
-                                  border: OutlineInputBorder()),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            );
-                          },
-                          optionsBuilder: (TextEditingValue textEditingValue) {
-                            if (textEditingValue.text == '' || autoFilled) {
-                              return const Iterable<AutofillSuggestion>.empty();
-                            }
-
-                            apiFetchDebouncer.run(() async {
-                              final suggs =
-                                  await fetchSuggestions(textEditingValue.text);
-                              setState(() {
-                                // Update suggestions list with retrieved suggestions
-                                suggestions = suggs;
-                              });
-                            });
-                            return suggestions; // Prevent initial suggestions before delay
-                          },
-                          initialValue: TextEditingValue(text: user.address!),
-                          onSelected:
-                              (final AutofillSuggestion selection) async {
-                            print(
-                                '\n \n \n \n \n ==========================================================');
-                            final place =
-                                await getAutofillFullAddress(selection);
-
-                            setState(() {
-                              autoFilled = true;
-                              user.city = place.city;
-                              user.zip = place.zipCode;
-                              usrCityTextController.text = place.city!;
-                              usrStateTextController.text = place.state!;
-                              usrZipTextController.text = place.zipCode!;
-                              usrAddressTextController.text =
-                                  selection.streetAddress!;
-                              //usrAddressTextController.text =
-                              //  '${place.streetNumber} ${place.street}';
-                            });
-//This code is used for re-enabling the autofill as when we substitute the full
-//address with the street address it gets triggered again to show suggestion, so it is unnecessary to show it again
-                            Future.delayed(const Duration(milliseconds: 1500),
-                                () {
-                              setState(() {
-                                autoFilled = false;
-                              });
-                            });
-                            debugPrint('You just selected $selection');
-                          },
-                        ),
-
-                        /*
-                        TextFormField(
-                          enabled: userProvider.isEditing,
-                          decoration: const InputDecoration(
-                              labelText: 'Address',
-                              border: OutlineInputBorder()),
-                          keyboardType: TextInputType.streetAddress,
-                          initialValue: user.address,
-                          onChanged: (final val) {
-                            user.address = val;
-                          },
-                        ),*/
+                        TypeAheadField<AutofillSuggestion>(
+                            controller: usrAddressTextController,
+                            // suggestionsCallback: (search) => CityService.of(context).find(search),
+                            debounceDuration: const Duration(milliseconds: 555),
+                            hideOnEmpty: true,
+                            suggestionsCallback: (search) async {
+                              try {
+                                if (search.isEmpty || autoFilled) {
+                                  return [];
+                                } else {
+                                  final cities = await fetchSuggestions(search);
+                                  return cities;
+                                }
+                              } catch (error) {
+                                // Handle errors here
+                                print(error);
+                                return []; // Return an empty list in case of errors
+                              }
+                            },
+                            builder: (context, controller, focusNode) =>
+                                TextField(
+                                  controller: controller,
+                                  focusNode: focusNode,
+                                  //autofocus: false,
+                                  decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        icon: Icon(Icons.clear),
+                                        onPressed: () {
+                                          usrAddressTextController.clear();
+                                        },
+                                      ),
+                                      labelText: 'Address',
+                                      border: OutlineInputBorder()),
+                                ),
+                            itemBuilder: (context, address) => ListTile(
+                                  title: Text(address.description!),
+                                  subtitle: Text(address.streetAddress!),
+                                ),
+                            onSelected: onSuggestionSelected),
                         const SizedBox(height: 25.0),
                         TextFormField(
                           enabled: userProvider.isEditing,

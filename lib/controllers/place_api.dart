@@ -2,7 +2,6 @@
 
 import 'dart:html';
 
-import 'package:angeleno_project/controllers/Debouncer.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 //import 'dart:io';
@@ -13,10 +12,9 @@ import '../utils/constants.dart';
 
 class PlaceAPI {
   final client = Client();
-
+  String sessionToken;
   PlaceAPI(this.sessionToken);
 
-  final sessionToken;
   int count = 0;
 
   final apiKey = placesAPI;
@@ -29,14 +27,16 @@ class PlaceAPI {
     final request =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&types=address&language=$lang&key=$apiKey&sessiontoken=$sessionToken';
     Response? response;
+    //print('the request is $request');
 
     try {
       response = await http.get(Uri.parse(request));
     } catch (e) {
       print(e.toString());
     }
-    count++;
-    print('the count of times we call the API is $count');
+    //count++;
+    print(
+        'the count of times we call the API is $count and sessionToken is $sessionToken');
     //print('client Our response is ${json.decode(response!.body)}');
     // print('client The link is $request');
 
@@ -69,37 +69,42 @@ class PlaceAPI {
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       if (result['status'] == 'OK') {
-        final components =
-            result['result']['address_components'] as List<dynamic>;
-        // build result
-        final place = AutofillPlace();
-        components.forEach((c) {
-          List type = c['types'] as List;
+        try {
+          final components =
+              result['result']['address_components'] as List<dynamic>;
+          // build result
+          final place = AutofillPlace();
+          for (final c in components) {
+            List type = c['types'] as List;
 
-          if (type.contains('street_number')) {
-            // print('pazSTREET# ${c['long_name'] as String}');
-            place.streetNumber = c['long_name'] as String;
+            if (type.contains('street_number')) {
+              // print('pazSTREET# ${c['long_name'] as String}');
+              place.streetNumber = c['long_name'] as String;
+            }
+            if (type.contains('route')) {
+              // print('pazSTREET ${c['long_name'] as String}');
+              place.street = c['long_name'] as String;
+            }
+            if (type.contains('locality')) {
+              // print('pazCITY ${c['long_name'] as String}');
+              place.city = c['long_name'] as String;
+            }
+            if (type.contains('postal_code')) {
+              //print('pazZIP ${c['long_name'] as String}');
+              place.zipCode = c['long_name'] as String;
+            }
+            if (type.contains('administrative_area_level_1')) {
+              // print('pazSTATE ${c['long_name'] as String}');
+              place.state = c['long_name'] as String;
+            }
           }
-          if (type.contains('route')) {
-            // print('pazSTREET ${c['long_name'] as String}');
-            place.street = c['long_name'] as String;
-          }
-          if (type.contains('locality')) {
-            // print('pazCITY ${c['long_name'] as String}');
-            place.city = c['long_name'] as String;
-          }
-          if (type.contains('postal_code')) {
-            //print('pazZIP ${c['long_name'] as String}');
-            place.zipCode = c['long_name'] as String;
-          }
-          if (type.contains('administrative_area_level_1')) {
-            // print('pazSTATE ${c['long_name'] as String}');
-            place.state = c['long_name'] as String;
-          }
-        });
-        return place;
+          return place;
+        } catch (e) {
+          print('$e and the response is $response');
+        }
       }
-      throw Exception(result['error_message']);
+      return AutofillPlace();
+      //throw Exception(result['error_message']);
     } else {
       throw Exception('Failed to fetch suggestion');
     }
