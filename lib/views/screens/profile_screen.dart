@@ -46,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     sessionToken = Uuid().v4(); //Create token for the session
     apiClient = PlaceAPI(sessionToken);
+    //loadAddress();
   }
 
   @override
@@ -77,6 +78,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       updateUser();
                     })));
       });
+    }
+  }
+
+  void loadAddress() {
+    try {
+      usrAddressTextController.text = user.address!;
+      usrCityTextController.text = user.city!;
+      usrStateTextController.text = user.state!;
+      usrZipTextController.text = user.zip!;
+    } catch (e) {
+      print('Cannot load address $e');
     }
   }
 
@@ -131,6 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return const LinearProgressIndicator();
     } else {
       user = userProvider.user!;
+      loadAddress();
     }
 
     return Column(
