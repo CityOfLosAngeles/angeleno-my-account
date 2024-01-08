@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  loadUser() {
+  void loadUser() {
     if (userProvider.user == null) {
       //return const LinearProgressIndicator();
       print('user is null');
