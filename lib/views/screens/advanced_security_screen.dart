@@ -12,7 +12,11 @@ import '../../utils/constants.dart';
 
 class AdvancedSecurityScreen extends StatefulWidget {
   final UserProvider userProvider;
-  const AdvancedSecurityScreen({required this.userProvider, super.key});
+
+  const AdvancedSecurityScreen({
+    required this.userProvider,
+    super.key
+  });
 
   @override
   State<AdvancedSecurityScreen> createState() => _AdvancedSecurityState();
@@ -22,6 +26,8 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
 
   late bool authenticatorEnabled = false;
   late String totpAuthId = '';
+
+  bool initialLoading = true;
 
   @override
   void initState() {
@@ -34,17 +40,25 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
             final String jsonString = response.body;
             final List<dynamic> dataList = jsonDecode(jsonString)
               as List<dynamic>;
-            // When additional MFA is added, we can filter out types
-            // then setState once and do typeArray.contains('totp')
-            // think more about methods to retrieve auth method id
-            for (final element in dataList) {
-              if (element['type'] == 'totp') {
-                setState(() {
-                  totpAuthId = element['id'] as String;
-                  authenticatorEnabled = true;
-                });
+            if (dataList.isNotEmpty) {
+              // When additional MFA is added, we can filter out types
+              // then setState once and do typeArray.contains('totp')
+              // think more about methods to retrieve auth method id
+              for (final element in dataList) {
+                if (element['type'] == 'totp') {
+                  setState(() {
+                    totpAuthId = element['id'] as String;
+                    authenticatorEnabled = true;
+                    initialLoading = false;
+                  });
+                }
               }
+            } else {
+              setState(() {
+                initialLoading = false;
+              });
             }
+
           }
     });
   }
@@ -56,7 +70,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     }).then((final response) {
       final bool success = response.statusCode == HttpStatus.ok;
       if (success) {
-        Navigator.pop(context);
+        Navigator.pop(context, response.statusCode.toString());
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
             behavior: SnackBarBehavior.floating,
             width: 280.0,
@@ -70,57 +84,75 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   }
 
   @override
-  Widget build(final BuildContext context) => Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text('Authenticator App (Timed One-Time Password)'),
-          FilledButton(
-            onPressed: () {
-              authenticatorEnabled ?
-              showDialog<void>(
-                context: context,
-                builder: (final BuildContext context) => AlertDialog(
-                  title: const Text('Remove authenticator app?'),
-                  content: const SingleChildScrollView(
-                    child: ListBody(
-                      children: <Widget>[
-                        // ignore: avoid_escaping_inner_quotes
-                        Text('You won\'t be able to use your authenticator '
-                        'app to sign into your Angeleno Account.')
+  Widget build(final BuildContext context) => initialLoading ?
+    const LinearProgressIndicator()
+    :
+    Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Authenticator App (Timed One-Time Password)'),
+            authenticatorEnabled ?
+              TextButton(
+                onPressed: () => showDialog<String>(
+                    context: context,
+                    builder: (final BuildContext context) => AlertDialog(
+                      title: const Text('Remove authenticator app?'),
+                      content: const SingleChildScrollView(
+                          child: ListBody(
+                            children: <Widget>[
+                              // ignore: avoid_escaping_inner_quotes
+                              Text('You won\'t be able to use your authenticator '
+                                  'app to sign into your Angeleno Account.')
+                            ],
+                          )
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('Cancel'),
+                          onPressed: () {
+                            Navigator.pop(context, '');
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Ok'),
+                          onPressed: () {
+                            disableAuthenticator();
+                          },
+                        )
                       ],
                     )
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('Cancel'),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                    TextButton(
-                     child: const Text('Ok'),
-                     onPressed: () {
-                       disableAuthenticator();
-                     },
-                    )
-                  ],
-                )
+                ).then((final value) {
+                  if (value != null && value == HttpStatus.ok.toString()) {
+                    setState(() {
+                      authenticatorEnabled = false;
+                    });
+                  }
+                }),
+                child: const Text('Disabled'),
               )
               :
-              showDialog<void>(
-                context: context,
-                builder: (final BuildContext context) =>
-                  const AuthenticatorDialog(),
-              );
-            },
-            child: Text(authenticatorEnabled ? 'Disable' : 'Enable')
-          ),
-        ],
-      )
-    ],
-  );
+              FilledButton(
+                onPressed: () {
+                  showDialog<String>(
+                    context: context,
+                    builder: (final BuildContext context) =>
+                      const AuthenticatorDialog(),
+                  ).then((final value) {
+                    if (value != null && value == HttpStatus.ok.toString()) {
+                      setState(() {
+                        authenticatorEnabled = true;
+                      });
+                    }
+                  });
+                },
+                child: Text(authenticatorEnabled ? 'Disable' : 'Enable')
+              ),
+            ],
+        )
+      ],
+    );
 }
 
 class AuthenticatorDialog extends StatefulWidget {
@@ -213,7 +245,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     };
     UserApi().confirmTOTP(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
-        Navigator.pop(context);
+        Navigator.pop(context, response.statusCode.toString());
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
             behavior: SnackBarBehavior.floating,
             width: 280.0,
@@ -266,6 +298,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
               SizedBox(
                 width: 250,
                 child: TextFormField(
+                  autofocus: true,
                   controller: passwordField,
                   onFieldSubmitted: (final value) {
                     enrollTOTP();
@@ -395,6 +428,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                 SizedBox(
                   width: 250,
                   child: TextFormField(
+                    autofocus: true,
                     autovalidateMode: AutovalidateMode.always,
                     validator: (final value) {
                       if (value == null || value.trim().isEmpty) {

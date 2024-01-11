@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _unsavedDataDialog(index);
     } else {
       // Could use a cleaner implementation
-      if ([3, 4, 5].contains(index)) {
+      if ([3, 4, 5, 6].contains(index)) {
         switch(index) {
           case 3:
             await launchUrl(
@@ -86,6 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Uri.parse('https://angeleno.lacity.org/help')
             );
             break;
+          case 6:
+            userProvider.logout();
+            break;
         }
       } else {
         setState(() {
@@ -100,7 +103,9 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> get screens => <Widget>[
         const ProfileScreen(),
         const PasswordScreen(),
-        AdvancedSecurityScreen(userProvider: userProvider)
+        AdvancedSecurityScreen(
+            userProvider: userProvider
+        )
       ];
 
   @override
@@ -163,6 +168,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
                 child: Divider(),
               ),
+              const NavigationDrawerDestination(
+                  label: Text('Logout'),
+                  icon: Icon(Icons.logout)
+              )
             ],
           ),
           body: Stack(
