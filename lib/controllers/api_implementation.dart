@@ -86,7 +86,7 @@ class UserApi extends Api {
       final body = json.encode(user);
 
       final response = await http.post(
-          Uri.parse('/updateUser'),
+          Uri.parse('/auth0Api/updateUser'),
           headers: headers,
           body: body
       ).timeout(const Duration(seconds: 15));
@@ -119,7 +119,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/updatePassword'),
+          Uri.parse('/auth0Api/updatePassword'),
           headers: headers,
           body: reqBody
       );
@@ -151,7 +151,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/authMethods'),
+          Uri.parse('/auth0Api/authMethods'),
           headers: headers,
           body: reqBody
       );
@@ -182,7 +182,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/enrollOTP'),
+          Uri.parse('/auth0Api/enrollOTP'),
           headers: headers,
           body: reqBody
       );
@@ -230,7 +230,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/confirmOTP'),
+          Uri.parse('/auth0Api/confirmOTP'),
           headers: headers,
           body: reqBody
       );
@@ -260,7 +260,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/unenrollMFA'),
+          Uri.parse('/auth0Api/unenrollMFA'),
           headers: headers,
           body: reqBody
       );
