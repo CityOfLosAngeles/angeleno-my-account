@@ -9,34 +9,8 @@
     ],
     "rewrites": [
       {
-        "source": "/updateUser",
-        "function": "updateUser",
-        "region": "us-central1",
-        "pinTag": true
-      },
-      {
-        "source": "/updatePassword",
-        "function": "updatePassword",
-        "region": "us-central1"
-      },
-      {
-        "source": "/enrollOTP",
-        "function": "enrollOTP",
-        "region": "us-central1"
-      },
-      {
-        "source": "/confirmOTP",
-        "function": "confirmOTP",
-        "region": "us-central1"
-      },
-      {
-        "source": "/authMethods",
-        "function": "authMethods",
-        "region": "us-central1"
-      },
-      {
-        "source": "/unenrollMFA",
-        "function": "unenrollMFA",
+        "source": "/auth0Api",
+        "function": "auth0Api",
         "region": "us-central1"
       }
     ]

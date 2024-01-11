@@ -130,7 +130,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                     });
                   }
                 }),
-                child: const Text('Disabled'),
+                child: const Text('Disable'),
               )
               :
               FilledButton(
