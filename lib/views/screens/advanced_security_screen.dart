@@ -94,7 +94,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
           children: [
             const Text('Authenticator App (Timed One-Time Password)'),
             authenticatorEnabled ?
-              TextButton(
+              FilledButton.tonal(
                 onPressed: () => showDialog<String>(
                     context: context,
                     builder: (final BuildContext context) => AlertDialog(
