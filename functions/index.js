@@ -23,8 +23,4 @@ app.post("/confirmOTP", confirmOTP);
 app.post("/authMethods", authMethods);
 app.post("/unenrollMFA", unenrollMFA);
 
-const auth0Api = onRequest(app);
-
-module.exports = {
-  auth0Api
-};
+exports.auth0api = onRequest(app);

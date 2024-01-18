@@ -9,8 +9,8 @@
     ],
     "rewrites": [
       {
-        "source": "/auth0Api",
-        "function": "auth0Api",
+        "source": "**",
+        "function": "auth0api",
         "region": "us-central1"
       }
     ]
