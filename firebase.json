@@ -9,14 +9,8 @@
     ],
     "rewrites": [
       {
-        "source": "/updateUser",
-        "function": "updateUser",
-        "region": "us-central1",
-        "pinTag": true
-      },
-      {
-        "source": "/updatePassword",
-        "function": "updatePassword",
+        "source": "**",
+        "function": "auth0api",
         "region": "us-central1"
       }
     ]
