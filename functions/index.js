@@ -8,8 +8,8 @@ admin.initializeApp();
 const {
   updateUser,
   updatePassword,
-  enrollOTP,
-  confirmOTP,
+  enrollMFA,
+  confirmMFA,
   authMethods,
   unenrollMFA
 } = require("./api/auth0");
@@ -18,8 +18,8 @@ app.use(express.json());
 
 app.post("/updateUser", updateUser);
 app.post("/updatePassword", updatePassword);
-app.post("/enrollOTP", enrollOTP);
-app.post("/confirmOTP", confirmOTP);
+app.post("/enrollMFA", enrollMFA);
+app.post("/confirmMFA", confirmMFA);
 app.post("/authMethods", authMethods);
 app.post("/unenrollMFA", unenrollMFA);
 

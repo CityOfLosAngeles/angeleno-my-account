@@ -10,7 +10,12 @@ import '../../controllers/user_provider.dart';
 import '../../utils/constants.dart';
 
 class AuthenticatorDialog extends StatefulWidget {
-  const AuthenticatorDialog({super.key});
+  final UserProvider userProvider;
+
+  const AuthenticatorDialog({
+    required this.userProvider,
+    super.key
+  });
 
   @override
   State<AuthenticatorDialog> createState() => _AuthenticatorDialogState();
@@ -32,6 +37,13 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
   String userPassword = '';
   bool obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    userProvider = widget.userProvider;
+  }
 
   @override
   void dispose() {
@@ -63,10 +75,11 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
     final Map<String, String> body = {
       'email': userProvider.user!.email,
-      'password': passwordField.text
+      'password': passwordField.text,
+      'mfaFactor': 'otp'
     };
 
-    UserApi().enrollAuthenticator(body).then((final response) {
+    UserApi().enrollMFA(body).then((final response) {
       final bool success = response['status'] == HttpStatus.ok;
       if (success) {
         setState(() {
@@ -97,13 +110,14 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'mfaToken': mfaToken,
       'userOtpCode': totpCode
     };
-    UserApi().confirmTOTP(body).then((final response) {
+
+    UserApi().confirmMFA(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
         Navigator.pop(context, response.statusCode.toString());
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
-            behavior: SnackBarBehavior.floating,
-            width: 280.0,
-            content: Text('Authenticator app has been set up.')
+          behavior: SnackBarBehavior.floating,
+          width: 280.0,
+          content: Text('Authenticator app has been set up.')
         ));
       } else {
         setState(() {
@@ -280,22 +294,22 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                         softWrap: true
                     ),
                     SizedBox(
-                        width: 250,
-                        child: TextFormField(
-                          autofocus: true,
-                          autovalidateMode: AutovalidateMode.always,
-                          validator: (final value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Code is required';
-                            }
-                            return null;
-                          },
-                          onChanged: (final val) {
-                            setState(() {
-                              totpCode = val;
-                            });
-                          },
-                        )
+                      width: 250,
+                      child: TextFormField(
+                        autofocus: true,
+                        autovalidateMode: AutovalidateMode.always,
+                        validator: (final value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Code is required';
+                          }
+                          return null;
+                        },
+                        onChanged: (final val) {
+                          setState(() {
+                            totpCode = val;
+                          });
+                        },
+                      )
                     ),
                     const SizedBox(height: 15),
                     if (errMsg.isNotEmpty)
@@ -314,29 +328,24 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
   ];
 
   @override
-  Widget build(final BuildContext context) {
-
-    userProvider = context.watch<UserProvider>();
-
-    return Dialog(
-        insetPadding: EdgeInsets.zero,
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: PageView.builder(
-              controller: _pageController,
-              itemCount: 3,
-              onPageChanged: (final index) {
-                setState(() {
-                  _pageIndex++;
-                });
-              },
-              itemBuilder: (final context, final index) => Container(
-                  padding: const EdgeInsets.all(20),
-                  child: screens[_pageIndex]
-              )
-          ),
+  Widget build(final BuildContext context) => Dialog(
+    insetPadding: EdgeInsets.zero,
+    child: SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: 3,
+        onPageChanged: (final index) {
+          setState(() {
+            _pageIndex++;
+          });
+        },
+        itemBuilder: (final context, final index) => Container(
+          padding: const EdgeInsets.all(20),
+          child: screens[_pageIndex]
         )
-    );
-  }
+      ),
+    )
+  );
 }

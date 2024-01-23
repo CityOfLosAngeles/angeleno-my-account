@@ -171,7 +171,7 @@ class UserApi extends Api {
 
   @override
   Future<Map<String, dynamic>>
-    enrollAuthenticator(final Map<String, String> body) async {
+    enrollMFA(final Map<String, String> body) async {
     late Map<String, dynamic> response;
 
     final headers = {
@@ -182,15 +182,16 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/enrollOTP'),
+          Uri.parse('/enrollMFA'),
           headers: headers,
           body: reqBody
       );
 
       final jsonBody = jsonDecode(request.body);
-      final barcode = jsonBody['barcode_uri'];
-      final token = jsonBody['token'];
-      final tokenSecret = jsonBody['secret'];
+      final barcode = jsonBody['barcode_uri'] ?? '';
+      final token = jsonBody['token'] ?? '';
+      final tokenSecret = jsonBody['secret'] ?? '';
+      final oobCode = jsonBody['oob_code'] ?? '';
 
       if (request.statusCode == HttpStatus.ok) {
         response = {
@@ -198,7 +199,8 @@ class UserApi extends Api {
           'body': request.body,
           'barcode': barcode,
           'token': token,
-          'barcode_string': tokenSecret
+          'barcode_string': tokenSecret,
+          'oobCode': oobCode
         };
       } else {
         throw ApiException(request.statusCode, request.body);
@@ -220,7 +222,7 @@ class UserApi extends Api {
   }
 
   @override
-  Future<ApiResponse> confirmTOTP(final Map<String, String> body) async {
+  Future<ApiResponse> confirmMFA(final Map<String, String> body) async {
 
     final headers = {
       'Content-Type': 'application/json'
@@ -230,7 +232,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/confirmOTP'),
+          Uri.parse('/confirmMFA'),
           headers: headers,
           body: reqBody
       );
@@ -249,8 +251,7 @@ class UserApi extends Api {
   }
 
   @override
-  Future<ApiResponse> unenrollAuthenticator(final Map<String, String> body)
-  async {
+  Future<ApiResponse> unenrollMFA(final Map<String, String> body) async {
 
     final headers = {
       'Content-Type': 'application/json'
