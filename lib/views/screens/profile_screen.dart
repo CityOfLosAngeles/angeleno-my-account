@@ -233,8 +233,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               hideOnEmpty: true,
                               hideOnLoading: true,
                               suggestionsCallback: (search) async {
+                                //At initial, if the widget is called, it show suggestions but we should avoid at ommit, so...
+                                bool isInitial = user.address ==
+                                    usrAddressTextController.text;
                                 try {
-                                  if (search.isEmpty || autoFilled) {
+                                  if (search.isEmpty ||
+                                      autoFilled ||
+                                      isInitial) {
                                     // print('Show nothing');
                                     return [];
                                   } else {
@@ -251,6 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               },
                               builder: (context, controller, focusNode) =>
                                   TextField(
+                                    enabled: userProvider.isEditing,
                                     controller: controller,
                                     focusNode: focusNode,
                                     //autofocus: false,
