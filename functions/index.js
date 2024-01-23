@@ -6,7 +6,6 @@ const { User } = require("./models/user");
 admin.initializeApp();
 
 
-
 const {
   auth0ClientId,
   auth0ClientSecret,

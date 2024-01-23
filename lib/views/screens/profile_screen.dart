@@ -200,6 +200,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       userProvider.isEditing ? 'Save' : 'Edit'),
                                 ),
                                 if (userProvider.isEditing)
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                if (userProvider.isEditing)
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
