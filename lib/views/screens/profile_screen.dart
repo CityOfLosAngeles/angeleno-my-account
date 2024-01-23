@@ -117,39 +117,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<List<AutofillSuggestion>> fetchSuggestions(final String input) async {
     // Implement API call to fetch suggestions based on input
-
     apiClient.count++;
     return await apiClient.fetchSuggestions(
         input, Localizations.localeOf(context).languageCode);
-    //return results;
   }
-
+/*
   Future<AutofillPlace> getAutofillFullAddress(
-      AutofillSuggestion autocomplete) async {
-    print('The autocomplete is $autocomplete');
+      final AutofillSuggestion autocomplete) async {
+    print('The autocomplete request to send to the API $autocomplete');
 
+    //return AutofillPlace();
     return await PlaceAPI(sessionToken)
         .getPlaceDetailFromId(autocomplete.placeId!);
-  }
+  }*/
 
-  Future<void> onSuggestionSelected(AutofillSuggestion suggestion) async {
-    final place = await getAutofillFullAddress(suggestion);
+  Future<void> onSuggestionSelected(final AutofillSuggestion sugg) async {
+    print('We are in onSuggestionSelected with suggestion: ${sugg.toString()}');
+    autoFilled = true;
+    AutofillPlace place = AutofillPlace();
     try {
-      autoFilled = true;
       usrAddressTextController.clear();
+      usrAddressTextController.text = sugg.streetAddress!;
+      place = await PlaceAPI(sessionToken).getPlaceDetailFromId(sugg.placeId!);
+    } catch (e) {
+      print('The autofillPlace error is $e');
+    }
+
+    try {
       user.city = place.city;
       user.zip = place.zipCode;
+      user.state = place.state;
+      user.address = sugg.streetAddress;
+      //user.address2 =
       usrCityTextController.text = place.city!;
       usrStateTextController.text = place.state!;
       usrZipTextController.text = place.zipCode!;
-      usrAddressTextController.text = suggestion.streetAddress!;
     } catch (e) {
-      print(e);
+      print('The error is $e');
     }
 
-    //usrAddressTextController.text = suggestion.placeId!;
 //We need this for the Autofill to become active after selecting and saving as the issue made the suggestion keep re-apperaring
-    Future.delayed(const Duration(milliseconds: 999), () {
+    Future.delayed(const Duration(milliseconds: 1234), () {
       setState(() {
         autoFilled = false;
         apiClient.count = 0;
@@ -223,14 +231,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               debounceDuration:
                                   const Duration(milliseconds: 555),
                               hideOnEmpty: true,
-                              hideOnUnfocus: true,
+                              hideOnLoading: true,
                               suggestionsCallback: (search) async {
                                 try {
                                   if (search.isEmpty || autoFilled) {
+                                    // print('Show nothing');
                                     return [];
                                   } else {
                                     final cities =
                                         await fetchSuggestions(search);
+                                    //print('Show cities');
                                     return cities;
                                   }
                                 } catch (error) {
@@ -264,6 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: userProvider.isEditing,
                             decoration: const InputDecoration(
                                 labelText: 'Address 2',
+                                //border: InputBorder.none,
                                 border: OutlineInputBorder()),
                             keyboardType: TextInputType.streetAddress,
                             initialValue: user.address2,
@@ -276,8 +287,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: false,
                             controller: usrCityTextController,
                             decoration: const InputDecoration(
-                                labelText: 'City',
-                                border: OutlineInputBorder()),
+                                labelText: 'City', border: InputBorder.none
+                                // border: OutlineInputBorder()
+                                ),
                             keyboardType: TextInputType.streetAddress,
                             //initialValue: user.city,
                             onChanged: (final val) {
@@ -289,7 +301,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: false,
                             controller: usrZipTextController,
                             decoration: const InputDecoration(
-                                labelText: 'Zip', border: OutlineInputBorder()),
+                              labelText: 'Zip', border: InputBorder.none,
+                              //border: OutlineInputBorder()
+                            ),
                             //initialValue: user.zip,
                             onChanged: (final val) {
                               user.zip = val;
@@ -301,8 +315,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             enabled: false,
                             controller: usrStateTextController,
                             decoration: const InputDecoration(
-                                labelText: 'State',
-                                border: OutlineInputBorder()),
+                                labelText: 'State', border: InputBorder.none
+                                // border: OutlineInputBorder()
+                                ),
                             keyboardType: TextInputType.streetAddress,
                             //initialValue: user.state,
                             onChanged: (final val) {

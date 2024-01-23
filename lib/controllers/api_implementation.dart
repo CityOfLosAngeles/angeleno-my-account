@@ -8,34 +8,29 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
 import 'package:angeleno_project/controllers/api.dart';
 import 'package:angeleno_project/models/user.dart';
+import 'package:http/http.dart';
 
 class UserApi extends Api {
-
   String createJwt() {
     final jwt = JWT(
-      {
-        'exp': DateTime.now()
-            .add(const Duration(hours: 1))
-            .millisecondsSinceEpoch ~/ 1000,
-        'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        'aud': 'https://www.googleapis.com/oauth2/v4/token',
-        'target_audience': cloudFunctionURL
-      },
-      issuer: serviceAccountEmail,
-      subject: serviceAccountEmail,
-      header: {
-        'alg':'RS256',
-        'typ':'JWT'
-      }
-    );
+        {
+          'exp': DateTime.now()
+                  .add(const Duration(hours: 1))
+                  .millisecondsSinceEpoch ~/
+              1000,
+          'iat': DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          'aud': 'https://www.googleapis.com/oauth2/v4/token',
+          'target_audience': cloudFunctionURL
+        },
+        issuer: serviceAccountEmail,
+        subject: serviceAccountEmail,
+        header: {'alg': 'RS256', 'typ': 'JWT'});
 
-    final privKey = serviceAccountSecret
-        .replaceAll(r'\n', '\n');
+    final privKey = serviceAccountSecret.replaceAll(r'\n', '\n');
 
     final rsaPrivKey = RSAPrivateKey(privKey);
 
     return jwt.sign(rsaPrivKey, algorithm: JWTAlgorithm.RS256);
-
   }
 
   Future<String> getOAuthToken() async {
@@ -44,15 +39,16 @@ class UserApi extends Api {
     final createdToken = createJwt();
 
     try {
-      final response = await http.post(
-          Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer $createdToken'
-          },
-          // ignore: lines_longer_than_80_chars
-          body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Bearer $createdToken'
+              },
+              // ignore: lines_longer_than_80_chars
+              body:
+                  'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken')
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == HttpStatus.ok) {
         final jsonRes = jsonDecode(response.body);
@@ -65,10 +61,10 @@ class UserApi extends Api {
     return newToken;
   }
 
-
   @override
   Future<int> updateUser(final User user) async {
     late int statusCode;
+    print('We are in updateUser');
 
     try {
       final token = await getOAuthToken();
@@ -83,12 +79,20 @@ class UserApi extends Api {
       };
 
       final body = json.encode(user);
+      Response? response;
 
-      final response = await http.post(
-          Uri.parse('/updateUser'),
-          headers: headers,
-          body: body
-      ).timeout(const Duration(seconds: 15));
+      if (isTestingLocally) {
+        print('We are testing locally UPDATE USER');
+        response = await http
+            //.post(Uri.parse('AUTH0_FIREBASE_UPDATE_USER_BASE_URL/updateUser'),
+            .post(Uri.parse(UpdateUserAPIFirebaseURL),
+                headers: headers, body: body)
+            .timeout(const Duration(seconds: 15));
+      } else {
+        response = await http
+            .post(Uri.parse('/updateUser'), headers: headers, body: body)
+            .timeout(const Duration(seconds: 15));
+      }
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
@@ -98,7 +102,7 @@ class UserApi extends Api {
 
       statusCode = response.statusCode;
     } catch (err) {
-      print (err);
+      print(err);
       // generic server error
       statusCode = HttpStatus.internalServerError;
     }
@@ -110,25 +114,29 @@ class UserApi extends Api {
   Future<Map<String, dynamic>> updatePassword(final PasswordBody body) async {
     late Map<String, dynamic> response;
 
-    final headers = {
-      'Content-Type': 'application/json'
-    };
+    final headers = {'Content-Type': 'application/json'};
 
     final reqBody = json.encode(body);
 
     try {
-      final request = await http.post(
-          Uri.parse('/updatePassword'),
-          headers: headers,
-          body: reqBody
-      );
+      Response? request;
+      if (isTestingLocally) {
+        await http.post(Uri.parse(updatePasswordAPIFirebaseURL),
+            headers: headers, body: reqBody);
+      } else {
+        await http.post(Uri.parse('/updatePassword'),
+            headers: headers, body: reqBody);
+      }
+
+      // await http.post(Uri.parse('updatePasswordAPIFirebaseURL/updatePassword'),
+      //   headers: headers, body: reqBody);
 
       response = {
-        'status': request.statusCode,
+        'status': request!.statusCode,
         'body': request.body.isNotEmpty ? request.body : 'Error Encountered'
       };
     } catch (err) {
-      print (err);
+      print(err);
       // generic server error
       response = {
         'status': HttpStatus.internalServerError,

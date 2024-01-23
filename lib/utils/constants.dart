@@ -9,6 +9,17 @@ const serviceAccountSecret = String.fromEnvironment('SA_SECRET_KEY');
 const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
 const placesAPI = String.fromEnvironment('PLACES_API_KEY');
 
+const placesAPIFirebaseURL =
+    String.fromEnvironment('MAPS_API_FIREBASE_PLACE_DETAILS_BASE_URL');
+const fetchSuggestionsAPIFirebaseURL =
+    String.fromEnvironment('MAPS_API_FIREBASE_AUTOFILL_SUGGESTIONS_BASE_URL');
+const updatePasswordAPIFirebaseURL =
+    String.fromEnvironment('AUTH0_FIREBASE_UPDATE_USER_PASSWORD_BASE_URL');
+const UpdateUserAPIFirebaseURL =
+    String.fromEnvironment('AUTH0_FIREBASE_UPDATE_USER_BASE_URL');
+
+const bool isTestingLocally = true;
+
 /* Colors */
 ColorScheme colorScheme = const ColorScheme(
   brightness: Brightness.light,

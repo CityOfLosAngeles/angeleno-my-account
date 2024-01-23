@@ -1,15 +1,18 @@
-const {onRequest} = require("firebase-functions/v2/https");
+const { onRequest } = require("firebase-functions/v2/https");
 const axios = require("axios");
 const admin = require("firebase-admin");
-const {User} = require("./models/user");
+const { User } = require("./models/user");
 
 admin.initializeApp();
+
+
 
 const {
   auth0ClientId,
   auth0ClientSecret,
   auth0Domain
 } = process.env;
+
 
 const getAccessToken = async () => {
   const options = {
@@ -24,10 +27,10 @@ const getAccessToken = async () => {
   };
 
   const request = await axios.post(
-      `https://${auth0Domain}/oauth/token`,
-      body, {
-        headers: options
-      }
+    `https://${auth0Domain}/oauth/token`,
+    body, {
+    headers: options
+  }
   );
 
   if (request.status === 200) {
@@ -35,7 +38,7 @@ const getAccessToken = async () => {
   }
 };
 
-exports.updateUser = onRequest( async (req, res) => {
+exports.updateUser = onRequest(async (req, res) => {
   let user;
 
   try {
@@ -75,7 +78,7 @@ exports.updateUser = onRequest( async (req, res) => {
   if (user.city) {
     primaryAddress["city"] = user.city;
   }
-
+  console.log(user);
   const metaAddresses = user.metadata["addresses"];
 
   if (metaAddresses) {
@@ -115,7 +118,7 @@ exports.updateUser = onRequest( async (req, res) => {
   }
 });
 
-exports.updatePassword = onRequest( async (req, res) => {
+exports.updatePassword = onRequest(async (req, res) => {
   const body = req.body;
 
   try {
@@ -164,11 +167,73 @@ exports.updatePassword = onRequest( async (req, res) => {
     console.error(`Error: ${err.message}`);
 
     const {
-        error_description,
-        message
+      error_description,
+      message
     } = err?.response?.data
 
     res.status(500).send(message || error_description || 'Error encountered');
     return;
+  }
+});
+
+const functions = require('firebase-functions');
+const cors = require('cors')({ origin: true }); // Enable CORS for all origins
+
+exports.corsProxyAutofill = functions.https.onRequest(async (req, res) => {
+  //const { url } = req.query;
+  console.log('We are in corsProxyAutofill');
+  const { url, types, language, sessiontoken, key } = req.query;
+  //console.log('the url is ' + url + " : " +sessiontoken+ " : "+key+" : "+language + " : "+types);
+ 
+ const reconstructedString = url+"&types="+types+"&language="+language+"&key="+key+"&sessiontoken="+sessiontoken;
+ console.log('The reconstructed string is: \n'+reconstructedString); 
+
+  try {
+      // Handle preflight request
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+      res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+
+    // Proxy the actual request
+    const response = await axios.get(reconstructedString, {
+      withCredentials: true, // Forward cookies for authenticated requests
+    });
+
+    res.set('Access-Control-Allow-Origin', '*'); // Set CORS headers for the response
+    res.status(response.status).send(response.data);
+
+  } catch (error) {
+    console.error('Error during proxy request:', error);
+    res.status(500).send('Error fetching data');
+  }
+});
+
+exports.corsProxyPlaceDetails = functions.https.onRequest(async (req, res) => {
+  //const { url } = req.query;
+  console.log('We are in corsProxyPlaceDetails');
+  const { url, place_id, fields, sessiontoken, key } = req.query;
+  console.log('the url: ' + url + " \nsessiontoken: " +sessiontoken+ " \nkey: "+key+" \nfields: "+fields + " \nplace_id: "+place_id);
+ 
+ const reconstructedString = url+"&fields="+fields+"&key="+key+"&sessiontoken="+sessiontoken;
+ console.log('The reconstructed string is: \n'+reconstructedString); 
+
+  try {
+      // Handle preflight request
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+      res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Proxy the actual request
+    const response = await axios.get(reconstructedString, {
+      withCredentials: true, // Forward cookies for authenticated requests
+    });
+
+    res.set('Access-Control-Allow-Origin', '*'); // Set CORS headers for the response
+    res.status(response.status).send(response.data);
+
+  } catch (error) {
+    console.error('Error during proxy request:', error);
+    res.status(500).send('Error fetching data');
   }
 });
