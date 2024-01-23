@@ -198,7 +198,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   },
                                   child: Text(
                                       userProvider.isEditing ? 'Save' : 'Edit'),
-                                )
+                                ),
+                                if (userProvider.isEditing)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        userProvider.toggleEditing();
+                                      });
+                                    },
+                                    child: const Text('Cancel'),
+                                  )
                               ]),
                           const SizedBox(height: 25.0),
                           TextFormField(
