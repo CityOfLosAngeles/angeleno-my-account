@@ -40,6 +40,7 @@ class _MobileDialogState extends State<MobileDialog> {
   String oobCode = '';
   String codeProvided = '';
   bool obscurePassword = true;
+  bool validPhoneNumber = false;
   int _pageIndex = 0;
 
   @override
@@ -73,7 +74,7 @@ class _MobileDialogState extends State<MobileDialog> {
       errMsg = '';
     });
 
-    if (passwordField.text.isEmpty) {
+    if (passwordField.text.isEmpty || !validPhoneNumber) {
       return;
     }
 
@@ -132,7 +133,7 @@ class _MobileDialogState extends State<MobileDialog> {
       icon: const Icon(Icons.close)
   );
 
-  Widget get passwordPrompt => Column(
+  Widget get phonePrompt => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Row(
@@ -141,7 +142,7 @@ class _MobileDialogState extends State<MobileDialog> {
           dialogClose,
           TextButton(
             onPressed: () {
-              enrollMobile();
+              _navigateToNextPage();
             },
             child: const Text('Continue'),
           )
@@ -165,7 +166,7 @@ class _MobileDialogState extends State<MobileDialog> {
                     phoneNumber = number.phoneNumber!;
                   },
                   onInputValidated: (final bool value) {
-                    print(value);
+                   validPhoneNumber = value;
                   },
                   selectorTextStyle: const TextStyle(color: Colors.black),
                   initialValue: number,
@@ -180,7 +181,34 @@ class _MobileDialogState extends State<MobileDialog> {
                   },
                 ),
               ),
-              const SizedBox(height: 40),
+            ],
+          ),
+        ),
+      )
+    ],
+  );
+
+  Widget get passwordPrompt => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          dialogClose,
+          TextButton(
+            onPressed: () {
+              enrollMobile();
+            },
+            child: const Text('Continue'),
+          )
+        ],
+      ),
+      Expanded(
+        child: Align(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 15),
               const Text(
                 'Please enter your password:',
                 textAlign: TextAlign.center,
@@ -279,6 +307,7 @@ class _MobileDialogState extends State<MobileDialog> {
   );
 
   List<Widget> get screens => [
+    phonePrompt,
     passwordPrompt,
     codeScreen
   ];
