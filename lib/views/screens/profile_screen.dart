@@ -69,10 +69,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void updateUser() {
-    overlayProvider.showLoading();
-
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
+      overlayProvider.showLoading();
       UserApi().updateUser(user).then((final response) {
         final success = response == html.HttpStatus.ok;
         overlayProvider.hideLoading();
@@ -81,12 +80,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: 280.0,
             content: Text(success ? 'User updated' : 'User update failed'),
             action: success
-                ? null
-                : SnackBarAction(
-                    label: 'Retry',
-                    onPressed: () {
-                      updateUser();
-                    })));
+              ? null
+              : SnackBarAction(
+                  label: 'Retry',
+                  onPressed: () {
+                    updateUser();
+                  })));
       });
     }
   }

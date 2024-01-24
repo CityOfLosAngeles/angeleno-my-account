@@ -71,8 +71,8 @@ class User {
 
   @override
   int get hashCode => firstName.hashCode ^ lastName.hashCode ^
-    zip.hashCode ^ address.hashCode ^ address2.hashCode ^ city.hashCode ^ state.hashCode ^
-    phone.hashCode;
+    zip.hashCode ^ address.hashCode ^ address2.hashCode ^ city.hashCode ^
+    state.hashCode ^ phone.hashCode;
 
 
 }

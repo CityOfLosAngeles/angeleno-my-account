@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
+import 'package:angeleno_project/models/api_exception.dart';
+import 'package:angeleno_project/models/api_response.dart';
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -124,7 +126,7 @@ class UserApi extends Api {
         await http.post(Uri.parse(updatePasswordAPIFirebaseURL),
             headers: headers, body: reqBody);
       } else {
-        await http.post(Uri.parse('/updatePassword'),
+        await http.post(Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0api/updatePassword'),
             headers: headers, body: reqBody);
       }
 
@@ -145,5 +147,143 @@ class UserApi extends Api {
     }
 
     return response;
+  }
+
+  @override
+  Future<ApiResponse> getAuthenticationMethods(final String userId) async {
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode({'userId': userId});
+
+    try {
+      final request = await http.post(
+          Uri.parse('/authMethods'),
+          headers: headers,
+          body: reqBody
+      );
+
+      if (request.statusCode == HttpStatus.ok) {
+        return ApiResponse(request.statusCode, request.body);
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
+
+    } on ApiException catch(e) {
+      return ApiResponse(e.statusCode, e.error);
+    } catch (err) {
+      return ApiResponse(HttpStatus.internalServerError, 'Error Encountered');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>>
+    enrollAuthenticator(final Map<String, String> body) async {
+    late Map<String, dynamic> response;
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final request = await http.post(
+          Uri.parse('/enrollOTP'),
+          headers: headers,
+          body: reqBody
+      );
+
+      final jsonBody = jsonDecode(request.body);
+      final barcode = jsonBody['barcode_uri'];
+      final token = jsonBody['token'];
+      final tokenSecret = jsonBody['secret'];
+
+      if (request.statusCode == HttpStatus.ok) {
+        response = {
+          'status': request.statusCode,
+          'body': request.body,
+          'barcode': barcode,
+          'token': token,
+          'barcode_string': tokenSecret
+        };
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
+
+    } on ApiException catch(e) {
+      response = {
+        'status': e.statusCode,
+        'body': e.error
+      };
+    } catch (err) {
+      response = {
+        'status': HttpStatus.internalServerError,
+        'body': 'Error Encountered'
+      };
+    }
+
+    return response;
+  }
+
+  @override
+  Future<ApiResponse> confirmTOTP(final Map<String, String> body) async {
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final request = await http.post(
+          Uri.parse('/confirmOTP'),
+          headers: headers,
+          body: reqBody
+      );
+
+      if (request.statusCode == HttpStatus.ok) {
+        return ApiResponse(request.statusCode, '');
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
+
+    }  on ApiException catch(e) {
+      return ApiResponse(e.statusCode, e.error);
+    } catch (err) {
+      return ApiResponse(HttpStatus.internalServerError, 'Error Encountered.');
+    }
+  }
+
+  @override
+  Future<ApiResponse> unenrollAuthenticator(final Map<String, String> body)
+  async {
+
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final reqBody = json.encode(body);
+
+    try {
+      final request = await http.post(
+          Uri.parse('/unenrollMFA'),
+          headers: headers,
+          body: reqBody
+      );
+
+      if (request.statusCode == HttpStatus.ok) {
+        return ApiResponse(request.statusCode, '');
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
+
+    }  on ApiException catch(e) {
+      return ApiResponse(e.statusCode, e.error);
+    } catch (err) {
+      return ApiResponse(HttpStatus.internalServerError, 'Error Encountered');
+    }
   }
 }
