@@ -82,7 +82,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     });
   }
 
-  void disableMFA(final String mfaAuthId) {
+  void disableMFA(final String mfaAuthId, final String method) {
     UserApi().unenrollMFA({
       'authFactorId': mfaAuthId,
       'userId': widget.userProvider.user!.userId
@@ -96,7 +96,14 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
             content: Text('Authenticator app has been removed.')
         ));
         setState(() {
-          authenticatorEnabled = false;
+          switch(method) {
+            case 'totp':
+              authenticatorEnabled = false;
+              break;
+            case 'sms':
+              smsEnabled = false;
+              break;
+          }
         });
       }
     });
@@ -115,33 +122,33 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
             authenticatorEnabled ?
               FilledButton.tonal(
                 onPressed: () => showDialog<String>(
-                    context: context,
-                    builder: (final BuildContext context) => AlertDialog(
-                      title: const Text('Remove authenticator app?'),
-                      content: const SingleChildScrollView(
-                          child: ListBody(
-                            children: <Widget>[
-                              // ignore: avoid_escaping_inner_quotes
-                              Text('You won\'t be able to use your authenticator '
-                                  'app to sign into your Angeleno Account.')
-                            ],
-                          )
+                  context: context,
+                  builder: (final BuildContext context) => AlertDialog(
+                    title: const Text('Remove authenticator app?'),
+                    content: const SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          // ignore: avoid_escaping_inner_quotes
+                          Text('You won\'t be able to use your authenticator '
+                              'app to sign into your Angeleno Account.')
+                        ],
+                      )
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context, '');
+                        },
                       ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Cancel'),
-                          onPressed: () {
-                            Navigator.pop(context, '');
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('Ok'),
-                          onPressed: () {
-                            disableMFA(totpAuthId);
-                          },
-                        )
-                      ],
-                    )
+                      TextButton(
+                        child: const Text('Ok'),
+                        onPressed: () {
+                          disableMFA(totpAuthId, 'totp');
+                        },
+                      )
+                    ],
+                  )
                 ).then((final value) {
                   if (value != null && value == HttpStatus.ok.toString()) {
                     setState(() {
@@ -203,7 +210,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                       TextButton(
                         child: const Text('Ok'),
                         onPressed: () {
-                          disableMFA(smsAuthId);
+                          disableMFA(smsAuthId, 'sms');
                         },
                       )
                     ],

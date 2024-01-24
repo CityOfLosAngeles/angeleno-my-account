@@ -245,6 +245,9 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                     data: totpQrCode,
                     size: 150
                 ),
+                const SizedBox(height: 20),
+                const Text('If unable to scan, please enter the code below:'),
+                const SizedBox(height: 15),
                 Text(
                     qrCodeAltString,
                     style: const TextStyle(
