@@ -126,7 +126,7 @@ class UserApi extends Api {
         await http.post(Uri.parse(updatePasswordAPIFirebaseURL),
             headers: headers, body: reqBody);
       } else {
-        await http.post(Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0api/updatePassword'),
+        await http.post(Uri.parse('/updatePassword'),
             headers: headers, body: reqBody);
       }
 
