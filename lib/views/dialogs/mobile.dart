@@ -1,5 +1,5 @@
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
-
 import 'package:angeleno_project/controllers/api_implementation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -164,21 +164,18 @@ class _MobileDialogState extends State<MobileDialog> {
                   onInputChanged: (final PhoneNumber number) {
                     phoneNumber = number.phoneNumber!;
                   },
-                  onInputValidated: (bool value) {
+                  onInputValidated: (final bool value) {
                     print(value);
                   },
-                  selectorConfig: const SelectorConfig(
-                    selectorType: PhoneInputSelectorType.DROPDOWN,
-                    useBottomSheetSafeArea: true,
-                  ),
-                  autoValidateMode: AutovalidateMode.disabled,
                   selectorTextStyle: const TextStyle(color: Colors.black),
                   initialValue: number,
                   textFieldController: phoneField,
-                  keyboardType:
-                  const TextInputType.numberWithOptions(signed: true, decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    signed: true,
+                    decimal: true
+                  ),
                   inputBorder: const OutlineInputBorder(),
-                  onSaved: (PhoneNumber number) {
+                  onSaved: (final PhoneNumber number) {
                     print('On Saved: $number');
                   },
                 ),
@@ -216,7 +213,7 @@ class _MobileDialogState extends State<MobileDialog> {
                           });
                         },
                         icon: Icon(
-                            obscurePassword ? Icons.visibility : Icons.visibility_off
+                    obscurePassword ? Icons.visibility : Icons.visibility_off
                         ),
                       )
                   ),

@@ -59,7 +59,8 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                     totpAuthId = methodId;
                     break;
                   case 'phone':
-                    final prefMethod = element['preferred_authentication_method'] as String;
+                    final prefMethod =
+                      element['preferred_authentication_method'] as String;
                     if (prefMethod == 'sms') {
                       smsEnabled = true;
                       smsAuthId = methodId;
@@ -191,14 +192,15 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                   builder: (final BuildContext context) => AlertDialog(
                     title: const Text('Remove SMS MFA?'),
                     content: const SingleChildScrollView(
-                        child: ListBody(
-                          children: <Widget>[
-                            // ignore: avoid_escaping_inner_quotes
-                            Text('Do you confirm to remove SMS Text? This action'
-                                ' is irreversible. If you want to use this factor again'
-                                ' you will need to enroll the factor again.')
-                          ],
-                        )
+                      child: ListBody(
+                        children: <Widget>[
+                          // ignore: avoid_escaping_inner_quotes
+                          Text('Do you confirm to remove SMS Text? This'
+                          ' action is irreversible. If you want to use this'
+                          ' factor again you will need to enroll the'
+                          ' factor again.')
+                        ],
+                      )
                     ),
                     actions: <Widget>[
                       TextButton(

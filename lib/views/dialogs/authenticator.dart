@@ -2,7 +2,6 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../controllers/api_implementation.dart';
@@ -189,7 +188,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                           });
                         },
                         icon: Icon(
-                            obscurePassword ? Icons.visibility : Icons.visibility_off
+                      obscurePassword ? Icons.visibility : Icons.visibility_off
                         ),
                       )
                   ),
