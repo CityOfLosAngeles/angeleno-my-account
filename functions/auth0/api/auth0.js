@@ -16,7 +16,7 @@ const updateUser = onRequest(async (req, res) => {
   try {
     user = Object.assign(new User(), req.body);
   } catch (err) {
-    console.error('hi ', err);
+    console.error(err);
     return res.send(400);
   }
 
