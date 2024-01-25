@@ -10,4 +10,11 @@ abstract class Api {
 
   void updatePassword(final PasswordBody body);
 
+  void getAuthenticationMethods(final String userId);
+
+  void enrollAuthenticator(final Map<String, String> body);
+
+  void confirmTOTP(final Map<String, String> body);
+
+  void unenrollAuthenticator(final Map<String, String> body);
 }

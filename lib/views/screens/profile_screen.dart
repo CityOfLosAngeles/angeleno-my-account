@@ -69,13 +69,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void updateUser() {
-    overlayProvider.showLoading();
-
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
       print('The user before we send it over is ${user.toString()}');
       print('The user metadata before we send is ${user.metadata}');
 
+      overlayProvider.showLoading();
       UserApi().updateUser(user).then((final response) {
         final success = response == html.HttpStatus.ok;
         overlayProvider.hideLoading();

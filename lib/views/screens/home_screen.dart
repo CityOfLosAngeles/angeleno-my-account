@@ -1,4 +1,5 @@
 import 'package:angeleno_project/controllers/overlay_provider.dart';
+import 'package:angeleno_project/views/screens/advanced_security_screen.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _unsavedDataDialog(index);
     } else {
       // Could use a cleaner implementation
-      if ([3, 4, 5].contains(index)) {
+      if ([3, 4, 5, 6].contains(index)) {
         switch(index) {
           case 3:
             await launchUrl(
@@ -85,6 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Uri.parse('https://angeleno.lacity.org/help')
             );
             break;
+          case 6:
+            userProvider.logout();
+            break;
         }
       } else {
         setState(() {
@@ -99,9 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> get screens => <Widget>[
         const ProfileScreen(),
         const PasswordScreen(),
-        //Security
-        ListView(
-          children: const [Text('This looks like an external script.')],
+        AdvancedSecurityScreen(
+            userProvider: userProvider
         )
       ];
 
@@ -165,25 +168,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
                 child: Divider(),
               ),
+              const NavigationDrawerDestination(
+                  label: Text('Logout'),
+                  icon: Icon(Icons.logout)
+              )
             ],
           ),
           body: Stack(
             children: [
               Center(
-                  child: Container(
-                    transformAlignment: Alignment.center,
-                    width: double.infinity,
-                    constraints: const BoxConstraints(maxWidth: 1280),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                            child: Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: screens[_selectedIndex]))
-                      ],
-                    ),
-                  )
+                child: Container(
+                  transformAlignment: Alignment.center,
+                  width: double.infinity,
+                  constraints: const BoxConstraints(maxWidth: 1280),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: screens[_selectedIndex]))
+                    ],
+                  ),
+                )
               ),
               if (overlayProvider.isLoading)
                 Center(
