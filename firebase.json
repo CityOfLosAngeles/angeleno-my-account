@@ -9,6 +9,11 @@
     ],
     "rewrites": [
       {
+        "source": "/maps/**",
+        "function": "maps",
+        "region": "us-central1"
+      },
+      {
         "source": "**",
         "function": "auth0api",
         "region": "us-central1"
