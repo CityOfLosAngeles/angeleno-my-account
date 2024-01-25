@@ -73,6 +73,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
+      print('The user before we send it over is ${user.toString()}');
+      print('The user metadata before we send is ${user.metadata}');
+
       UserApi().updateUser(user).then((final response) {
         final success = response == html.HttpStatus.ok;
         overlayProvider.hideLoading();
@@ -252,7 +255,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 try {
                                   if (search.isEmpty ||
                                       autoFilled ||
-                                      isInitial) {
+                                      isInitial ||
+                                      search.trim().length < 1) {
                                     // print('Show nothing');
                                     return [];
                                   } else {

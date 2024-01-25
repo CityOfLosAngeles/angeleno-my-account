@@ -14,12 +14,10 @@ class UserProvider extends ChangeNotifier {
 
   UserProvider() {
     auth0Web.onLoad().then((final credentials) async {
-      if (credentials != null
-          && credentials.expiresAt.isAfter(DateTime.now())) {
-
+      if (credentials != null &&
+          credentials.expiresAt.isAfter(DateTime.now())) {
         setUser(credentials.user);
         _cleanUser = User.copy(_user!);
-
       } else {
         await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
       }
@@ -29,7 +27,6 @@ class UserProvider extends ChangeNotifier {
   }
 
   void setUser(final UserProfile user) {
-
     String zip = '';
     String address = '';
     String address2 = '';
@@ -37,26 +34,32 @@ class UserProvider extends ChangeNotifier {
     String state = '';
     String phone = '';
 
-    final metadata = user.customClaims?['user_metadata']
-                                  as Map<String, dynamic>;
+    final metadata =
+        user.customClaims?['user_metadata'] as Map<String, dynamic>;
 
     if (metadata.isNotEmpty) {
       final primaryAddress = metadata['addresses']?['primary'];
 
       if (primaryAddress != null) {
-        zip = primaryAddress['zip'] != null ?
-          primaryAddress['zip'] as String : '';
-        address = primaryAddress['address'] != null ?
-          primaryAddress['address'] as String : '';
-        address2 = primaryAddress['address2'] != null ?
-          primaryAddress['address2'] as String : '';
-        city =  primaryAddress['city'] != null ?
-          primaryAddress['city'] as String : '';
-        state = primaryAddress['state'] != null ?
-          primaryAddress['state'] as String : '';
+        address = primaryAddress['address'] != null
+            ? primaryAddress['address'] as String
+            : '';
+        address2 = primaryAddress['address2'] != null
+            ? primaryAddress['address2'] as String
+            : '';
+        city = primaryAddress['city'] != null
+            ? primaryAddress['city'] as String
+            : '';
+        zip = primaryAddress['zip'] != null
+            ? primaryAddress['zip'] as String
+            : '';
+        state = primaryAddress['state'] != null
+            ? primaryAddress['state'] as String
+            : '';
       }
 
       phone = metadata['phone'] as String;
+      //zip = metadata['phone'] as String;
     }
 
     _user = User(
@@ -70,8 +73,7 @@ class UserProvider extends ChangeNotifier {
         city: city,
         state: state,
         phone: phone,
-        metadata: metadata
-    );
+        metadata: metadata);
 
     notifyListeners();
   }
@@ -85,16 +87,13 @@ class UserProvider extends ChangeNotifier {
     await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
   }
 
-  Future<bool> isLoggedIn() async =>
-      await auth0Web.hasValidCredentials();
+  Future<bool> isLoggedIn() async => await auth0Web.hasValidCredentials();
 
   Future<Credentials> currentCredentials() async =>
       await auth0Web.credentials();
 
   Future<void> logout() => auth0Web.logout(
-      federated: false,
-      returnToUrl: 'https://angeleno.lacity.org/'
-  );
+      federated: false, returnToUrl: 'https://angeleno.lacity.org/');
 
   User? get user => _user;
 

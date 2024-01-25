@@ -78,9 +78,10 @@ class UserApi extends Api {
         'Authorization': 'Bearer $token'
       };
 
+      print('Before we encode, the user is ${user.toString()}');
       final body = json.encode(user);
       Response? response;
-
+      print('The user body to be sent is: ${body.toString()}');
       if (isTestingLocally) {
         print('We are testing locally UPDATE USER');
         response = await http

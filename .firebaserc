@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "my-account-dev-402917"
+    "default": "DEFAULT_PROJECT"
   },
   "targets": {
     "DEFAULT_PROJECT": {
