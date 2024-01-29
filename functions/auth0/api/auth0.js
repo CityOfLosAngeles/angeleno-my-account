@@ -6,9 +6,9 @@ const {
   auth0Domain,
   auth0ClientId,
   auth0ClientSecret,
-} = require("../../utils/constants");
+} = require("../utils/constants");
 
-const {getAccessToken, authorizeUser} = require("../../utils/auth0");
+const {getAccessToken, authorizeUser} = require("../utils/auth0");
 
 const updateUser = onRequest(async (req, res) => {
   let user;
