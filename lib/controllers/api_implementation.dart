@@ -119,7 +119,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/updatePassword'),
+          Uri.parse('/auth0/updatePassword'),
           headers: headers,
           body: reqBody
       );
@@ -151,7 +151,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/authMethods'),
+          Uri.parse('/auth0/authMethods'),
           headers: headers,
           body: reqBody
       );
@@ -182,7 +182,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/enrollMFA'),
+          Uri.parse('/auth0/enrollMFA'),
           headers: headers,
           body: reqBody
       );
@@ -232,7 +232,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/confirmMFA'),
+          Uri.parse('/auth0/confirmMFA'),
           headers: headers,
           body: reqBody
       );
@@ -261,7 +261,7 @@ class UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/unenrollMFA'),
+          Uri.parse('/auth0/unenrollMFA'),
           headers: headers,
           body: reqBody
       );
