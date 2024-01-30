@@ -3,24 +3,24 @@ const admin = require("firebase-admin");
 const express = require("express");
 
 admin.initializeApp();
-const auth0 = express();
+const app = express();
 
 const {
   updateUser,
   updatePassword,
-  enrollOTP,
-  confirmOTP,
+  enrollMFA,
+  confirmMFA,
   authMethods,
   unenrollMFA
 } = require("./api/auth0");
 
-auth0.use(express.json());
+app.use(express.json());
 
-auth0.post("/updateUser", updateUser);
-auth0.post("/updatePassword", updatePassword);
-auth0.post("/enrollMFA", enrollMFA);
-auth0.post("/confirmMFA", confirmMFA);
-auth0.post("/authMethods", authMethods);
-auth0.post("/unenrollMFA", unenrollMFA);
+app.post("/updateUser", updateUser);
+app.post("/updatePassword", updatePassword);
+app.post("/enrollMFA", enrollMFA);
+app.post("/confirmMFA", confirmMFA);
+app.post("/authMethods", authMethods);
+app.post("/unenrollMFA", unenrollMFA);
 
-exports.auth0 = onRequest(auth0);
+exports.auth0 = onRequest(app);
