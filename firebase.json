@@ -9,16 +9,31 @@
     ],
     "rewrites": [
       {
+        "source": "/maps/**",
+        "function": "maps",
+        "region": "us-central1"
+      },
+      {
         "source": "**",
-        "function": "auth0api",
+        "function": "auth0",
         "region": "us-central1"
       }
     ]
   },
   "functions": [
     {
-      "source": "functions",
-      "codebase": "default",
+      "source": "functions/auth0",
+      "codebase": "auth0",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "source": "functions/maps",
+      "codebase": "maps",
       "ignore": [
         "node_modules",
         ".git",
