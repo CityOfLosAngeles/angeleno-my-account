@@ -4,9 +4,9 @@ const axios = require("axios");
 const express = require("express");
 
 admin.initializeApp();
-const maps = express();
+const app = express();
 
-maps.use(express.json());
+app.use(express.json());
 
 const corsProxyAutofill = onRequest(async (req, res) => {
  
@@ -16,7 +16,7 @@ const corsProxyPlaceDetails = onRequest(async (req, res) => {
  
 });
 
-maps.get("/corsProxyPlaceDetails", corsProxyPlaceDetails);
-maps.get("/corsProxyAutofill", corsProxyAutofill);
+app.get("/maps/corsProxyPlaceDetails", corsProxyPlaceDetails);
+app.get("/maps/corsProxyAutofill", corsProxyAutofill);
 
-exports.maps = onRequest(maps);
+exports.maps = onRequest(app);
