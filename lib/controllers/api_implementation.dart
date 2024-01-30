@@ -86,7 +86,7 @@ class UserApi extends Api {
       final body = json.encode(user);
 
       final response = await http.post(
-          Uri.parse('/updateUser'),
+          Uri.parse('/auth0/updateUser'),
           headers: headers,
           body: body
       ).timeout(const Duration(seconds: 15));
