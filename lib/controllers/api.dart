@@ -12,9 +12,9 @@ abstract class Api {
 
   void getAuthenticationMethods(final String userId);
 
-  void enrollAuthenticator(final Map<String, String> body);
+  void enrollMFA(final Map<String, String> body);
 
-  void confirmTOTP(final Map<String, String> body);
+  void confirmMFA(final Map<String, String> body);
 
-  void unenrollAuthenticator(final Map<String, String> body);
+  void unenrollMFA(final Map<String, String> body);
 }

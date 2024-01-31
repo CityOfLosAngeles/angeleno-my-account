@@ -3,6 +3,7 @@ import 'dart:html';
 import 'dart:convert';
 
 import 'package:angeleno_project/controllers/api_implementation.dart';
+import 'package:angeleno_project/views/dialogs/mobile.dart';
 import 'package:flutter/material.dart';
 
 import '../../controllers/user_provider.dart';
@@ -22,8 +23,15 @@ class AdvancedSecurityScreen extends StatefulWidget {
 
 class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
 
+  late UserProvider userProvider;
+
   late bool authenticatorEnabled = false;
+  late bool smsEnabled = false;
+  late bool voiceEnabled = false;
+
   late String totpAuthId = '';
+  late String smsAuthId = '';
+  late String voiceAuthId = '';
 
   bool initialLoading = true;
 
@@ -31,7 +39,9 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   void initState() {
     super.initState();
 
-    UserApi().getAuthenticationMethods(widget.userProvider.user!.userId)
+    userProvider = widget.userProvider;
+
+    UserApi().getAuthenticationMethods(userProvider.user!.userId)
         .then((final response) {
           final bool success = response.statusCode == HttpStatus.ok;
           if (success) {
@@ -39,18 +49,30 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
             final List<dynamic> dataList = jsonDecode(jsonString)
               as List<dynamic>;
             if (dataList.isNotEmpty) {
-              // When additional MFA is added, we can filter out types
-              // then setState once and do typeArray.contains('totp')
-              // think more about methods to retrieve auth method id
               for (final element in dataList) {
-                if (element['type'] == 'totp') {
-                  setState(() {
-                    totpAuthId = element['id'] as String;
+                final type = element['type'] as String;
+                final methodId = element['id'] as String;
+
+                switch(type) {
+                  case 'totp':
                     authenticatorEnabled = true;
-                    initialLoading = false;
-                  });
+                    totpAuthId = methodId;
+                    break;
+                  case 'phone':
+                    final prefMethod =
+                      element['preferred_authentication_method'] as String;
+                    if (prefMethod == 'sms') {
+                      smsEnabled = true;
+                      smsAuthId = methodId;
+                    } else {
+                      voiceEnabled = true;
+                      voiceAuthId = methodId;
+                    }
                 }
               }
+              setState(() {
+                initialLoading = false;
+              });
             } else {
               setState(() {
                 initialLoading = false;
@@ -61,9 +83,9 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     });
   }
 
-  void disableAuthenticator() {
-    UserApi().unenrollAuthenticator({
-      'authFactorId': totpAuthId,
+  void disableMFA(final String mfaAuthId, final String method) {
+    UserApi().unenrollMFA({
+      'authFactorId': mfaAuthId,
       'userId': widget.userProvider.user!.userId
     }).then((final response) {
       final bool success = response.statusCode == HttpStatus.ok;
@@ -75,7 +97,14 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
             content: Text('Authenticator app has been removed.')
         ));
         setState(() {
-          authenticatorEnabled = false;
+          switch(method) {
+            case 'totp':
+              authenticatorEnabled = false;
+              break;
+            case 'sms':
+              smsEnabled = false;
+              break;
+          }
         });
       }
     });
@@ -94,33 +123,33 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
             authenticatorEnabled ?
               FilledButton.tonal(
                 onPressed: () => showDialog<String>(
-                    context: context,
-                    builder: (final BuildContext context) => AlertDialog(
-                      title: const Text('Remove authenticator app?'),
-                      content: const SingleChildScrollView(
-                          child: ListBody(
-                            children: <Widget>[
-                              // ignore: avoid_escaping_inner_quotes
-                              Text('You won\'t be able to use your authenticator '
-                                  'app to sign into your Angeleno Account.')
-                            ],
-                          )
+                  context: context,
+                  builder: (final BuildContext context) => AlertDialog(
+                    title: const Text('Remove authenticator app?'),
+                    content: const SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          // ignore: avoid_escaping_inner_quotes
+                          Text('You won\'t be able to use your authenticator '
+                              'app to sign into your Angeleno Account.')
+                        ],
+                      )
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context, '');
+                        },
                       ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Cancel'),
-                          onPressed: () {
-                            Navigator.pop(context, '');
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('Ok'),
-                          onPressed: () {
-                            disableAuthenticator();
-                          },
-                        )
-                      ],
-                    )
+                      TextButton(
+                        child: const Text('Ok'),
+                        onPressed: () {
+                          disableMFA(totpAuthId, 'totp');
+                        },
+                      )
+                    ],
+                  )
                 ).then((final value) {
                   if (value != null && value == HttpStatus.ok.toString()) {
                     setState(() {
@@ -136,7 +165,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                   showDialog<String>(
                     context: context,
                     builder: (final BuildContext context) =>
-                      const AuthenticatorDialog(),
+                        AuthenticatorDialog(userProvider: userProvider),
                   ).then((final value) {
                     if (value != null && value == HttpStatus.ok.toString()) {
                       setState(() {
@@ -145,10 +174,114 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                     }
                   });
                 },
-                child: Text(authenticatorEnabled ? 'Disable' : 'Enable')
+                child: const Text('Enable')
               ),
             ],
-        )
+        ),
+        const SizedBox(height: 10),
+        const Divider(),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('SMS Text'),
+            smsEnabled ?
+            FilledButton.tonal(
+              onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (final BuildContext context) => AlertDialog(
+                    title: const Text('Remove SMS MFA?'),
+                    content: const SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          // ignore: avoid_escaping_inner_quotes
+                          Text('Do you confirm to remove SMS Text? This'
+                          ' action is irreversible. If you want to use this'
+                          ' factor again you will need to enroll the'
+                          ' factor again.')
+                        ],
+                      )
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context, '');
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Ok'),
+                        onPressed: () {
+                          disableMFA(smsAuthId, 'sms');
+                        },
+                      )
+                    ],
+                  )
+              ).then((final value) {
+                if (value != null && value == HttpStatus.ok.toString()) {
+                  setState(() {
+                    smsEnabled = false;
+                  });
+                }
+              }),
+              child: const Text('Disable'),
+            )
+            :
+            FilledButton(
+              onPressed: () {
+                showDialog<String>(
+                  context: context,
+                  builder: (
+                    final BuildContext context) => MobileDialog(
+                    userProvider: userProvider,
+                    channel: 'sms',
+                  )
+                ).then((final value) {
+                  if (value != null && value == HttpStatus.ok.toString()) {
+                    setState(() {
+                      smsEnabled = true;
+                    });
+                  }
+                });
+              },
+              child: const Text('Enable')
+            )
+          ]
+        ),
+        const SizedBox(height: 10),
+        const Divider(),
+        const SizedBox(height: 10),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Phone Call'),
+              voiceEnabled ?
+              FilledButton.tonal(
+                onPressed: () => {},
+                child: const Text('Disable'),
+              )
+                  :
+              FilledButton(
+                  onPressed: () {
+                    showDialog<String>(
+                        context: context,
+                        builder: (
+                            final BuildContext context) => MobileDialog(
+                          userProvider: userProvider,
+                          channel: 'voice',
+                        )
+                    ).then((final value) {
+                      if (value != null && value == HttpStatus.ok.toString()) {
+                        setState(() {
+                          voiceEnabled = true;
+                        });
+                      }
+                    });
+                  },
+                  child: const Text('Enable')
+              )
+            ]
+        ),
       ],
     );
 }

@@ -156,18 +156,35 @@ const authMethods = onRequest(async (req, res) => {
   }
 });
 
-const enrollOTP = onRequest(async (req, res) => {
+const enrollMFA = onRequest(async (req, res) => {
   const body = req.body;
+
+  const {
+    email,
+    password,
+    mfaFactor = '',
+    number,
+    channel
+  } = body;
 
   try {
     const validateResponse = await authorizeUser(
-      body.email,
-      body.password,
+      email,
+      password,
       "/mfa/"
     );
 
     if (validateResponse.status === 200) {
       const mfaToken = validateResponse?.data?.access_token;
+
+      let additionalData = {};
+
+      if (mfaFactor == "oob") {
+        additionalData = {
+         "oob_channels": [channel],
+         "phone_number": number
+        }
+      }
 
       const otpRequest = {
         method: "POST",
@@ -177,7 +194,8 @@ const enrollOTP = onRequest(async (req, res) => {
           Authorization: `Bearer ${mfaToken}`,
         },
         data: {
-          authenticator_types: ["otp"],
+          authenticator_types: [mfaFactor],
+          ...additionalData
         },
       };
 
@@ -202,22 +220,40 @@ const enrollOTP = onRequest(async (req, res) => {
   }
 });
 
-const confirmOTP = onRequest(async (req, res) => {
+const confirmMFA = onRequest(async (req, res) => {
   const body = req.body;
 
+  const {
+    mfaToken, 
+    userOtpCode = '',
+    oobCode = '',
+  } = body;
+
   try {
-    const {mfaToken, userOtpCode} = body;
+  
+    let additionalData = {};
+
+     if (oobCode.length) {
+      additionalData = {
+        oob_code: `${oobCode}`,
+        binding_code: `${userOtpCode}`
+      }
+    } else {
+      additionalData = {
+        otp: `${userOtpCode}`
+      }
+    }
 
     const options = {
       method: "POST",
       url: `https://${auth0Domain}/oauth/token`,
       headers: {"content-type": "application/x-www-form-urlencoded"},
       data: new URLSearchParams({
-        grant_type: "http://auth0.com/oauth/grant-type/mfa-otp",
+        grant_type: `http://auth0.com/oauth/grant-type/${oobCode.length ? 'mfa-oob' : 'mfa-otp'}`,
         client_id: `${auth0ClientId}`,
-        mfa_token: `${mfaToken}`,
         client_secret: `${auth0ClientSecret}`,
-        otp: `${userOtpCode}`,
+        mfa_token: `${mfaToken}`,
+        ...additionalData
       }),
     };
 
@@ -268,7 +304,7 @@ module.exports = {
   updateUser,
   updatePassword,
   authMethods,
-  enrollOTP,
-  confirmOTP,
+  enrollMFA,
+  confirmMFA,
   unenrollMFA,
 };
