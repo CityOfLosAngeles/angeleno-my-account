@@ -1,0 +1,45 @@
+{
+  "hosting": {
+    "target": "angeleno-my-account-dev-402917",
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/maps/**",
+        "function": "maps",
+        "region": "us-central1"
+      },
+      {
+        "source": "/auth0/**",
+        "function": "auth0",
+        "region": "us-central1"
+      }
+    ]
+  },
+  "functions": [
+    {
+      "source": "functions/auth0",
+      "codebase": "auth0",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    },
+    {
+      "source": "functions/maps",
+      "codebase": "maps",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ]
+}
