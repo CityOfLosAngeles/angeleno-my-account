@@ -110,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(final BuildContext context) {
+
      var userEmail = '';
      overlayProvider = Provider.of<OverlayProvider>(context);
      userProvider = context.watch<UserProvider>();
