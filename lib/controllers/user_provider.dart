@@ -13,19 +13,19 @@ class UserProvider extends ChangeNotifier {
   bool _isEditing = false;
 
   UserProvider() {
-    auth0Web.onLoad().then((final credentials) async {
-      if (credentials != null
-          && credentials.expiresAt.isAfter(DateTime.now())) {
+    // auth0Web.onLoad().then((final credentials) async {
+    //   if (credentials != null
+    //       && credentials.expiresAt.isAfter(DateTime.now())) {
 
-        setUser(credentials.user);
-        _cleanUser = User.copy(_user!);
+    //     setUser(credentials.user);
+    //     _cleanUser = User.copy(_user!);
 
-      } else {
-        await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
-      }
+    //   } else {
+    //     await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+    //   }
 
-      html.window.history.pushState(null, 'home', '/');
-    });
+    //   html.window.history.pushState(null, 'home', '/');
+    // });
   }
 
   void setUser(final UserProfile user) {
