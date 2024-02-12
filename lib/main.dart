@@ -23,12 +23,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => MaterialApp(
-      title: 'Angeleno - Account',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: colorScheme
-      ),
-      home: const MyHomePage(),
-    );
+    title: 'Angeleno - Account',
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme
+    ),
+    home: const MyHomePage(),
+  );
 }

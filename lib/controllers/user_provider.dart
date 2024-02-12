@@ -43,8 +43,6 @@ class UserProvider extends ChangeNotifier {
       final primaryAddress = metadata['addresses']?['primary'];
 
       if (primaryAddress != null) {
-        zip = primaryAddress['zip'] != null ?
-          primaryAddress['zip'] as String : '';
         address = primaryAddress['address'] != null ?
           primaryAddress['address'] as String : '';
         address2 = primaryAddress['address2'] != null ?
@@ -53,6 +51,8 @@ class UserProvider extends ChangeNotifier {
           primaryAddress['city'] as String : '';
         state = primaryAddress['state'] != null ?
           primaryAddress['state'] as String : '';
+        zip = primaryAddress['zip'] != null ?
+          primaryAddress['zip'] as String : '';
       }
 
       phone = metadata['phone'] as String;

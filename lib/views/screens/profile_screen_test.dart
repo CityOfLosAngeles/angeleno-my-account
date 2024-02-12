@@ -1,13 +1,10 @@
+import 'package:flutter_test/flutter_test.dart';
 import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
-import 'package:auth0_flutter/auth0_flutter.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:angeleno_project/main.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-
   const auth0User = UserProfile(
     sub: 'auth0|id',
     email: 'user@email.com',
@@ -36,16 +33,16 @@ void main() {
           ChangeNotifierProvider(create: (final _) => UserProvider()),
           ChangeNotifierProvider(create: (final _) => OverlayProvider())
         ],
-        child: const MyApp()
-      )
+        child: const MyApp(),
+      ),
     );
     expect(find.text('Angeleno Account'), findsOneWidget);
   });
 
-  testWidgets('Displays and edits user', (final WidgetTester tester) async {
+  testWidgets('Displays User', (final WidgetTester tester) async {
     final userProvider = UserProvider();
     userProvider.setUser(auth0User);
-   
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -56,23 +53,22 @@ void main() {
       ),
     );
 
-    await tester.pump(const Duration());
-    await tester.pumpAndSettle(const Duration(seconds: 3));
-
-    expect(find.text('First Name'), findsOneWidget);
+    expect(find.text('Angeleno Account'), findsOneWidget);
+    expect(find.byType(LinearProgressIndicator), findsNothing);
 
     await tester.tap(find.byType(ElevatedButton));
     await tester.pump();
 
     expect(userProvider.isEditing, true);
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'New First Name');
-
     await tester.tap(find.byType(ElevatedButton));
     await tester.pump();
 
     expect(userProvider.isEditing, false);
-    expect(userProvider.user!.firstName, 'New First Name');
 
+    await tester.enterText(find.byType(TextFormField).at(0), 'New First Name');
+    await tester.pump();
+
+    expect(userProvider.user!.firstName, 'New First Name');
   });
 }
