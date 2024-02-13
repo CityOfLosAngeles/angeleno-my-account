@@ -39,6 +39,8 @@ void main() {
         child: const MyApp()
       )
     );
+
+    expect(find.byType(MyApp), findsOneWidget);
     expect(find.text('Angeleno Account'), findsOneWidget);
   });
 
@@ -73,6 +75,43 @@ void main() {
 
     expect(userProvider.isEditing, false);
     expect(userProvider.user!.firstName, 'New First Name');
+  });
 
+  testWidgets('Navigates to Password', (final WidgetTester tester) async {
+    final userProvider = UserProvider();
+    userProvider.setUser(auth0User);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: userProvider),
+          ChangeNotifierProvider(create: (final _) => OverlayProvider())
+        ],
+        child: const MyApp(),
+      ),
+    );
+
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    await tester.ensureVisible(find.byIcon(Icons.password));
+    await tester.tap(find.byIcon(Icons.password));
+    await tester.pump();
+
+    expect(find.text('Current Password'), findsOneWidget);
+    expect(find.text('New Password'), findsOneWidget);
+    expect(find.text('Confirm New Password'), findsOneWidget);
+
+    final buttonFinder = find.byType(ElevatedButton);
+    expect(buttonFinder, findsOneWidget);
+
+    expect(tester.widget<ElevatedButton>(buttonFinder).enabled, false);
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'oldPassword');
+    await tester.enterText(find.byType(TextFormField).at(1), 'newPassword123');
+    await tester.enterText(find.byType(TextFormField).at(2), 'newPassword123');
+
+    await tester.pump();
+    expect(tester.widget<ElevatedButton>(buttonFinder).enabled, true);
   });
 }

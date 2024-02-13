@@ -83,7 +83,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   bool enablePasswordSubmit() => !(currentPassword.trim() != ''
       && newPassword.trim() != '' && passwordMatch.trim() != ''
-      && acceptableLength);
+      && acceptableLength && passwordMatch == newPassword);
 
   @override
   Widget build(final BuildContext context) {
