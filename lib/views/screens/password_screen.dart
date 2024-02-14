@@ -107,14 +107,14 @@ class _PasswordScreenState extends State<PasswordScreen> {
               border: const OutlineInputBorder(),
               labelText: 'Current Password',
               suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      viewPassword = !viewPassword;
-                    });
-                  },
-                  icon: Icon(
-                      viewPassword ? Icons.visibility : Icons.visibility_off
-                  )
+                onPressed: () {
+                  setState(() {
+                    viewPassword = !viewPassword;
+                  });
+                },
+                icon: Icon(
+                  viewPassword ? Icons.visibility_off : Icons.visibility
+                )
               )
           ),
           onChanged: (final value) {
@@ -146,14 +146,14 @@ class _PasswordScreenState extends State<PasswordScreen> {
               border: const OutlineInputBorder(),
               labelText: 'New Password',
               suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      viewNewPassword = !viewNewPassword;
-                    });
-                  },
-                  icon: Icon(
-                      viewNewPassword ? Icons.visibility : Icons.visibility_off
-                  )
+                onPressed: () {
+                  setState(() {
+                    viewNewPassword = !viewNewPassword;
+                  });
+                },
+                icon: Icon(
+                  viewNewPassword ? Icons.visibility_off : Icons.visibility
+                )
               )
           ),
           onChanged: (final value) {
@@ -175,8 +175,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 'Be at least $minPasswordLength characters',
                 style: TextStyle(
                 color: acceptableLength
-                    ? colorScheme.primary
-                    : colorScheme.error
+                  ? colorScheme.primary
+                  : colorScheme.error
                 )
               )
             ],
@@ -200,15 +200,14 @@ class _PasswordScreenState extends State<PasswordScreen> {
               border: const OutlineInputBorder(),
               labelText: 'Confirm New Password',
               suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      viewPasswordMatch = !viewPasswordMatch;
-                    });
-                  },
-                  icon: Icon(
-                      viewPasswordMatch ? Icons.visibility : Icons
-                          .visibility_off
-                  )
+                onPressed: () {
+                  setState(() {
+                    viewPasswordMatch = !viewPasswordMatch;
+                  });
+                },
+                icon: Icon(
+                  viewPasswordMatch ? Icons.visibility_off : Icons.visibility
+                )
               )
           ),
           onChanged: (final value) {
