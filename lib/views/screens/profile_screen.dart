@@ -116,12 +116,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           TextFormField(
                             enabled: userProvider.isEditing,
                             decoration: const InputDecoration(
-                                labelText: 'Zip', border: OutlineInputBorder()),
-                            initialValue: user.zip,
+                                labelText: 'Mobile',
+                                border: OutlineInputBorder()),
+                            initialValue: user.phone,
                             onChanged: (final val) {
-                              user.zip = val;
+                              user.phone = val;
                             },
-                            keyboardType: TextInputType.number,
                           ),
                           const SizedBox(height: 25.0),
                           TextFormField(
@@ -175,12 +175,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           TextFormField(
                             enabled: userProvider.isEditing,
                             decoration: const InputDecoration(
-                                labelText: 'Mobile',
-                                border: OutlineInputBorder()),
-                            initialValue: user.phone,
+                                labelText: 'Zip', border: OutlineInputBorder()),
+                            initialValue: user.zip,
                             onChanged: (final val) {
-                              user.phone = val;
+                              user.zip = val;
                             },
+                            keyboardType: TextInputType.number,
                           ),
                         ],
                     )
