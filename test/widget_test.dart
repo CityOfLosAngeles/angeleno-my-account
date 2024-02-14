@@ -29,6 +29,19 @@ void main() {
     }
   );
 
+  group('OverlayProvider', () {
+    test('Test overlay initialization', () {
+      final overlayProvider = OverlayProvider();
+      expect(overlayProvider.isLoading, false);
+    });
+
+    test('Test showing overlay', () {
+      final overlayProvider = OverlayProvider();
+      overlayProvider.showLoading();
+      expect(overlayProvider.isLoading, true);
+    });
+  });
+
   testWidgets('Loads AppBar Title', (final WidgetTester tester) async {
     await tester.pumpWidget(
       MultiProvider(
@@ -47,7 +60,7 @@ void main() {
   testWidgets('Displays and edits user', (final WidgetTester tester) async {
     final userProvider = UserProvider();
     userProvider.setUser(auth0User);
-   
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
