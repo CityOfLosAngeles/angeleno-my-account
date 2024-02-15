@@ -95,6 +95,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         TextFormField(
           obscureText: !viewPassword,
           autocorrect: false,
+          key: const Key('old_password'),
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (final value) {
