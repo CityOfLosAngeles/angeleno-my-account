@@ -63,12 +63,52 @@ void main() {
     await tester.pump();
     expect(tester.widget<ElevatedButton>(submitButtonFinder).enabled, true);
 
-    // final oldPasswordFinder = find.descendant(
-    //   of: find.byKey(const Key('old_password')),
-    //   matching: find.byType(TextField),
-    // );
+    // Current Password
+    final oldPasswordFinder = find.descendant(
+      of: find.byKey(const Key('old_password')),
+      matching: find.byType(TextField),
+    );
 
-    // final field = tester.firstWidget<TextField>(oldPasswordFinder);
-    // expect(field.obscureText, true);
+    final oldPasswordField = tester.firstWidget<TextField>(oldPasswordFinder);
+    expect(oldPasswordField.obscureText, true);
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('toggle_old_password')));
+    await tester.pump();
+    final refreshOldPasswordField = tester.firstWidget<TextField>(oldPasswordFinder);
+    expect(refreshOldPasswordField.obscureText, false);
+
+    // New Password
+    final newPasswordFinder = find.descendant(
+      of: find.byKey(const Key('new_password')),
+      matching: find.byType(TextField),
+    );
+
+    final newPasswordField = tester.firstWidget<TextField>(newPasswordFinder);
+    expect(newPasswordField.obscureText, true);
+
+    await tester.tap(find.byKey(const Key('toggle_new_password')));
+    await tester.pump();
+    final refreshNewPasswordField = tester
+      .firstWidget<TextField>(newPasswordFinder);
+    expect(refreshNewPasswordField.obscureText, false);
+
+
+    // Password match
+    final matchPasswordFinder = find.descendant(
+      of: find.byKey(const Key('match_password')),
+      matching: find.byType(TextField),
+    );
+
+    final matchPasswordField = tester
+      .firstWidget<TextField>(matchPasswordFinder);
+    expect(matchPasswordField.obscureText, true);
+
+    await tester.tap(find.byKey(const Key('toggle_match_password')));
+    await tester.pump();
+    final refreshMatchPasswordField = tester
+      .firstWidget<TextField>(matchPasswordFinder);
+    expect(refreshMatchPasswordField.obscureText, false);
+
   });
 }

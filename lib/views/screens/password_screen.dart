@@ -105,18 +105,19 @@ class _PasswordScreenState extends State<PasswordScreen> {
             return null;
           },
           decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Current Password',
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    viewPassword = !viewPassword;
-                  });
-                },
-                icon: Icon(
-                  viewPassword ? Icons.visibility_off : Icons.visibility
-                )
+            border: const OutlineInputBorder(),
+            labelText: 'Current Password',
+            suffixIcon: IconButton(
+              key: const Key('toggle_old_password'),
+              onPressed: () {
+                setState(() {
+                  viewPassword = !viewPassword;
+                });
+              },
+              icon: Icon(
+                viewPassword ? Icons.visibility_off : Icons.visibility
               )
+            )
           ),
           onChanged: (final value) {
             setState(() {
@@ -129,6 +130,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         TextFormField(
           obscureText: !viewNewPassword,
           autocorrect: false,
+          key: const Key('new_password'),
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (final value) {
@@ -144,18 +146,19 @@ class _PasswordScreenState extends State<PasswordScreen> {
             return null;
           },
           decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'New Password',
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    viewNewPassword = !viewNewPassword;
-                  });
-                },
-                icon: Icon(
-                  viewNewPassword ? Icons.visibility_off : Icons.visibility
-                )
+            border: const OutlineInputBorder(),
+            labelText: 'New Password',
+            suffixIcon: IconButton(
+              key: const Key('toggle_new_password'),
+              onPressed: () {
+                setState(() {
+                  viewNewPassword = !viewNewPassword;
+                });
+              },
+              icon: Icon(
+                viewNewPassword ? Icons.visibility_off : Icons.visibility
               )
+            )
           ),
           onChanged: (final value) {
             setState(() {
@@ -167,25 +170,26 @@ class _PasswordScreenState extends State<PasswordScreen> {
         ),
         const SizedBox(height: 5),
         Row(
-            children: [
-              const Text('Password must:',
-                style: TextStyle(fontWeight: FontWeight.bold)
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'Be at least $minPasswordLength characters',
-                style: TextStyle(
-                color: acceptableLength
-                  ? colorScheme.primary
-                  : colorScheme.error
-                )
+          children: [
+            const Text('Password must:',
+              style: TextStyle(fontWeight: FontWeight.bold)
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Be at least $minPasswordLength characters',
+              style: TextStyle(
+              color: acceptableLength
+                ? colorScheme.primary
+                : colorScheme.error
               )
-            ],
-          ),
+            )
+          ],
+        ),
         const SizedBox(height: 10.0),
         TextFormField(
           obscureText: !viewPasswordMatch,
           autocorrect: false,
+          key: const Key('match_password'),
           enableSuggestions: false,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (final value) {
@@ -198,18 +202,19 @@ class _PasswordScreenState extends State<PasswordScreen> {
             return null;
           },
           decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Confirm New Password',
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    viewPasswordMatch = !viewPasswordMatch;
-                  });
-                },
-                icon: Icon(
-                  viewPasswordMatch ? Icons.visibility_off : Icons.visibility
-                )
+            border: const OutlineInputBorder(),
+            labelText: 'Confirm New Password',
+            suffixIcon: IconButton(
+              key: const Key('toggle_match_password'),
+              onPressed: () {
+                setState(() {
+                  viewPasswordMatch = !viewPasswordMatch;
+                });
+              },
+              icon: Icon(
+                viewPasswordMatch ? Icons.visibility_off : Icons.visibility
               )
+            )
           ),
           onChanged: (final value) {
             setState(() {
