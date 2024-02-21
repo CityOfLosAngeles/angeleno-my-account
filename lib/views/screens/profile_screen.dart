@@ -32,6 +32,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       UserApi().updateUser(user).then((final response) {
           final success = response == HttpStatus.ok;
           overlayProvider.hideLoading();
+          if (success) {
+            userProvider.setCleanUser(user);
+          }
           ScaffoldMessenger.of(context).showSnackBar( SnackBar(
               behavior: SnackBarBehavior.floating,
               width: 280.0,

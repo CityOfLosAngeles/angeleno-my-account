@@ -1,7 +1,9 @@
 import 'package:angeleno_project/controllers/overlay_provider.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/screens/advanced_security_screen.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
+import 'package:auth0_flutter/auth0_flutter_web.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,7 +19,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
+  final Auth0Web auth0Web = Auth0Web(auth0Domain, auth0ClientId);
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
   late User user;
@@ -27,6 +29,20 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    // temporary, to skip tests
+    if (auth0Domain.isNotEmpty) {
+      auth0Web.onLoad().then((final credentials) async {
+        if (credentials != null
+            && await auth0Web.hasValidCredentials()) {
+
+          userProvider.setUser(credentials.user);
+          userProvider.setCleanUser(userProvider.user!);
+
+        } else {
+          await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+        }
+      });
+    }
   }
 
   Future<void> _unsavedDataDialog(final int futureIndex) async =>

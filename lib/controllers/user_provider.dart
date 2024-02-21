@@ -1,4 +1,3 @@
-// ignore: avoid_web_libraries_in_flutter
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
@@ -10,22 +9,6 @@ class UserProvider extends ChangeNotifier {
   User? _user;
   User? _cleanUser;
   bool _isEditing = false;
-
-  UserProvider() {
-    // auth0Web.onLoad().then((final credentials) async {
-    //   if (credentials != null
-    //       && credentials.expiresAt.isAfter(DateTime.now())) {
-
-    //     setUser(credentials.user);
-    //     _cleanUser = User.copy(_user!);
-
-    //   } else {
-    //     await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
-    //   }
-
-    //   html.window.history.pushState(null, 'home', '/');
-    // });
-  }
 
   void setUser(final UserProfile user) {
 
@@ -73,6 +56,10 @@ class UserProvider extends ChangeNotifier {
     );
 
     notifyListeners();
+  }
+
+  void setCleanUser(final User user) {
+    _cleanUser = User.copy(user);
   }
 
   void toggleEditing() {
