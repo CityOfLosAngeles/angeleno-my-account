@@ -46,6 +46,8 @@ jobs:
     with:
       scan-args: |-
         fail-on-vuln=false
+        results-file-name
+        upload-sarif
 
   upload-sarif:
     runs-on: ubuntu-latest
