@@ -42,19 +42,18 @@ jobs:
       #- name: Run Flutter Tests
       #  run: flutter test
 
-  securit_scan:
+  security-scan:
     # OSV-Scanner 
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.6.2-beta1"
 
   upload-sarif:
     runs-on: ubuntu-latest
+    needs: security-scan
     steps:
       - name: UploadSarif
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
-    
-    
 
   semgrep:
     # Skip any PR created by dependabot to avoid permission issues:
