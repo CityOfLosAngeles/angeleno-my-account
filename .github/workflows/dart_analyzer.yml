@@ -40,20 +40,14 @@ jobs:
       #- name: Run Flutter Tests
       #  run: flutter test
 
-      - name: Dart Analyze
-        run: dart analyze > dart_analyze.txt || true
-
-      - name: Dart Analyze to SARIF
-        uses: advanced-security/dart-analyzer-sarif@main
-        with:
-         input: dart_analyze.txt
-         output: dart_analyze.sarif
-
+      # OSV-Scanner 
+      - name: scan-pr
+        uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.6.2-beta1"
      
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: dart_analyze.sarif
+          sarif_file: results.sarif
 
 
   semgrep:
