@@ -35,10 +35,12 @@ class MyApp extends StatelessWidget {
       final uri = Uri.parse(settings.name!);
       
       if (uri.path == '/' && uri.queryParameters.isNotEmpty) {
-        return MaterialPageRoute(builder: (final context) => const MyHomePage());
+        return MaterialPageRoute(builder: (final context) => const MyHomePage(),
+          settings: const RouteSettings(name: '/'));
       }
 
-      return MaterialPageRoute(builder: (final context) => const MyHomePage());
+      return MaterialPageRoute(builder: (final context) => const MyHomePage(),
+        settings: const RouteSettings(name: '/'));
     },
     home: const MyHomePage()
   );
