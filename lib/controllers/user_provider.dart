@@ -10,6 +10,23 @@ class UserProvider extends ChangeNotifier {
   User? _cleanUser;
   bool _isEditing = false;
 
+  UserProvider() {
+    // temporary, to skip tests
+    if (auth0Domain.isNotEmpty) {
+      auth0Web.onLoad().then((final credentials) async {
+        if (credentials != null
+            && await auth0Web.hasValidCredentials()) {
+
+          setUser(credentials.user);
+          setCleanUser(_user!);
+
+        } else {
+          await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+        }
+      });
+    }
+  }
+
   void setUser(final UserProfile user) {
 
     String zip = '';

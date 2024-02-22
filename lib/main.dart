@@ -4,9 +4,11 @@ import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 
 void main() {
+  setPathUrlStrategy();
   runApp(
     MultiProvider(
       providers: [
@@ -29,6 +31,15 @@ class MyApp extends StatelessWidget {
       useMaterial3: true,
       colorScheme: colorScheme
     ),
-    home: const MyHomePage(),
+    onGenerateRoute: (final settings) {
+      final uri = Uri.parse(settings.name!);
+      
+      if (uri.path == '/' && uri.queryParameters.isNotEmpty) {
+        return MaterialPageRoute(builder: (final context) => const MyHomePage());
+      }
+
+      return MaterialPageRoute(builder: (final context) => const MyHomePage());
+    },
+    home: const MyHomePage()
   );
 }
