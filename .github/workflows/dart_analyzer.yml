@@ -8,6 +8,8 @@ jobs:
     # Skip any PR created by dependabot to avoid permission issues:
     if: (github.actor != 'dependabot[bot]')
 
+    
+
     permissions:
       # For actions/checkout to fetch code
       contents: read 
@@ -40,15 +42,19 @@ jobs:
       #- name: Run Flutter Tests
       #  run: flutter test
 
-      # OSV-Scanner 
-      - name: scan-pr
-        uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.6.2-beta1"
-     
-      - name: Upload SARIF
+  securit_scan:
+    # OSV-Scanner 
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.6.2-beta1"
+
+  upload-sarif:
+    runs-on: ubuntu-latest
+    steps:
+      - name: UploadSarif
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
-
+    
+    
 
   semgrep:
     # Skip any PR created by dependabot to avoid permission issues:
