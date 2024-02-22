@@ -1,5 +1,3 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'package:angeleno_project/models/user.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
@@ -13,19 +11,20 @@ class UserProvider extends ChangeNotifier {
   bool _isEditing = false;
 
   UserProvider() {
-    auth0Web.onLoad().then((final credentials) async {
-      if (credentials != null
-          && credentials.expiresAt.isAfter(DateTime.now())) {
+    // temporary, to skip tests
+    if (auth0Domain.isNotEmpty) {
+      auth0Web.onLoad().then((final credentials) async {
+        if (credentials != null
+            && await auth0Web.hasValidCredentials()) {
 
-        setUser(credentials.user);
-        _cleanUser = User.copy(_user!);
+          setUser(credentials.user);
+          setCleanUser(_user!);
 
-      } else {
-        await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
-      }
-
-      html.window.history.pushState(null, 'home', '/');
-    });
+        } else {
+          await auth0Web.loginWithRedirect(redirectUrl: redirectUri);
+        }
+      });
+    }
   }
 
   void setUser(final UserProfile user) {
@@ -44,8 +43,6 @@ class UserProvider extends ChangeNotifier {
       final primaryAddress = metadata['addresses']?['primary'];
 
       if (primaryAddress != null) {
-        zip = primaryAddress['zip'] != null ?
-          primaryAddress['zip'] as String : '';
         address = primaryAddress['address'] != null ?
           primaryAddress['address'] as String : '';
         address2 = primaryAddress['address2'] != null ?
@@ -54,6 +51,8 @@ class UserProvider extends ChangeNotifier {
           primaryAddress['city'] as String : '';
         state = primaryAddress['state'] != null ?
           primaryAddress['state'] as String : '';
+        zip = primaryAddress['zip'] != null ?
+          primaryAddress['zip'] as String : '';
       }
 
       phone = metadata['phone'] as String;
@@ -74,6 +73,10 @@ class UserProvider extends ChangeNotifier {
     );
 
     notifyListeners();
+  }
+
+  void setCleanUser(final User user) {
+    _cleanUser = User.copy(user);
   }
 
   void toggleEditing() {
