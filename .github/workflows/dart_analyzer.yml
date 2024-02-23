@@ -50,7 +50,6 @@ jobs:
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v1.6.2-beta1"
     with:
       scan-args: |-
-        ./
         --lockfile=pubspec.lock
 
   semgrep:
