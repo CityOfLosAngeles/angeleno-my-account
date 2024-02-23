@@ -51,7 +51,7 @@ jobs:
     with:
       scan-args: |-
         --lockfile=pubspec.lock
-        --fail-on-vuln=false
+      fail-on-vuln: false
 
   semgrep:
     # Skip any PR created by dependabot to avoid permission issues:
