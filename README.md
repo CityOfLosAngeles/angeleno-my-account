@@ -3,7 +3,7 @@
 <a href="https://github.com/CityOfLosAngeles/angeleno-my-account-flutter/actions"><img src="https://github.com/CityOfLosAngeles/angeleno-my-account-flutter/workflows/Flutter%20Unit%20Tests/badge.svg" alt="Flutter Tests Status"></a>
 [![codecov](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account/graph/badge.svg?token=ILNR5XOM40)](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account)
 
-## What Angeleno - My Account?
+## What is Angeleno - My Account?
 This repository is for setting up a Flutter Web Application on your machine to interface Auth0. With Auth0 you can authenticate and authorize user to access your applications. With this repository you will get a Auth0 Web login which then redirects back to the Flutter app in where the authenticated user can see their current profile along with make changes to their profile. We have added Google Places API to assist user's with autocompleting and validating their address.
 
 
