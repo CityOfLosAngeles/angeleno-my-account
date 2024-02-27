@@ -3,8 +3,13 @@
 <a href="https://github.com/CityOfLosAngeles/angeleno-my-account-flutter/actions"><img src="https://github.com/CityOfLosAngeles/angeleno-my-account-flutter/workflows/Flutter%20Unit%20Tests/badge.svg" alt="Flutter Tests Status"></a>
 [![codecov](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account/graph/badge.svg?token=ILNR5XOM40)](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account)
 
+## What Angeleno - My Account?
+This repository is for setting up a Flutter Web Application on your machine to interface Auth0. With Auth0 you can authenticate and authorize user to access your applications. With this repository you will get a Auth0 Web login which then redirects back to the Flutter app in where the authenticated user can see their current profile along with make changes to their profile. We have added Google Places API to assist user's with autocompleting and validating their address.
+
+
 ## Getting Started
-This branch should act as our main branch until we have a working Minimum Viable Product (MVP) to merge into the `main` branch. To start development you'll `git clone` this repo; after cloning you'll by default be on the main branch, but you can `git checkout mvp-skeleton` to switch to the branch with the code being worked on. From the `mvp-skeleton` branch, you can branch off to work on your own work/issue by running `git checkout -b your-branch-name`. When opening the pull request for your work, make sure the branch is being merged into `mvp-skeleton` and not `main`.
+The develpment branch is our main branch you can use to work on your own work/issues. To start development you'll `git clone` this repo; after cloning you'll by default be on the development branch. When opening the pull request for your work, make sure the branch is being merged into `development` branch as well.
+
 
 ### Minimum Requirements
 - Flutter >=3.16.0 [Flutter SDK](https://docs.flutter.dev/get-started/install)
