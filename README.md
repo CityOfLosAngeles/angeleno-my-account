@@ -56,5 +56,10 @@ If you're using a cloud function without authorization, you will not need the Se
 The cloud functions being used can be found in the `functions` directory. To run them locally, you can find instructions [here](https://firebase.google.com/docs/functions/local-emulator). Once you have the functions running locally, you'll have to update the code in the locations where the request is sent so that it points to your emulator.
 
 #### Commands
+Needed for running project:
 - flutter run -d chrome --web-port=50601 --dart-define-from-file=.env (You can change the web port)
 - firebase emulators:start --only functions
+
+Needed for syntax:
+- dart analyze
+- flutter test
