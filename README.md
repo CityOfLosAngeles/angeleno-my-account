@@ -3,11 +3,11 @@
 <a href="https://github.com/CityOfLosAngeles/angeleno-my-account-flutter/actions"><img src="https://github.com/CityOfLosAngeles/angeleno-my-account-flutter/workflows/Flutter%20Unit%20Tests/badge.svg" alt="Flutter Tests Status"></a>
 [![codecov](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account/graph/badge.svg?token=ILNR5XOM40)](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account)
 
-## What is Angeleno - My Account?
-Add-> What is an Angeleno Account
-Add ->What is the Angeleno - My Account app (Integrate paragraph from below)
+## What is Angeleno Account?
+An Angeleno Account acts as a single sign-on for our public to access multiple City of Los Angeles services that have decided to accept the Angeleno Account. 
 
-This repository is for setting up a Flutter Web Application on your machine to interface Auth0. With Auth0 you can authenticate and authorize user to access your applications. With this repository you will get a Auth0 Web login which then redirects back to the Flutter app in where the authenticated user can see their current profile along with make changes to their profile. We have added Google Places API to assist user's with autocompleting and validating their address.
+## What is Angeleno - My Account?
+Angeleno - My Account is a Flutter based app that interfaces Auth0. This repository is for setting up a Flutter Web Application on your machine to interface Auth0. With Auth0 you can authenticate and authorize user to access your applications. With this repository you will get a Auth0 Web login which then redirects back to the Flutter app in where the authenticated user can see their current profile along with make changes to their profile. We have added Google Places API to assist user's with autocompleting and validating their address.
 
 
 ## Getting Started
@@ -65,4 +65,6 @@ Needed for running project:
 
 Needed for syntax:
 - dart analyze
+
+Needed for running Unit Tests:
 - flutter test
