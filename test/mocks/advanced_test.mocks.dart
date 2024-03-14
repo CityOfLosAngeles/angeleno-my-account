@@ -39,14 +39,14 @@ class _FakeApiResponse_0 extends _i1.SmartFake implements _i2.ApiResponse {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockUserApi extends _i1.Mock implements _i3.UserApi {
-  MockUserApi() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
         returnValue: _i4.dummyValue<String>(
+          this,
+          Invocation.getter(#baseUrl),
+        ),
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.getter(#baseUrl),
         ),
@@ -59,6 +59,13 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
           [],
         ),
         returnValue: _i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #createJwt,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _i4.dummyValue<String>(
           this,
           Invocation.method(
             #createJwt,
@@ -80,6 +87,14 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
             [],
           ),
         )),
+        returnValueForMissingStub:
+            _i5.Future<String>.value(_i4.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getOAuthToken,
+            [],
+          ),
+        )),
       ) as _i5.Future<String>);
 
   @override
@@ -89,6 +104,7 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
           [user],
         ),
         returnValue: _i5.Future<int>.value(0),
+        returnValueForMissingStub: _i5.Future<int>.value(0),
       ) as _i5.Future<int>);
 
   @override
@@ -99,6 +115,8 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
           [body],
         ),
         returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+        returnValueForMissingStub:
             _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i5.Future<Map<String, dynamic>>);
 
@@ -116,6 +134,14 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
             [userId],
           ),
         )),
+        returnValueForMissingStub:
+            _i5.Future<_i2.ApiResponse>.value(_FakeApiResponse_0(
+          this,
+          Invocation.method(
+            #getAuthenticationMethods,
+            [userId],
+          ),
+        )),
       ) as _i5.Future<_i2.ApiResponse>);
 
   @override
@@ -126,6 +152,8 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
           [body],
         ),
         returnValue:
+            _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
+        returnValueForMissingStub:
             _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i5.Future<Map<String, dynamic>>);
 
@@ -143,6 +171,14 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
             [body],
           ),
         )),
+        returnValueForMissingStub:
+            _i5.Future<_i2.ApiResponse>.value(_FakeApiResponse_0(
+          this,
+          Invocation.method(
+            #confirmMFA,
+            [body],
+          ),
+        )),
       ) as _i5.Future<_i2.ApiResponse>);
 
   @override
@@ -153,6 +189,14 @@ class MockUserApi extends _i1.Mock implements _i3.UserApi {
           [body],
         ),
         returnValue: _i5.Future<_i2.ApiResponse>.value(_FakeApiResponse_0(
+          this,
+          Invocation.method(
+            #unenrollMFA,
+            [body],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i5.Future<_i2.ApiResponse>.value(_FakeApiResponse_0(
           this,
           Invocation.method(
             #unenrollMFA,

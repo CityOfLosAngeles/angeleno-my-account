@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../controllers/api_implementation.dart';
 import '../../controllers/user_provider.dart';
 import '../../models/user.dart';
 
@@ -101,7 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
     const ProfileScreen(),
     const PasswordScreen(),
     AdvancedSecurityScreen(
-      userProvider: userProvider
+      userProvider: userProvider,
+      userApi: UserApi(),
     )
   ];
 

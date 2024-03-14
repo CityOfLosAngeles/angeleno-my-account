@@ -1,7 +1,5 @@
 import 'package:angeleno_project/controllers/api_implementation.dart';
-import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
-import 'package:angeleno_project/main.dart';
 import 'package:angeleno_project/models/api_response.dart';
 import 'package:angeleno_project/views/screens/advanced_security_screen.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
@@ -9,18 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 import 'mocks/advanced_test.mocks.dart';
 
-@GenerateMocks([UserApi])
+@GenerateNiceMocks([MockSpec<UserApi>()])
 void main() {
 
-  late MockUserApi userApi;
+  late MockUserApi mockUserApi;
 
   setUp(() {
-    userApi = MockUserApi();
+    mockUserApi = MockUserApi();
   });
-
 
   final userProvider = UserProvider();
   const auth0User = UserProfile(
@@ -46,36 +42,60 @@ void main() {
   userProvider.setUser(auth0User);
 
   testWidgets('Navigates to Advanced Security', (final WidgetTester tester) async {
-    final mockResponse = ApiResponse(200, '[{"type": "totp", "id": "123"}]');
+    final authenticationMethodsMockResponse = ApiResponse(200, '[{"type": "totp", "id": "123"}]');
+    final disableAuthenticatorMockResponse = ApiResponse(200, '');
 
-    when(userApi.getAuthenticationMethods(any))
-      .thenAnswer((_) async => mockResponse);
+    when(mockUserApi.getAuthenticationMethods(any))
+        .thenAnswer((_) async => authenticationMethodsMockResponse);
+
+    when(mockUserApi.unenrollMFA(any))
+        .thenAnswer((_) async => disableAuthenticatorMockResponse);
 
     await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(value: userProvider),
-          ChangeNotifierProvider(create: (final _) => OverlayProvider())
-        ],
-        child: const MyApp(),
+MaterialApp(
+        home: Scaffold(
+          body: AdvancedSecurityScreen(
+              userProvider: userProvider,
+              userApi: mockUserApi
+          ),
+        )
       ),
     );
 
     await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.menu));
+    verify(mockUserApi.getAuthenticationMethods(any)).called(1);
+
+    // Mock response has Authenticator enabled
+    // so the UI should reflect disable button
+    expect(find.byKey(const Key('disableAuthenticator')), findsOneWidget);
+    await tester.tap(find.byKey( const Key('disableAuthenticator')));
+
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.security));
-    await tester.pump();
+    // Opens dialog and closes it on Cancel
+    expect(find.byType(Dialog), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
 
-    expect(find.byType(AdvancedSecurityScreen), findsOneWidget);
-
+    // Disables Authenticator
+    await tester.tap(find.byKey( const Key('disableAuthenticator')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Ok'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(LinearProgressIndicator), findsNothing);
+    // Should find the button to enable Authenticator
     expect(find.byKey(const Key('enableAuthenticator')), findsOneWidget);
     await tester.tap(find.byKey( const Key('enableAuthenticator')));
+
     await tester.pumpAndSettle();
+
+    // Enrollment Dialog
     expect(find.byType(Dialog), findsOneWidget);
+
+    // Enters password and taps submit
+    // await tester.enterText(find.byType(TextFormField), 'userPassword');
+    // await tester.tap(find.byType(TextButton));
+    // await tester.pumpAndSettle();
   });
 }

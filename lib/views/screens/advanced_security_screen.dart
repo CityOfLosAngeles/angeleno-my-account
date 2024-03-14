@@ -11,9 +11,11 @@ import '../dialogs/authenticator.dart';
 
 class AdvancedSecurityScreen extends StatefulWidget {
   final UserProvider userProvider;
+  final UserApi userApi;
 
   const AdvancedSecurityScreen({
     required this.userProvider,
+    required this.userApi,
     super.key
   });
 
@@ -23,8 +25,7 @@ class AdvancedSecurityScreen extends StatefulWidget {
 
 class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
 
-  final api = UserApi();
-
+  late UserApi api;
   late UserProvider userProvider;
 
   late bool authenticatorEnabled = false;
@@ -41,6 +42,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   void initState() {
     super.initState();
     userProvider = widget.userProvider;
+    api = widget.userApi;
     _authMethods = getAuthenticationMethods();
   }
 
