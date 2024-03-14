@@ -20,6 +20,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
 
+  final api = UserApi();
+
   final minPasswordLength = 12;
 
   String currentPassword = '';
@@ -57,7 +59,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         userId: userProvider.user!.userId
       );
 
-      UserApi().updatePassword(body).then((final response) {
+      api.updatePassword(body).then((final response) {
         final success = response['status'] == HttpStatus.ok;
         overlayProvider.hideLoading();
         ScaffoldMessenger.of(context).showSnackBar( SnackBar(

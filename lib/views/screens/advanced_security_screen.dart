@@ -5,6 +5,7 @@ import 'package:angeleno_project/controllers/api_implementation.dart';
 import 'package:angeleno_project/views/dialogs/mobile.dart';
 import 'package:flutter/material.dart';
 
+
 import '../../controllers/user_provider.dart';
 import '../dialogs/authenticator.dart';
 
@@ -21,6 +22,8 @@ class AdvancedSecurityScreen extends StatefulWidget {
 }
 
 class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
+
+  final api = UserApi();
 
   late UserProvider userProvider;
 
@@ -42,7 +45,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   }
 
   Future<void> getAuthenticationMethods() async {
-    await UserApi().getAuthenticationMethods(userProvider.user!.userId)
+    await api.getAuthenticationMethods(userProvider.user!.userId)
       .then((final response) {
         final bool success = response.statusCode == HttpStatus.ok;
         if (success) {
@@ -77,7 +80,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   }
 
   void disableMFA(final String mfaAuthId, final String method) {
-    UserApi().unenrollMFA({
+    api.unenrollMFA({
       'authFactorId': mfaAuthId,
       'userId': widget.userProvider.user!.userId
     }).then((final response) {
@@ -106,14 +109,19 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   @override
   Widget build(final BuildContext context) => FutureBuilder(
     future: _authMethods, 
-    builder: (final BuildContext context, final AsyncSnapshot<void> snapshot) => 
+    builder:(final BuildContext context, final AsyncSnapshot<void> snapshot) =>
       snapshot.connectionState == ConnectionState.done ?
         Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Authenticator App (Timed One-Time Password)'),
+                const Flexible(
+                  child: Text(
+                  'Authenticator App (Timed One-Time Password)',
+                    softWrap: true,
+                  ),
+                ),
                 authenticatorEnabled ?
                   FilledButton.tonal(
                     key: const Key('disableAuthenticator'),
@@ -125,8 +133,9 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                           child: ListBody(
                             children: <Widget>[
                               // ignore: avoid_escaping_inner_quotes
-                              Text('You won\'t be able to use your authenticator '
-                                'app to sign into your Angeleno Account.')
+                              Text('You won\'t be able to use your  '
+                                'authenticator app to sign into your Angeleno '
+                                 'Account.')
                             ],
                           )
                         ),
@@ -163,7 +172,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                         builder: (final BuildContext context) =>
                             AuthenticatorDialog(userProvider: userProvider),
                       ).then((final value) {
-                        if (value != null && value == HttpStatus.ok.toString()) {
+                        if (value != null && value == HttpStatus.ok.toString()){
                           setState(() {
                             authenticatorEnabled = true;
                           });
@@ -183,6 +192,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 const Text('SMS Text'),
                 smsEnabled ?
                 FilledButton.tonal(
+                  key: const Key('disableSMS'),
                   onPressed: () => showDialog<String>(
                       context: context,
                       builder: (final BuildContext context) => AlertDialog(
@@ -224,7 +234,8 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 )
                 :
                 FilledButton(
-                  onPressed: () {
+                    key: const Key('enableSMS'),
+                    onPressed: () {
                     showDialog<String>(
                       context: context,
                       builder: (
@@ -248,35 +259,37 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
             const Divider(),
             const SizedBox(height: 10),
             Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Phone Call'),
-                  voiceEnabled ?
-                  FilledButton.tonal(
-                    onPressed: () => {},
-                    child: const Text('Disable'),
-                  )
-                      :
-                  FilledButton(
-                      onPressed: () {
-                        showDialog<String>(
-                            context: context,
-                            builder: (
-                                final BuildContext context) => MobileDialog(
-                              userProvider: userProvider,
-                              channel: 'voice',
-                            )
-                        ).then((final value) {
-                          if (value != null && value == HttpStatus.ok.toString()) {
-                            setState(() {
-                              voiceEnabled = true;
-                            });
-                          }
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Phone Call'),
+                voiceEnabled ?
+                FilledButton.tonal(
+                  key: const Key('disableVoice'),
+                  onPressed: () => {},
+                  child: const Text('Disable'),
+                )
+                :
+                FilledButton(
+                  key: const Key('enableVoice'),
+                  onPressed: () {
+                    showDialog<String>(
+                        context: context,
+                        builder: (
+                            final BuildContext context) => MobileDialog(
+                          userProvider: userProvider,
+                          channel: 'voice',
+                        )
+                    ).then((final value) {
+                      if (value != null && value == HttpStatus.ok.toString()) {
+                        setState(() {
+                          voiceEnabled = true;
                         });
-                      },
-                      child: const Text('Enable')
-                  )
-                ]
+                      }
+                    });
+                  },
+                  child: const Text('Enable')
+                )
+              ]
             ),
           ],
         )

@@ -23,6 +23,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
   final PageController _pageController = PageController();
   final passwordField = TextEditingController();
+  final api = UserApi();
 
   late UserProvider userProvider;
 
@@ -77,7 +78,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'mfaFactor': 'otp'
     };
 
-    UserApi().enrollMFA(body).then((final response) {
+    api.enrollMFA(body).then((final response) {
       final bool success = response['status'] == HttpStatus.ok;
       if (success) {
         setState(() {
@@ -109,7 +110,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'userOtpCode': totpCode
     };
 
-    UserApi().confirmMFA(body).then((final response) {
+    api.confirmMFA(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
         Navigator.pop(context, response.statusCode.toString());
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(

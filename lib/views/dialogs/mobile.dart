@@ -26,6 +26,8 @@ class _MobileDialogState extends State<MobileDialog> {
   final passwordField = TextEditingController();
   final phoneField = TextEditingController();
 
+  final api = UserApi();
+
   late UserProvider userProvider;
   late String channel;
 
@@ -85,7 +87,7 @@ class _MobileDialogState extends State<MobileDialog> {
       'number': phoneNumber
     };
 
-    UserApi().enrollMFA(body).then((final response) {
+    api.enrollMFA(body).then((final response) {
       final bool success = response['status'] == HttpStatus.ok;
       if (success) {
         oobCode = response['oobCode'] as String;
@@ -110,7 +112,7 @@ class _MobileDialogState extends State<MobileDialog> {
       'userOtpCode': codeProvided
     };
 
-    UserApi().confirmMFA(body).then((final response) {
+    api.confirmMFA(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
         Navigator.pop(context, response.statusCode.toString());
         ScaffoldMessenger.of(context).showSnackBar( SnackBar(
