@@ -1,6 +1,9 @@
 name: Flutter/Dart Test Suite
 
 on:
+  schedule:
+    - cron: "30 12 * * 1"
+
   pull_request: {}
 
 jobs:
@@ -51,7 +54,8 @@ jobs:
     with:
       scan-args: |-
         --lockfile=pubspec.lock
-      fail-on-vuln: false
+      upload-sarif: ${{ github.event_name == 'schedule' }}
+
 
   semgrep:
     # Skip any PR created by dependabot to avoid permission issues:
