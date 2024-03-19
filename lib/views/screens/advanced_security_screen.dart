@@ -172,7 +172,10 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                       showDialog<String>(
                         context: context,
                         builder: (final BuildContext context) =>
-                            AuthenticatorDialog(userProvider: userProvider),
+                            AuthenticatorDialog(
+                              userProvider: userProvider,
+                              userApi: api
+                            ),
                       ).then((final value) {
                         if (value != null && value == HttpStatus.ok.toString()){
                           setState(() {

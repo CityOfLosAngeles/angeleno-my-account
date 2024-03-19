@@ -44,12 +44,28 @@ void main() {
   testWidgets('Navigates to Advanced Security', (final WidgetTester tester) async {
     final authenticationMethodsMockResponse = ApiResponse(200, '[{"type": "totp", "id": "123"}]');
     final disableAuthenticatorMockResponse = ApiResponse(200, '');
+    final confirmAuthenticatorMockResponse = ApiResponse(200, '');
+
+     final totpEnrollmentMockResponse = {
+      'status': 200,
+      'token': 'eyJhbG',
+      'authenticator_type': 'otp', 
+      'secret': 'NQ4FGVKEMQWGIRZVJFSE2STEKN4UQKCD', 
+      'barcode': 'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
+      'barcode_string': 'totpString'
+    };
 
     when(mockUserApi.getAuthenticationMethods(any))
         .thenAnswer((_) async => authenticationMethodsMockResponse);
 
     when(mockUserApi.unenrollMFA(any))
         .thenAnswer((_) async => disableAuthenticatorMockResponse);
+
+    when(mockUserApi.enrollMFA(any))
+      .thenAnswer((_) async => totpEnrollmentMockResponse);
+
+    when(mockUserApi.confirmMFA(any))
+      .thenAnswer((_) async => confirmAuthenticatorMockResponse);
 
     await tester.pumpWidget(
 MaterialApp(
@@ -93,9 +109,22 @@ MaterialApp(
     // Enrollment Dialog
     expect(find.byType(Dialog), findsOneWidget);
 
-    // Enters password and taps submit
-    // await tester.enterText(find.byType(TextFormField), 'userPassword');
-    // await tester.tap(find.byType(TextButton));
-    // await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), 'userPassword');
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('totpCode')), '123456');
+
+    await tester.tap(find.widgetWithText(TextButton, 'Finish'));
+    await tester.pumpAndSettle();
+
+    // Snackbar on successful enrollment
+    expect(find.byType(SnackBar), findsOneWidget);
+    // Authenticator has been re-enabled so we should see the disable button
+    expect(find.byKey(const Key('disableAuthenticator')), findsOneWidget);
+
   });
 }

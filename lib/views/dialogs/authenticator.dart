@@ -9,9 +9,11 @@ import '../../utils/constants.dart';
 
 class AuthenticatorDialog extends StatefulWidget {
   final UserProvider userProvider;
+  final UserApi userApi;
 
   const AuthenticatorDialog({
     required this.userProvider,
+    required this.userApi,
     super.key
   });
 
@@ -23,9 +25,9 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
   final PageController _pageController = PageController();
   final passwordField = TextEditingController();
-  final api = UserApi();
 
   late UserProvider userProvider;
+  late UserApi api;
 
   int _pageIndex = 0;
   String errMsg = '';
@@ -42,6 +44,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     super.initState();
 
     userProvider = widget.userProvider;
+    api = widget.userApi; 
   }
 
   @override
@@ -188,7 +191,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                           });
                         },
                         icon: Icon(
-                      obscurePassword ? Icons.visibility : Icons.visibility_off
+                          obscurePassword ? Icons.visibility : Icons.visibility_off
                         ),
                       )
                   ),
@@ -298,6 +301,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                     SizedBox(
                       width: 250,
                       child: TextFormField(
+                        key: const Key('totpCode'),
                         autofocus: true,
                         autovalidateMode: AutovalidateMode.always,
                         validator: (final value) {
