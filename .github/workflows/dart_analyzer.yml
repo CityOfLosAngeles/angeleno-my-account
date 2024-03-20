@@ -2,7 +2,7 @@ name: Flutter/Dart Test Suite
 
 on:
   schedule:
-    - cron: "30 12 * * 1"
+    - cron: "30 12 * * 1,5"
 
   pull_request: {}
 
