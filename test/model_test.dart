@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:angeleno_project/models/api_exception.dart';
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/models/user.dart';
@@ -70,20 +72,21 @@ void main() {
   });
 
   group('User', () {
+
+    final user = User(
+      userId: '123456',
+      email: 'test@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      address: '123 Main St',
+      address2: 'Apt 2',
+      city: 'City',
+      state: 'State',
+      zip: '12345',
+      phone: '123-456-7890',
+      metadata: {'key': 'value'},
+    );
     test('toJson() should return a valid map', () {
-      final user = User(
-        userId: '123456',
-        email: 'test@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        address: '123 Main St',
-        address2: 'Apt 2',
-        city: 'City',
-        state: 'State',
-        zip: '12345',
-        phone: '123-456-7890',
-        metadata: {'key': 'value'},
-      );
 
       final json = user.toJson();
 
@@ -103,24 +106,16 @@ void main() {
 
     test('toString() should return a valid string representation', () {
 
-      final user = User(
-        userId: '123456',
-        email: 'test@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        address: '123 Main St',
-        address2: 'Apt 2',
-        city: 'City',
-        state: 'State',
-        zip: '12345',
-        phone: '123-456-7890',
-        metadata: {'key': 'value'},
-      );
-
       final stringRep = user.toString();
       
       // ignore: lines_longer_than_80_chars
       expect(stringRep, '{id: 123456, email: test@example.com, firstName: John, lastName: Doe, zip: 12345, address: 123 Main St, address2: Apt 2, city: City, state: State, phone: 123-456-7890}');
+    });
+
+    test('User copy method should work correctly', () {
+      final userCopy = User.copy(user);
+
+      expect(userCopy, equals(user));
     });
 
     test('Equality comparison should work correctly', () {
@@ -142,7 +137,7 @@ void main() {
       final user2 = User(
         userId: '123456',
         email: 'test@example.com',
-        firstName: 'John',
+        firstName: 'Karen',
         lastName: 'Doe',
         address: '123 Main St',
         address2: 'Apt 2',
@@ -153,7 +148,8 @@ void main() {
         metadata: {'key': 'value'},
       );
 
-      expect(user1, equals(user2));
+      expect(user1, equals(user));
+      expect(user1, isNot(equals(user2)));
     });
 
     test('Hash code calculation should work correctly', () {
@@ -172,21 +168,7 @@ void main() {
         metadata: {'key': 'value'},
       );
 
-      final user2 = User(
-        userId: '123456',
-        email: 'test@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        address: '123 Main St',
-        address2: 'Apt 2',
-        city: 'City',
-        state: 'State',
-        zip: '12345',
-        phone: '123-456-7890',
-        metadata: {'key': 'value'},
-      );
-
-      expect(user1.hashCode, equals(user2.hashCode));
+      expect(user1.hashCode, equals(user.hashCode));
     });
   });
 }
