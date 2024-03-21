@@ -1,4 +1,5 @@
 import 'package:angeleno_project/models/api_exception.dart';
+import 'package:angeleno_project/models/password_reset.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -47,4 +48,28 @@ void main() {
       expect(error, "I'm a teapot");
     });
   });
+
+  group('PasswordBody', () {
+    test('toJson() should return a valid map', () {
+      // Arrange
+      final passwordBody = PasswordBody(
+        email: 'test@example.com',
+        oldPassword: 'oldPassword123',
+        newPassword: 'newPassword456',
+        userId: '123456789',
+      );
+
+      // Act
+      final json = passwordBody.toJson();
+
+      // Assert
+      expect(json, isA<Map<String, dynamic>>());
+      expect(json['email'], 'test@example.com');
+      expect(json['oldPassword'], 'oldPassword123');
+      expect(json['newPassword'], 'newPassword456');
+      expect(json['userId'], '123456789');
+    });
+  });
+
+
 }
