@@ -1,19 +1,17 @@
 import 'package:angeleno_project/models/api_exception.dart';
 import 'package:angeleno_project/models/password_reset.dart';
+import 'package:angeleno_project/models/user.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('ApiException', () {
     test('Should return error message from JSON body', () {
-      // Arrange
       const int statusCode = 404;
       const String responseBody = '{"error": "Resource not found"}';
       final ApiException apiException = ApiException(statusCode, responseBody);
 
-      // Act
       final error = apiException.error;
 
-      // Assert
       expect(error, 'Resource not found');
     });
 
@@ -37,7 +35,7 @@ void main() {
       expect(error, 'Error encountered');
     });
 
-    test('Should return response error message when body contains error in body', () {
+    test('Should return error message when body contains error in body', () {
 
       const int statusCode = 418;
       const String responseBody = '{"error": "I\'m a teapot"}';
@@ -71,5 +69,124 @@ void main() {
     });
   });
 
+  group('User', () {
+    test('toJson() should return a valid map', () {
+      final user = User(
+        userId: '123456',
+        email: 'test@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main St',
+        address2: 'Apt 2',
+        city: 'City',
+        state: 'State',
+        zip: '12345',
+        phone: '123-456-7890',
+        metadata: {'key': 'value'},
+      );
 
+      final json = user.toJson();
+
+      expect(json, isA<Map<String, dynamic>>());
+      expect(json['userId'], '123456');
+      expect(json['email'], 'test@example.com');
+      expect(json['firstName'], 'John');
+      expect(json['lastName'], 'Doe');
+      expect(json['address'], '123 Main St');
+      expect(json['address2'], 'Apt 2');
+      expect(json['city'], 'City');
+      expect(json['state'], 'State');
+      expect(json['zip'], '12345');
+      expect(json['phone'], '123-456-7890');
+      expect(json['metadata'], {'key': 'value'});
+    });
+
+    test('toString() should return a valid string representation', () {
+
+      final user = User(
+        userId: '123456',
+        email: 'test@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main St',
+        address2: 'Apt 2',
+        city: 'City',
+        state: 'State',
+        zip: '12345',
+        phone: '123-456-7890',
+        metadata: {'key': 'value'},
+      );
+
+      final stringRep = user.toString();
+      
+      // ignore: lines_longer_than_80_chars
+      expect(stringRep, '{id: 123456, email: test@example.com, firstName: John, lastName: Doe, zip: 12345, address: 123 Main St, address2: Apt 2, city: City, state: State, phone: 123-456-7890}');
+    });
+
+    test('Equality comparison should work correctly', () {
+
+      final user1 = User(
+        userId: '123456',
+        email: 'test@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main St',
+        address2: 'Apt 2',
+        city: 'City',
+        state: 'State',
+        zip: '12345',
+        phone: '123-456-7890',
+        metadata: {'key': 'value'},
+      );
+
+      final user2 = User(
+        userId: '123456',
+        email: 'test@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main St',
+        address2: 'Apt 2',
+        city: 'City',
+        state: 'State',
+        zip: '12345',
+        phone: '123-456-7890',
+        metadata: {'key': 'value'},
+      );
+
+      expect(user1, equals(user2));
+    });
+
+    test('Hash code calculation should work correctly', () {
+
+      final user1 = User(
+        userId: '123456',
+        email: 'test@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main St',
+        address2: 'Apt 2',
+        city: 'City',
+        state: 'State',
+        zip: '12345',
+        phone: '123-456-7890',
+        metadata: {'key': 'value'},
+      );
+
+      final user2 = User(
+        userId: '123456',
+        email: 'test@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        address: '123 Main St',
+        address2: 'Apt 2',
+        city: 'City',
+        state: 'State',
+        zip: '12345',
+        phone: '123-456-7890',
+        metadata: {'key': 'value'},
+      );
+
+      expect(user1.hashCode, equals(user2.hashCode));
+    });
+  });
 }
