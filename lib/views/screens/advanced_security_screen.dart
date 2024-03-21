@@ -246,6 +246,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                       builder: (
                         final BuildContext context) => MobileDialog(
                         userProvider: userProvider,
+                        userApi: api,
                         channel: 'sms',
                       )
                     ).then((final value) {
@@ -280,8 +281,9 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                     showDialog<String>(
                         context: context,
                         builder: (
-                            final BuildContext context) => MobileDialog(
+                          final BuildContext context) => MobileDialog(
                           userProvider: userProvider,
+                          userApi: api,
                           channel: 'voice',
                         )
                     ).then((final value) {

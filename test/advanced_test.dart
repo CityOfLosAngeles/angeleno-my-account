@@ -52,7 +52,8 @@ void main() {
       'authenticator_type': 'otp', 
       'secret': 'NQ4FGVKEMQWGIRZVJFSE2STEKN4UQKCD', 
       'barcode': 'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
-      'barcode_string': 'totpString'
+      'barcode_string': 'totpString',
+      'oobCode': 'dasddasdasd'
     };
 
     when(mockUserApi.getAuthenticationMethods(any))
@@ -68,7 +69,7 @@ void main() {
       .thenAnswer((_) async => confirmAuthenticatorMockResponse);
 
     await tester.pumpWidget(
-MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: AdvancedSecurityScreen(
               userProvider: userProvider,
@@ -125,6 +126,41 @@ MaterialApp(
     expect(find.byType(SnackBar), findsOneWidget);
     // Authenticator has been re-enabled so we should see the disable button
     expect(find.byKey(const Key('disableAuthenticator')), findsOneWidget);
+
+
+    // SMS Tests
+    expect(find.byKey(const Key('enableSMS')), findsOneWidget);
+    await tester.tap(find.byKey( const Key('enableSMS')));
+    await tester.pumpAndSettle();
+
+    // -------------------------------------
+
+    final inputTextFieldFinder = find.byKey(const Key('intl_text_input_key'));
+
+    await tester.tap(inputTextFieldFinder);
+   
+    await tester.enterText(find.byKey(const Key('phoneField')), '8');
+
+    await tester.pumpAndSettle();
+    
+
+    // -------------------------------------
+
+
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('passwordField')), 'myPassword');
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('phoneCode')), '483234');
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.byKey(const Key('disableSMS')), findsOneWidget);
+
 
   });
 }

@@ -8,10 +8,12 @@ import '../../utils/constants.dart';
 
 class MobileDialog extends StatefulWidget {
   final UserProvider userProvider;
+  final UserApi userApi;
   final String channel;
 
   const MobileDialog({
     required this.userProvider,
+    required this.userApi,
     required this.channel,
     super.key
   });
@@ -26,9 +28,8 @@ class _MobileDialogState extends State<MobileDialog> {
   final passwordField = TextEditingController();
   final phoneField = TextEditingController();
 
-  final api = UserApi();
-
   late UserProvider userProvider;
+  late UserApi api;
   late String channel;
 
   PhoneNumber number = PhoneNumber(isoCode: 'US');
@@ -49,6 +50,7 @@ class _MobileDialogState extends State<MobileDialog> {
     super.initState();
 
     userProvider = widget.userProvider;
+    api = widget.userApi;
     channel = widget.channel;
   }
 
@@ -59,11 +61,21 @@ class _MobileDialogState extends State<MobileDialog> {
     super.dispose();
   }
 
+  Widget get dialogClose => IconButton(
+    onPressed: () {
+      Navigator.pop(context);
+      setState(() {
+        _pageIndex = 0;
+      });
+    },
+    icon: const Icon(Icons.close)
+  );
+
   void _navigateToNextPage() {
     if (_pageIndex <= 2) {
       _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut
       );
     } else {
       Navigator.pop(context);
@@ -75,7 +87,7 @@ class _MobileDialogState extends State<MobileDialog> {
       errMsg = '';
     });
 
-    if (passwordField.text.isEmpty || !validPhoneNumber) {
+    if (passwordField.text.isEmpty) {
       return;
     }
 
@@ -124,16 +136,6 @@ class _MobileDialogState extends State<MobileDialog> {
     });
   }
 
-  Widget get dialogClose => IconButton(
-      onPressed: () {
-        Navigator.pop(context);
-        setState(() {
-          _pageIndex = 0;
-        });
-      },
-      icon: const Icon(Icons.close)
-  );
-
   Widget get phonePrompt => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
@@ -143,6 +145,10 @@ class _MobileDialogState extends State<MobileDialog> {
           dialogClose,
           TextButton(
             onPressed: () {
+              if (!validPhoneNumber) {
+                setState(() => errMsg = 'Invalid phone number');
+                return;
+              }
               _navigateToNextPage();
             },
             child: const Text('Continue'),
@@ -163,6 +169,7 @@ class _MobileDialogState extends State<MobileDialog> {
               SizedBox(
                 width: 500,
                 child: InternationalPhoneNumberInput(
+                  key: const Key('phoneField'),
                   onInputChanged: (final PhoneNumber number) {
                     phoneNumber = number.phoneNumber!;
                   },
@@ -182,6 +189,8 @@ class _MobileDialogState extends State<MobileDialog> {
                   },
                 ),
               ),
+              if (errMsg.isNotEmpty)
+                Text(errMsg, style: TextStyle(color: colorScheme.error))
             ],
           ),
         ),
@@ -217,6 +226,7 @@ class _MobileDialogState extends State<MobileDialog> {
               ),
               const SizedBox(height: 15),
               SizedBox(
+                key: const Key('passwordField'),
                 width: 250,
                 child: TextFormField(
                   autofocus: true,
@@ -282,6 +292,7 @@ class _MobileDialogState extends State<MobileDialog> {
               SizedBox(
                 width: 250,
                 child: TextFormField(
+                  key: const Key('phoneCode'),
                   autofocus: true,
                   autovalidateMode: AutovalidateMode.always,
                   validator: (final value) {
