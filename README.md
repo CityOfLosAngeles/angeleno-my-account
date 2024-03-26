@@ -11,7 +11,7 @@ Angeleno - My Account is a Flutter based app that interfaces Auth0. This reposit
 
 
 ## Getting Started
-The develpment branch is our main branch you can use to work on your own work/issues. To start development you'll `git clone` this repo; after cloning you'll by default be on the development branch. When opening the pull request for your work, make sure the branch is being merged into `development` branch as well.
+The development branch is our main branch you can use to work on your own work/issues. To start development you'll `git clone` this repo; after cloning you'll by default be on the development branch. When opening the pull request for your work, make sure the branch is being merged into `development` branch as well.
 
 
 ### Minimum Requirements
