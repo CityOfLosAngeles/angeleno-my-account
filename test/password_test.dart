@@ -1,12 +1,21 @@
 import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
-import 'package:angeleno_project/main.dart';
+import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'mocks/advanced_test.mocks.dart';
+
 
 void main() {
+
+  late MockUserApi mockUserApi;
+
+  setUp(() {
+    mockUserApi = MockUserApi();
+  });
 
   final userProvider = UserProvider();
   const auth0User = UserProfile(
@@ -31,22 +40,28 @@ void main() {
   );
   userProvider.setUser(auth0User);
   testWidgets('Navigates to Password', (final WidgetTester tester) async {
+    
+    final passwordUpdateMockResponse = {
+      'status': 500,
+      'body': 'Expected Failure'
+    };
+    
+    when(mockUserApi.updatePassword(any))
+        .thenAnswer((_) async => passwordUpdateMockResponse);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
           ChangeNotifierProvider.value(value: userProvider),
           ChangeNotifierProvider(create: (final _) => OverlayProvider())
         ],
-        child: const MyApp(),
-      ),
+        child: MaterialApp(
+          home: Scaffold(
+            body: PasswordScreen(userApi: mockUserApi)
+          )
+        )
+      )
     );
-
-    await tester.tap(find.byIcon(Icons.menu));
-    await tester.pumpAndSettle(const Duration(seconds: 3));
-
-    await tester.ensureVisible(find.byIcon(Icons.password));
-    await tester.tap(find.byIcon(Icons.password));
-    await tester.pump();
 
     expect(find.text('Current Password'), findsOneWidget);
     expect(find.text('New Password'), findsOneWidget);
@@ -110,6 +125,11 @@ void main() {
     final refreshMatchPasswordField = tester
       .firstWidget<TextField>(matchPasswordFinder);
     expect(refreshMatchPasswordField.obscureText, false);
+
+    await tester.tap(submitButtonFinder);
+    await tester.pumpAndSettle();
+    expect(find.byType(SnackBar), findsOne);
+    expect(find.textContaining('Expected Failure'), findsOne);
 
   });
 }

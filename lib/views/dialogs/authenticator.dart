@@ -191,6 +191,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                           });
                         },
                         icon: Icon(
+                          // ignore: lines_longer_than_80_chars
                           obscurePassword ? Icons.visibility : Icons.visibility_off
                         ),
                       )

@@ -10,7 +10,12 @@ import '../../controllers/overlay_provider.dart';
 import '../../controllers/user_provider.dart';
 
 class PasswordScreen extends StatefulWidget {
-  const PasswordScreen({super.key});
+  final UserApi userApi;
+
+  const PasswordScreen({
+    required this.userApi,
+    super.key
+  });
 
   @override
   State<PasswordScreen> createState() => _PasswordScreenState();
@@ -19,8 +24,7 @@ class PasswordScreen extends StatefulWidget {
 class _PasswordScreenState extends State<PasswordScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
-
-  final api = UserApi();
+  late UserApi api;
 
   final minPasswordLength = 12;
 
@@ -41,6 +45,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
   @override
   void initState() {
     super.initState();
+    api = widget.userApi;
   }
 
   void submitRequest() {
