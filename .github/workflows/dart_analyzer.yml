@@ -1,6 +1,9 @@
 name: Flutter/Dart Test Suite
 
 on:
+  schedule:
+    - cron: "30 12 * * 1,5"
+
   pull_request: {}
 
 jobs:
@@ -45,27 +48,13 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      # See output in console until we have access
-      # to sarif file
-      - name: Dart Analyze
-        run: dart analyze
-
-      # 3 Tasks below commented out until Repo is Public
-
-      # - name: Dart Analyze
-      #  run: dart analyze > dart_analyze.txt || true
-
-      # - name: Dart Analyze to SARIF
-      #  uses: advanced-security/dart-analyzer-sarif@main
-      #  with:
-      #    input: dart_analyze.txt
-      #    output: dart_analyze.sarif
-
-     
-      # - name: Upload SARIF
-      # uses: github/codeql-action/upload-sarif@v2
-      #  with:
-      #   sarif_file: dart_analyze.sarif
+  security-scan:
+    # OSV-Scanner 
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v1.6.2-beta1"
+    with:
+      scan-args: |-
+        --lockfile=pubspec.lock
+      upload-sarif: ${{ github.event_name == 'schedule' }}
 
 
   semgrep:
