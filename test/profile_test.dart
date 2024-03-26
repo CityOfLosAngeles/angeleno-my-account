@@ -61,6 +61,16 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(6), 'New State');
     await tester.enterText(find.byType(TextFormField).at(7), 'New Zip');
 
+    // Dialog preventing user from leaving while editing
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+    await tester.ensureVisible(find.byIcon(Icons.password));
+    await tester.tap(find.byIcon(Icons.password));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+
     await tester.dragUntilVisible(
       find.text('Save'),
       find.byType(ElevatedButton),

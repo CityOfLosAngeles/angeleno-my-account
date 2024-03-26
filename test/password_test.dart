@@ -75,6 +75,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('toggle_old_password')));
     await tester.pump();
+    // ignore: lines_longer_than_80_chars
     final refreshOldPasswordField = tester.firstWidget<TextField>(oldPasswordFinder);
     expect(refreshOldPasswordField.obscureText, false);
 
