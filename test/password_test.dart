@@ -128,8 +128,8 @@ void main() {
 
     await tester.tap(submitButtonFinder);
     await tester.pumpAndSettle();
-    expect(find.byType(SnackBar), findsOne);
-    expect(find.textContaining('Expected Failure'), findsOne);
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.textContaining('Expected Failure'), findsOneWidget);
 
   });
 }
