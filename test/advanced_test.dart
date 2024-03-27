@@ -45,7 +45,8 @@ void main() {
   userProvider.setUser(auth0User);
 
   testWidgets('Navigates to Advanced Security', (final WidgetTester tester) async {
-    final authenticationMethodsMockResponse = ApiResponse(200, '[{"type": "totp", "id": "123"}]');
+    final authenticationMethodsMockResponse = ApiResponse(200, 
+    '[{"type": "totp", "id": "123"}, {"type": "phone", "id": "456", "preferred_authentication_method": "sms"}]');
     final disableAuthenticatorMockResponse = ApiResponse(200, '');
     final confirmAuthenticatorMockResponse = ApiResponse(200, '');
 
@@ -132,6 +133,23 @@ void main() {
 
 
     // SMS Tests
+    expect(find.byKey(const Key('disableSMS')), findsOneWidget);
+    await tester.tap(find.byKey( const Key('disableSMS')));
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsNothing);
+
+    await tester.tap(find.byKey( const Key('disableSMS')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Ok'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SnackBar), findsOneWidget);
+    await tester.pumpAndSettle();
+
     expect(find.byKey(const Key('enableSMS')), findsOneWidget);
     await tester.tap(find.byKey( const Key('enableSMS')));
     await tester.pumpAndSettle();
