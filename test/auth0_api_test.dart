@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:angeleno_project/models/api_exception.dart';
 import 'package:angeleno_project/models/api_response.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
