@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           TextButton(
-            child: const Text('OK'),
+            child: const Text('Ok'),
             onPressed: () {
               Navigator.of(context).pop();
               userProvider.toggleEditing();
