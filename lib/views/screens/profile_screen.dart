@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../controllers/api_implementation.dart';
 import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
@@ -19,6 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
+  final api = UserApi();
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
       overlayProvider.showLoading();
-      UserApi().updateUser(user).then((final response) {
+      api.updateUser(user).then((final response) {
           final success = response == HttpStatus.ok;
           overlayProvider.hideLoading();
           if (success) {
@@ -40,10 +42,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               width: 280.0,
               content: Text(success ? 'User updated' : 'User update failed'),
               action: success ? null : SnackBarAction(
-                  label: 'Retry',
-                  onPressed: () {
-                    updateUser();
-                  }
+                label: 'Retry',
+                onPressed: () {
+                  updateUser();
+                }
               )
           ));
       });
