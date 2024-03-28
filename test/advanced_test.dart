@@ -149,7 +149,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SnackBar), findsOneWidget);
     await tester.pumpAndSettle();
-
+    
     expect(find.byKey(const Key('enableSMS')), findsOneWidget);
     await tester.tap(find.byKey( const Key('enableSMS')));
     await tester.pumpAndSettle();
@@ -158,6 +158,27 @@ void main() {
     await tester.tap(find.byIcon(Icons.close));
     await tester.pumpAndSettle();
     expect(find.byType(MobileDialog), findsNothing);
+
+    await tester.tap(find.byKey( const Key('enableSMS')));
+    await tester.pumpAndSettle();
+
+    final inputTextFieldFinder = find.byKey(const Key('phoneField'));
+    await tester.enterText(inputTextFieldFinder, '2134325435');
+
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('passwordField')), 'myPassword');
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('phoneCode')), '483234');
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.byKey(const Key('disableSMS')), findsOneWidget);
+
 
   });
 }
