@@ -108,11 +108,17 @@ void main() {
     // Should find the button to enable Authenticator
     expect(find.byKey(const Key('enableAuthenticator')), findsOneWidget);
     await tester.tap(find.byKey( const Key('enableAuthenticator')));
-
     await tester.pumpAndSettle();
 
     // Enrollment Dialog
     expect(find.byType(Dialog), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(MobileDialog), findsNothing);
+
+    await tester.tap(find.byKey( const Key('enableAuthenticator')));
+    await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextFormField), 'userPassword');
     await tester.tap(find.widgetWithText(TextButton, 'Continue'));

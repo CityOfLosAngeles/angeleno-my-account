@@ -1,9 +1,17 @@
+import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/models/api_exception.dart';
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/models/user.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+
+  late UserProvider userProvider;
+
+  setUp(() {
+    userProvider = UserProvider();
+  });
+
   group('ApiException', () {
     test('Should return error message from JSON body', () {
       const int statusCode = 404;
@@ -168,5 +176,28 @@ void main() {
 
       expect(user1.hashCode, equals(user.hashCode));
     });
+  });
+
+  group('UserProvider', () {
+    test('setCleanUser sets clean user correctly', () {
+      final user = User(
+        userId: 'testId',
+        email: 'testEmail',
+        firstName: 'testFirstName',
+        lastName: 'testLastName',
+        zip: 'testZip',
+        address: 'testAddress',
+        address2: 'testAddress2',
+        city: 'testCity',
+        state: 'testState',
+        phone: 'testPhone',
+        metadata: {},
+      );
+
+      userProvider.setCleanUser(user);
+
+      expect(userProvider.cleanUser, equals(user));
+    });
+
   });
 }

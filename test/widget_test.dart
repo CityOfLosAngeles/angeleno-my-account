@@ -55,6 +55,9 @@ void main() {
       )
     );
 
+    expect(Provider.of<UserProvider>(tester.element(find.byType(MyApp)), listen: false), isA<UserProvider>());
+    expect(Provider.of<OverlayProvider>(tester.element(find.byType(MyApp)), listen: false), isA<OverlayProvider>());
+
     expect(find.byType(MyHomePage), findsOneWidget);
     expect(find.text('Angeleno Account'), findsOneWidget);
   });
