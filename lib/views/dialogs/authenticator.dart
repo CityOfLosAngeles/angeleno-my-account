@@ -65,6 +65,16 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     }
   }
 
+  Widget get dialogClose => IconButton(
+    onPressed: () {
+      Navigator.pop(context);
+      setState(() {
+        _pageIndex = 0;
+      });
+    },
+    icon: const Icon(Icons.close)
+  );
+
   void enrollTOTP() async {
 
     setState(() {
@@ -135,15 +145,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _pageIndex = 0;
-              });
-            },
-            icon: const Icon(Icons.close),
-          ),
+          dialogClose,
           TextButton(
             onPressed: () {
               enrollTOTP();
@@ -214,15 +216,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  _pageIndex = 0;
-                });
-              },
-              icon: const Icon(Icons.close),
-            ),
+            dialogClose,
             TextButton(
               onPressed: () {
                 _navigateToNextPage();
@@ -273,15 +267,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  _pageIndex = 0;
-                });
-              },
-              icon: const Icon(Icons.close),
-            ),
+            dialogClose,
             TextButton(
               onPressed: () {
                 confirmTOTP();
