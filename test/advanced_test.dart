@@ -179,6 +179,29 @@ void main() {
     expect(find.byType(SnackBar), findsOneWidget);
     expect(find.byKey(const Key('disableSMS')), findsOneWidget);
 
+    // Voice Tests
+    expect(find.byKey(const Key('enableVoice')), findsOneWidget);
+    await tester.tap(find.byKey( const Key('enableVoice')));
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MobileDialog), findsOneWidget);
+
+    await tester.enterText(inputTextFieldFinder, '2134325435');
+
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('passwordField')), 'myPassword');
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('phoneCode')), '483234');
+    await tester.tap(find.widgetWithText(TextButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.byKey(const Key('disableVoice')), findsOneWidget);
 
   });
 }
