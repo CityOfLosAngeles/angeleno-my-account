@@ -44,7 +44,7 @@ void main() {
   );
   userProvider.setUser(auth0User);
 
-  testWidgets('Navigates to Advanced Security', (final WidgetTester tester) async {
+  testWidgets('Advanced Security', (final WidgetTester tester) async {
     final authenticationMethodsMockResponse = ApiResponse(200, 
     '[{"type": "totp", "id": "123"}, {"type": "phone", "id": "456", "preferred_authentication_method": "sms"}]');
     final disableAuthenticatorMockResponse = ApiResponse(200, '');

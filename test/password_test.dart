@@ -39,7 +39,7 @@ void main() {
     }
   );
   userProvider.setUser(auth0User);
-  testWidgets('Navigates to Password', (final WidgetTester tester) async {
+  testWidgets('Password', (final WidgetTester tester) async {
     
     final passwordUpdateMockResponse = {
       'status': 500,

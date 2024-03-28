@@ -93,6 +93,7 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     await tester.pump();
 
+    // Dialog with user intention of leaving while editing
     await tester.tap(find.byIcon(Icons.menu));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byIcon(Icons.password));
