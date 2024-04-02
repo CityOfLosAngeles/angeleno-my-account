@@ -1,4 +1,4 @@
-import 'package:angeleno_project/controllers/api_implementation.dart';
+import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/models/api_response.dart';
 import 'package:angeleno_project/views/dialogs/mobile.dart';
@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'mocks/advanced_test.mocks.dart';
+import 'mocks/auth0_user_api_mock.dart';
 
-@GenerateNiceMocks([MockSpec<UserApi>()])
+@GenerateNiceMocks([MockSpec<Auth0UserApi>()])
 void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -77,7 +77,7 @@ void main() {
         home: Scaffold(
           body: AdvancedSecurityScreen(
               userProvider: userProvider,
-              userApi: mockUserApi
+              auth0UserApi: mockUserApi
           ),
         )
       ),

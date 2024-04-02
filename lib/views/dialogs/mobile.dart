@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:angeleno_project/controllers/api_implementation.dart';
+import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
@@ -8,7 +8,7 @@ import '../../utils/constants.dart';
 
 class MobileDialog extends StatefulWidget {
   final UserProvider userProvider;
-  final UserApi userApi;
+  final Auth0UserApi userApi;
   final String channel;
 
   const MobileDialog({
@@ -29,7 +29,7 @@ class _MobileDialogState extends State<MobileDialog> {
   final phoneField = TextEditingController();
 
   late UserProvider userProvider;
-  late UserApi api;
+  late Auth0UserApi api;
   late String channel;
 
   PhoneNumber number = PhoneNumber(isoCode: 'US');

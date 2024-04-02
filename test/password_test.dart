@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'mocks/advanced_test.mocks.dart';
+import 'mocks/auth0_user_api_mock.dart';
 
 
 void main() {
@@ -57,7 +57,7 @@ void main() {
         ],
         child: MaterialApp(
           home: Scaffold(
-            body: PasswordScreen(userApi: mockUserApi)
+            body: PasswordScreen(auth0UserApi: mockUserApi)
           )
         )
       )

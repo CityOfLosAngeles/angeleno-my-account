@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:angeleno_project/controllers/api_implementation.dart';
+import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart';
 import 'package:angeleno_project/views/dialogs/mobile.dart';
 import 'package:flutter/material.dart';
 
@@ -11,11 +11,11 @@ import '../dialogs/authenticator.dart';
 
 class AdvancedSecurityScreen extends StatefulWidget {
   final UserProvider userProvider;
-  final UserApi userApi;
+  final Auth0UserApi auth0UserApi;
 
   const AdvancedSecurityScreen({
     required this.userProvider,
-    required this.userApi,
+    required this.auth0UserApi,
     super.key
   });
 
@@ -25,7 +25,7 @@ class AdvancedSecurityScreen extends StatefulWidget {
 
 class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
 
-  late UserApi api;
+  late Auth0UserApi auth0UserApi;
   late UserProvider userProvider;
 
   late bool authenticatorEnabled = false;
@@ -42,12 +42,12 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   void initState() {
     super.initState();
     userProvider = widget.userProvider;
-    api = widget.userApi;
+    auth0UserApi = widget.auth0UserApi;
     _authMethods = getAuthenticationMethods();
   }
 
   Future<void> getAuthenticationMethods() async {
-    await api.getAuthenticationMethods(userProvider.user!.userId)
+    await auth0UserApi.getAuthenticationMethods(userProvider.user!.userId)
       .then((final response) {
         final bool success = response.statusCode == HttpStatus.ok;
         if (success) {
@@ -82,7 +82,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   }
 
   void disableMFA(final String mfaAuthId, final String method) {
-    api.unenrollMFA({
+    auth0UserApi.unenrollMFA({
       'authFactorId': mfaAuthId,
       'userId': widget.userProvider.user!.userId
     }).then((final response) {
@@ -174,7 +174,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                         builder: (final BuildContext context) =>
                             AuthenticatorDialog(
                               userProvider: userProvider,
-                              userApi: api
+                              auth0UserApi: auth0UserApi
                             ),
                       ).then((final value) {
                         if (value != null && value == HttpStatus.ok.toString()){
@@ -246,7 +246,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                       builder: (
                         final BuildContext context) => MobileDialog(
                         userProvider: userProvider,
-                        userApi: api,
+                        userApi: auth0UserApi,
                         channel: 'sms',
                       )
                     ).then((final value) {
@@ -283,7 +283,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                         builder: (
                           final BuildContext context) => MobileDialog(
                           userProvider: userProvider,
-                          userApi: api,
+                          userApi: auth0UserApi,
                           channel: 'voice',
                         )
                     ).then((final value) {

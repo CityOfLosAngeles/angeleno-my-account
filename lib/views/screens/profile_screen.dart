@@ -4,7 +4,7 @@ import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/api_implementation.dart';
+import '../../controllers/auth0_user_api_implementation.dart';
 import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
 
@@ -20,7 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
-  final api = UserApi();
+  final auth0UserApi = Auth0UserApi();
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
       overlayProvider.showLoading();
-      api.updateUser(user).then((final response) {
+      auth0UserApi.updateUser(user).then((final response) {
           final success = response == HttpStatus.ok;
           overlayProvider.hideLoading();
           if (success) {

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../controllers/api_implementation.dart';
+import '../../controllers/auth0_user_api_implementation.dart';
 import '../../controllers/user_provider.dart';
 import '../../models/user.dart';
 
@@ -19,6 +19,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final Auth0UserApi auth0UserApi = Auth0UserApi();
   late UserProvider userProvider;
   late User user;
   late OverlayProvider overlayProvider;
@@ -101,11 +102,11 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> get screens => <Widget>[
     const ProfileScreen(),
     PasswordScreen(
-      userApi: UserApi(),
+      auth0UserApi: auth0UserApi,
     ),
     AdvancedSecurityScreen(
       userProvider: userProvider,
-      userApi: UserApi(),
+      auth0UserApi: auth0UserApi,
     )
   ];
 

@@ -3,17 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../controllers/api_implementation.dart';
+import '../../controllers/auth0_user_api_implementation.dart';
 import '../../controllers/user_provider.dart';
 import '../../utils/constants.dart';
 
 class AuthenticatorDialog extends StatefulWidget {
   final UserProvider userProvider;
-  final UserApi userApi;
+  final Auth0UserApi auth0UserApi;
 
   const AuthenticatorDialog({
     required this.userProvider,
-    required this.userApi,
+    required this.auth0UserApi,
     super.key
   });
 
@@ -27,7 +27,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
   final passwordField = TextEditingController();
 
   late UserProvider userProvider;
-  late UserApi api;
+  late Auth0UserApi auth0UserApi;
 
   int _pageIndex = 0;
   String errMsg = '';
@@ -44,7 +44,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     super.initState();
 
     userProvider = widget.userProvider;
-    api = widget.userApi; 
+    auth0UserApi = widget.auth0UserApi;
   }
 
   @override
@@ -91,7 +91,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'mfaFactor': 'otp'
     };
 
-    api.enrollMFA(body).then((final response) {
+    auth0UserApi.enrollMFA(body).then((final response) {
       final bool success = response['status'] == HttpStatus.ok;
       if (success) {
         setState(() {
@@ -123,7 +123,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'userOtpCode': totpCode
     };
 
-    api.confirmMFA(body).then((final response) {
+    auth0UserApi.confirmMFA(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
         Navigator.pop(context, response.statusCode.toString());
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(

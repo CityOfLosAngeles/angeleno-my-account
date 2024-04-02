@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
-import 'package:angeleno_project/controllers/api_implementation.dart' as _i3;
+import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart' as _i3;
 import 'package:angeleno_project/models/api_response.dart' as _i2;
 import 'package:angeleno_project/models/password_reset.dart' as _i7;
 import 'package:angeleno_project/models/user.dart' as _i6;
@@ -38,7 +38,7 @@ class _FakeApiResponse_0 extends _i1.SmartFake implements _i2.ApiResponse {
 /// A class which mocks [UserApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserApi extends _i1.Mock implements _i3.UserApi {
+class MockUserApi extends _i1.Mock implements _i3.Auth0UserApi {
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),

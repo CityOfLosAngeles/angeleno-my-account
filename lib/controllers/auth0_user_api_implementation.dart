@@ -7,10 +7,12 @@ import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
-import 'package:angeleno_project/controllers/api.dart';
+import 'package:angeleno_project/controllers/auth0_user_api.dart';
 import 'package:angeleno_project/models/user.dart';
 
-class UserApi extends Api {
+class Auth0UserApi extends Api {
+
+  var authToken = '';
 
   String createJwt() {
     final jwt = JWT(
@@ -40,30 +42,40 @@ class UserApi extends Api {
   }
 
   Future<String> getOAuthToken() async {
-    String newToken = '';
 
-    final createdToken = createJwt();
+    if (authToken.isNotEmpty) {
+      final decodedToken = JWT.decode(authToken);
+      final tokenExpiration = decodedToken.payload['exp'] as int;
+      if (DateTime
+          .now()
+          .millisecondsSinceEpoch ~/ 1000 < tokenExpiration) {
+        return authToken;
+      }
+    }
 
     try {
+      final jwt = createJwt();
+
       final response = await http.post(
           Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer $createdToken'
+            'Authorization': 'Bearer $jwt'
           },
           // ignore: lines_longer_than_80_chars
-          body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
-      ).timeout(const Duration(seconds: 15));
+          body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$jwt'
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == HttpStatus.ok) {
         final jsonRes = jsonDecode(response.body);
-        newToken = jsonRes['id_token'] as String;
+        authToken = jsonRes['id_token'] as String;
+        return authToken;
       }
     } catch (err) {
       print(err);
     }
 
-    return newToken;
+    throw Exception('No token received');
   }
 
   @override
@@ -72,6 +84,7 @@ class UserApi extends Api {
 
     try {
       final token = await getOAuthToken();
+      print(token);
 
       if (token.isEmpty) {
         throw const FormatException('Empty token received');
@@ -88,7 +101,7 @@ class UserApi extends Api {
           Uri.parse('/auth0/updateUser'),
           headers: headers,
           body: body
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
