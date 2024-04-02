@@ -1,6 +1,7 @@
 import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/main.dart';
+import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -61,6 +62,16 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(6), 'New State');
     await tester.enterText(find.byType(TextFormField).at(7), 'New Zip');
 
+    // Dialog preventing user from leaving while editing
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byIcon(Icons.password));
+    await tester.tap(find.byIcon(Icons.password));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.pumpAndSettle();
+
     await tester.dragUntilVisible(
       find.text('Save'),
       find.byType(ElevatedButton),
@@ -78,6 +89,19 @@ void main() {
     expect(userProvider.user!.city, 'New City');
     expect(userProvider.user!.state, 'New State');
     expect(userProvider.user!.zip, 'New Zip');
-    
+
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+
+    // Dialog with user intention of leaving while editing
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byIcon(Icons.password));
+    await tester.tap(find.byIcon(Icons.password));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, 'Ok'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PasswordScreen), findsOneWidget);
   });
 }

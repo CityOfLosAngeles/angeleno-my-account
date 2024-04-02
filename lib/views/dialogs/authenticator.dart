@@ -9,9 +9,11 @@ import '../../utils/constants.dart';
 
 class AuthenticatorDialog extends StatefulWidget {
   final UserProvider userProvider;
+  final UserApi userApi;
 
   const AuthenticatorDialog({
     required this.userProvider,
+    required this.userApi,
     super.key
   });
 
@@ -25,6 +27,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
   final passwordField = TextEditingController();
 
   late UserProvider userProvider;
+  late UserApi api;
 
   int _pageIndex = 0;
   String errMsg = '';
@@ -41,6 +44,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     super.initState();
 
     userProvider = widget.userProvider;
+    api = widget.userApi; 
   }
 
   @override
@@ -61,6 +65,16 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     }
   }
 
+  Widget get dialogClose => IconButton(
+    onPressed: () {
+      Navigator.pop(context);
+      setState(() {
+        _pageIndex = 0;
+      });
+    },
+    icon: const Icon(Icons.close)
+  );
+
   void enrollTOTP() async {
 
     setState(() {
@@ -77,7 +91,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'mfaFactor': 'otp'
     };
 
-    UserApi().enrollMFA(body).then((final response) {
+    api.enrollMFA(body).then((final response) {
       final bool success = response['status'] == HttpStatus.ok;
       if (success) {
         setState(() {
@@ -109,7 +123,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       'userOtpCode': totpCode
     };
 
-    UserApi().confirmMFA(body).then((final response) {
+    api.confirmMFA(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
         Navigator.pop(context, response.statusCode.toString());
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
@@ -131,15 +145,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {
-                _pageIndex = 0;
-              });
-            },
-            icon: const Icon(Icons.close),
-          ),
+          dialogClose,
           TextButton(
             onPressed: () {
               enrollTOTP();
@@ -187,7 +193,8 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                           });
                         },
                         icon: Icon(
-                      obscurePassword ? Icons.visibility : Icons.visibility_off
+                          // ignore: lines_longer_than_80_chars
+                          obscurePassword ? Icons.visibility : Icons.visibility_off
                         ),
                       )
                   ),
@@ -209,15 +216,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  _pageIndex = 0;
-                });
-              },
-              icon: const Icon(Icons.close),
-            ),
+            dialogClose,
             TextButton(
               onPressed: () {
                 _navigateToNextPage();
@@ -268,15 +267,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  _pageIndex = 0;
-                });
-              },
-              icon: const Icon(Icons.close),
-            ),
+            dialogClose,
             TextButton(
               onPressed: () {
                 confirmTOTP();
@@ -297,6 +288,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                     SizedBox(
                       width: 250,
                       child: TextFormField(
+                        key: const Key('totpCode'),
                         autofocus: true,
                         autovalidateMode: AutovalidateMode.always,
                         validator: (final value) {
