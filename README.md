@@ -4,10 +4,10 @@
 [![codecov](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account/graph/badge.svg?token=ILNR5XOM40)](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account)
 
 ## What is Angeleno Account?
-An Angeleno Account acts as a single sign-on for our public to access multiple City of Los Angeles services that have decided to accept the Angeleno Account credentials. 
+An Angeleno Account acts as a single sign-on for our public to access multiple City of Los Angeles services that have integrated Angeleno Accoun SSO login. 
 
 ## What is Angeleno - My Account?
-Angeleno - My Account is a Flutter based app that interfaces Auth0. This repository is for setting up a Flutter Web Application on your machine to interface Auth0. With Auth0 you can authenticate and authorize user to access your applications. With this repository you will get a Auth0 Web login which then redirects back to the Flutter app in where the authenticated user can see their current profile along with make changes to their profile. We have added Google Places API to assist user's with autocompleting and validating their address.
+Angeleno - My Account is a Flutter based app that interfaces Auth0. This repository is for setting up a Flutter Web Application on your machine to interface Auth0. With Auth0 you can authenticate and authorize user to access your applications. With this repository you will get a Auth0 Web login which then redirects back to the Flutter app in where the authenticated user can view and make changes to their profile. We have added Google Places API to assist users with autocompletion and address validation.
 
 
 ## Getting Started
@@ -22,6 +22,11 @@ The development branch is our main branch you can use to work on your own work/i
     - Places Autocomplete (https://developers.google.com/maps/documentation/places/web-service/autocomplete)
     - Places Details (https://developers.google.com/maps/documentation/places/web-service/details)
       - We will consider using Geocoding API for cost optimization (https://developers.google.com/maps/documentation/geocoding/overview#results)
+    - Service Usage API
+    - Firebase API
+    - Cloud Resource Manager API
+    - Secret Manager API
+    - Compute Engine API
       
 - Firebase Account (https://firebase.google.com)
   - Enable and create functions for interfacing Auth0Web library
