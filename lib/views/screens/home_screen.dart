@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../controllers/api_implementation.dart';
 import '../../controllers/user_provider.dart';
 import '../../models/user.dart';
 
@@ -49,13 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           TextButton(
-            child: const Text('OK'),
+            child: const Text('Ok'),
             onPressed: () {
               Navigator.of(context).pop();
               userProvider.toggleEditing();
-              setState(() {
-                _selectedIndex = futureIndex;
-              });
+              _navigationSelected(futureIndex);
             },
           ),
         ],
@@ -100,12 +99,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> get screens => <Widget>[
-        const ProfileScreen(),
-        const PasswordScreen(),
-        AdvancedSecurityScreen(
-            userProvider: userProvider
-        )
-      ];
+    const ProfileScreen(),
+    PasswordScreen(
+      userApi: UserApi(),
+    ),
+    AdvancedSecurityScreen(
+      userProvider: userProvider,
+      userApi: UserApi(),
+    )
+  ];
 
   @override
   Widget build(final BuildContext context) {
@@ -122,9 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
-              title: const Text('Angeleno Account',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
+            title: const Text('Angeleno Account',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )
           ),
           drawer: NavigationDrawer(
             onDestinationSelected: _navigationSelected,
@@ -135,16 +137,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('My Account - $userEmail'),
               ),
               const NavigationDrawerDestination(
-                  label: Text('Profile'),
-                  icon: Icon(Icons.person)
+                label: Text('Profile'),
+                icon: Icon(Icons.person)
               ),
               const NavigationDrawerDestination(
-                  label: Text('Password'),
-                  icon: Icon(Icons.password)
+                label: Text('Password'),
+                icon: Icon(Icons.password)
               ),
               const NavigationDrawerDestination(
-                  label: Text('Security'),
-                  icon: Icon(Icons.security)
+                label: Text('Security'),
+                icon: Icon(Icons.security)
               ),
               const Divider(),
               const Padding(
@@ -152,24 +154,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('Angeleno'),
               ),
               const NavigationDrawerDestination(
-                  label: Text('Home'),
-                  icon: Icon(Icons.home)
+                label: Text('Home'),
+                icon: Icon(Icons.home)
               ),
               const NavigationDrawerDestination(
-                  label: Text('Services'),
-                  icon: Icon(Icons.grid_view)
+                label: Text('Services'),
+                icon: Icon(Icons.grid_view)
               ),
               const NavigationDrawerDestination(
-                  label: Text('Help'),
-                  icon: Icon(Icons.question_mark)
+                label: Text('Help'),
+                icon: Icon(Icons.question_mark)
               ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(28, 16, 28, 10),
                 child: Divider(),
               ),
               const NavigationDrawerDestination(
-                  label: Text('Logout'),
-                  icon: Icon(Icons.logout)
+                label: Text('Logout'),
+                icon: Icon(Icons.logout)
               )
             ],
           ),
@@ -186,7 +188,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
-                          child: screens[_selectedIndex]))
+                          child: screens[_selectedIndex])
+                      )
                     ],
                   ),
                 )
