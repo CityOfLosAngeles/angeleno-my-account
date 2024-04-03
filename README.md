@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account/graph/badge.svg?token=ILNR5XOM40)](https://codecov.io/gh/CityOfLosAngeles/angeleno-my-account)
 
 ## What is an Angeleno Account?
-An Angeleno Account acts as a single sign-on for our public to access multiple City of Los Angeles services that have integrated Angeleno Accoun SSO login. 
+An Angeleno Account acts as a single sign-on for our public to access multiple City of Los Angeles services that have integrated Angeleno Account SSO login. 
 
 ## What is this Repository (Angeleno - My Account)?
 This repository is a Flutter based web-app that interfaces with Auth0 to handle user authentication and allows users to edit their Angeleno Account profile and their account security via multi-factor authentication.
