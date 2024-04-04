@@ -122,8 +122,11 @@ class Auth0UserApi extends Api {
   Future<Map<String, dynamic>> updatePassword(final PasswordBody body) async {
     late Map<String, dynamic> response;
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
@@ -154,8 +157,11 @@ class Auth0UserApi extends Api {
   @override
   Future<ApiResponse> getAuthenticationMethods(final String userId) async {
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode({'userId': userId});
@@ -185,8 +191,11 @@ class Auth0UserApi extends Api {
     enrollMFA(final Map<String, String> body) async {
     late Map<String, dynamic> response;
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
@@ -235,8 +244,11 @@ class Auth0UserApi extends Api {
   @override
   Future<ApiResponse> confirmMFA(final Map<String, String> body) async {
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
@@ -264,8 +276,11 @@ class Auth0UserApi extends Api {
   @override
   Future<ApiResponse> unenrollMFA(final Map<String, String> body) async {
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
