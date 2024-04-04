@@ -43,7 +43,7 @@ const getAccessToken = async () => {
     return auth0Token;
   } catch (err) {
     console.error(err);
-    throw new Error('Error getting access token');
+    throw err;
   }
 };
 
