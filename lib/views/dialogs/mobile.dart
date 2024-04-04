@@ -237,9 +237,6 @@ class _MobileDialogState extends State<MobileDialog> {
                 child: TextFormField(
                   autofocus: true,
                   controller: passwordField,
-                  onFieldSubmitted: (final value) {
-
-                  },
                   obscureText: obscurePassword,
                   enableSuggestions: false,
                   autocorrect: false,
@@ -252,6 +249,7 @@ class _MobileDialogState extends State<MobileDialog> {
                   },
                   decoration: InputDecoration(
                       suffixIcon: IconButton(
+                        key: const Key('toggle_password'),
                         onPressed: () {
                           setState(() {
                             obscurePassword = !obscurePassword;

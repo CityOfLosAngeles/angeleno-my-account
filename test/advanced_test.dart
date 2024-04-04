@@ -121,6 +121,22 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextFormField), 'userPassword');
+
+    final authenticatorPasswordFinder = find.descendant(
+      of: find.byKey(const Key('passwordField')),
+      matching: find.byType(TextField),
+    );
+
+    final authenticatorPasswordField = tester.firstWidget<TextField>(authenticatorPasswordFinder);
+    expect(authenticatorPasswordField.obscureText, true);
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('toggle_password')));
+    await tester.pump();
+    // ignore: lines_longer_than_80_chars
+    final refreshAuthenticatorPasswordField = tester.firstWidget<TextField>(authenticatorPasswordFinder);
+    expect(refreshAuthenticatorPasswordField.obscureText, false);
+
     await tester.tap(find.widgetWithText(TextButton, 'Continue'));
     await tester.pumpAndSettle();
 
@@ -175,6 +191,22 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byKey(const Key('passwordField')), 'myPassword');
+
+    final phonePasswordFinder = find.descendant(
+      of: find.byKey(const Key('passwordField')),
+      matching: find.byType(TextField),
+    );
+
+    final phonePasswordField = tester.firstWidget<TextField>(phonePasswordFinder);
+    expect(phonePasswordField.obscureText, true);
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('toggle_password')));
+    await tester.pump();
+    // ignore: lines_longer_than_80_chars
+    final refreshPhonePasswordField = tester.firstWidget<TextField>(phonePasswordFinder);
+    expect(refreshPhonePasswordField.obscureText, false);
+
     await tester.tap(find.widgetWithText(TextButton, 'Continue'));
     await tester.pumpAndSettle();
 

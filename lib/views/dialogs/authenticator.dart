@@ -168,6 +168,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
               ),
               const SizedBox(height: 15),
               SizedBox(
+                key: const Key('passwordField'),
                 width: 250,
                 child: TextFormField(
                   autofocus: true,
@@ -187,6 +188,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                   },
                   decoration: InputDecoration(
                       suffixIcon: IconButton(
+                        key: const Key('toggle_password'),
                         onPressed: () {
                           setState(() {
                             obscurePassword = !obscurePassword;
