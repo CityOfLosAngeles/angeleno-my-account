@@ -125,7 +125,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
     auth0UserApi.confirmMFA(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
-        Navigator.pop(context, response.statusCode.toString());
+        Navigator.pop(context, response.statusCode);
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
           behavior: SnackBarBehavior.floating,
           width: 280.0,
@@ -262,56 +262,56 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
   );
 
   Widget get confirmationScreen => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            dialogClose,
-            TextButton(
-              onPressed: () {
-                confirmTOTP();
-              },
-              child: const Text('Finish'),
-            )
-          ],
-        ),
-        Expanded(
-            child: Align(
-                child:  Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Enter code displayed from the application:',
-                        textAlign: TextAlign.center,
-                        softWrap: true
-                    ),
-                    SizedBox(
-                      width: 250,
-                      child: TextFormField(
-                        key: const Key('totpCode'),
-                        autofocus: true,
-                        autovalidateMode: AutovalidateMode.always,
-                        validator: (final value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Code is required';
-                          }
-                          return null;
-                        },
-                        onChanged: (final val) {
-                          setState(() {
-                            totpCode = val;
-                          });
-                        },
-                      )
-                    ),
-                    const SizedBox(height: 15),
-                    if (errMsg.isNotEmpty)
-                      Text(errMsg, style: TextStyle(color: colorScheme.error))
-                  ],
-                )
-            )
-        )
-      ]
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          dialogClose,
+          TextButton(
+            onPressed: () {
+              confirmTOTP();
+            },
+            child: const Text('Finish'),
+          )
+        ],
+      ),
+      Expanded(
+          child: Align(
+              child:  Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Enter code displayed from the application:',
+                      textAlign: TextAlign.center,
+                      softWrap: true
+                  ),
+                  SizedBox(
+                    width: 250,
+                    child: TextFormField(
+                      key: const Key('totpCode'),
+                      autofocus: true,
+                      autovalidateMode: AutovalidateMode.always,
+                      validator: (final value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Code is required';
+                        }
+                        return null;
+                      },
+                      onChanged: (final val) {
+                        setState(() {
+                          totpCode = val;
+                        });
+                      },
+                    )
+                  ),
+                  const SizedBox(height: 15),
+                  if (errMsg.isNotEmpty)
+                    Text(errMsg, style: TextStyle(color: colorScheme.error))
+                ],
+              )
+          )
+      )
+    ]
   );
 
   List<Widget> get screens => [
@@ -320,25 +320,36 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     confirmationScreen
   ];
 
-  @override
-  Widget build(final BuildContext context) => Dialog(
-    insetPadding: EdgeInsets.zero,
-    child: SizedBox(
-      width: double.infinity,
-      height: double.infinity,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: 3,
-        onPageChanged: (final index) {
-          setState(() {
-            _pageIndex++;
-          });
-        },
-        itemBuilder: (final context, final index) => Container(
+  Widget get dialogBody => SizedBox(
+    width: double.infinity,
+    height: double.infinity,
+    child: PageView.builder(
+      controller: _pageController,
+      itemCount: 3,
+      onPageChanged: (final index) {
+        setState(() {
+          _pageIndex++;
+        });
+      },
+      itemBuilder: (final context, final index) => Container(
           padding: const EdgeInsets.all(20),
           child: screens[_pageIndex]
-        )
-      ),
-    )
+      )
+    ),
   );
+
+  @override
+  Widget build(final BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isSmallScreen = screenWidth < smallScreen;
+
+    return isSmallScreen ?
+      Dialog.fullscreen(
+        child: dialogBody
+      )
+      :
+      Dialog(
+        child: dialogBody
+      );
+  }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
@@ -31,6 +32,9 @@ class _MobileDialogState extends State<MobileDialog> {
   late UserProvider userProvider;
   late Auth0UserApi api;
   late String channel;
+
+  final isNotTestMode = kIsWeb ||
+      !Platform.environment.containsKey('FLUTTER_TEST');
 
   PhoneNumber number = PhoneNumber(isoCode: 'US');
   String initialCountry = 'US';
@@ -126,7 +130,7 @@ class _MobileDialogState extends State<MobileDialog> {
 
     api.confirmMFA(body).then((final response) {
       if (response.statusCode == HttpStatus.ok) {
-        Navigator.pop(context, response.statusCode.toString());
+        Navigator.pop(context, response.statusCode);
         ScaffoldMessenger.of(context).showSnackBar( SnackBar(
           behavior: SnackBarBehavior.floating,
           width: 280.0,
@@ -146,8 +150,7 @@ class _MobileDialogState extends State<MobileDialog> {
           TextButton(
             onPressed: () {
               try {
-                if (!validPhoneNumber && !Platform.environment.containsKey('FLUTTER_TEST')) {
-                  setState(() => errMsg = 'Invalid phone number');
+                if (!validPhoneNumber && isNotTestMode) {
                   return;
                 }
                 _navigateToNextPage();
@@ -171,6 +174,10 @@ class _MobileDialogState extends State<MobileDialog> {
               SizedBox(
                 width: 500,
                 child: InternationalPhoneNumberInput(
+                  autoFocus: isNotTestMode,
+                  selectorConfig: const SelectorConfig(
+                    selectorType: PhoneInputSelectorType.BOTTOM_SHEET
+                  ),
                   key: const Key('phoneField'),
                   onInputChanged: (final PhoneNumber number) {
                     phoneNumber = number.phoneNumber!;
@@ -178,6 +185,8 @@ class _MobileDialogState extends State<MobileDialog> {
                   onInputValidated: (final bool value) {
                    validPhoneNumber = value;
                   },
+                  autoValidateMode: isNotTestMode ?
+                    AutovalidateMode.always : AutovalidateMode.disabled,
                   selectorTextStyle: const TextStyle(color: Colors.black),
                   initialValue: number,
                   textFieldController: phoneField,
@@ -187,9 +196,7 @@ class _MobileDialogState extends State<MobileDialog> {
                   ),
                   inputBorder: const OutlineInputBorder()
                 ),
-              ),
-              if (errMsg.isNotEmpty)
-                Text(errMsg, style: TextStyle(color: colorScheme.error))
+              )
             ],
           ),
         ),
@@ -323,24 +330,36 @@ class _MobileDialogState extends State<MobileDialog> {
     codeScreen
   ];
 
-  @override
-  Widget build(final BuildContext context) => Dialog(
-    child: SizedBox(
-      width: double.infinity,
-      height: double.infinity,
-      child: PageView.builder(
-        controller: _pageController,
-        itemCount: 3,
-        onPageChanged: (final index) {
-          setState(() {
-            _pageIndex++;
-          });
-        },
-        itemBuilder: (final context, final index) => Container(
-          padding: const EdgeInsets.all(20),
-          child: screens[_pageIndex],
-        )
-      ),
+  Widget get dialogBody => SizedBox(
+    width: double.infinity,
+    height: double.infinity,
+    child: PageView.builder(
+      controller: _pageController,
+      itemCount: 3,
+      onPageChanged: (final index) {
+        setState(() {
+          _pageIndex++;
+        });
+      },
+      itemBuilder: (final context, final index) => Container(
+        padding: const EdgeInsets.all(20),
+        child: screens[_pageIndex],
+      )
     ),
   );
+
+  @override
+  Widget build(final BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isSmallScreen = screenWidth < smallScreen;
+
+    return isSmallScreen ?
+      Dialog.fullscreen(
+        child: dialogBody
+      )
+      :
+      Dialog(
+        child: dialogBody
+      );
+  }
 }

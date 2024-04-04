@@ -88,7 +88,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     }).then((final response) {
       final bool success = response.statusCode == HttpStatus.ok;
       if (success) {
-        Navigator.pop(context, response.statusCode.toString());
+        Navigator.pop(context, response.statusCode);
         ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
           behavior: SnackBarBehavior.floating,
           width: 280.0,
@@ -127,7 +127,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 authenticatorEnabled ?
                   FilledButton.tonal(
                     key: const Key('disableAuthenticator'),
-                    onPressed: () => showDialog<String>(
+                    onPressed: () => showDialog<int>(
                       context: context,
                       builder: (final BuildContext context) => AlertDialog(
                         title: const Text('Remove authenticator app?'),
@@ -145,7 +145,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                           TextButton(
                             child: const Text('Cancel'),
                             onPressed: () {
-                              Navigator.pop(context, '');
+                              Navigator.pop(context);
                             },
                           ),
                           TextButton(
@@ -157,7 +157,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                         ],
                       )
                     ).then((final value) {
-                      if (value != null && value == HttpStatus.ok.toString()) {
+                      if (value != null && value == HttpStatus.ok) {
                         setState(() {
                           authenticatorEnabled = false;
                         });
@@ -169,15 +169,15 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                   FilledButton(
                     key: const Key('enableAuthenticator'),
                     onPressed: () {
-                      showDialog<String>(
+                      showDialog<int>(
                         context: context,
                         builder: (final BuildContext context) =>
-                            AuthenticatorDialog(
-                              userProvider: userProvider,
-                              auth0UserApi: auth0UserApi
-                            ),
+                          AuthenticatorDialog(
+                            userProvider: userProvider,
+                            auth0UserApi: auth0UserApi
+                          ),
                       ).then((final value) {
-                        if (value != null && value == HttpStatus.ok.toString()){
+                        if (value != null && value == HttpStatus.ok){
                           setState(() {
                             authenticatorEnabled = true;
                           });
@@ -198,7 +198,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 smsEnabled ?
                 FilledButton.tonal(
                   key: const Key('disableSMS'),
-                  onPressed: () => showDialog<String>(
+                  onPressed: () => showDialog<int>(
                       context: context,
                       builder: (final BuildContext context) => AlertDialog(
                         title: const Text('Remove SMS MFA?'),
@@ -217,7 +217,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                           TextButton(
                             child: const Text('Cancel'),
                             onPressed: () {
-                              Navigator.pop(context, '');
+                              Navigator.pop(context);
                             },
                           ),
                           TextButton(
@@ -229,7 +229,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                         ],
                       )
                   ).then((final value) {
-                    if (value != null && value == HttpStatus.ok.toString()) {
+                    if (value != null && value == HttpStatus.ok) {
                       setState(() {
                         smsEnabled = false;
                       });
@@ -241,7 +241,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 FilledButton(
                     key: const Key('enableSMS'),
                     onPressed: () {
-                    showDialog<String>(
+                    showDialog<int>(
                       context: context,
                       builder: (
                         final BuildContext context) => MobileDialog(
@@ -250,7 +250,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                         channel: 'sms',
                       )
                     ).then((final value) {
-                      if (value != null && value == HttpStatus.ok.toString()) {
+                      if (value != null && value == HttpStatus.ok) {
                         setState(() {
                           smsEnabled = true;
                         });
@@ -278,16 +278,16 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 FilledButton(
                   key: const Key('enableVoice'),
                   onPressed: () {
-                    showDialog<String>(
-                        context: context,
-                        builder: (
-                          final BuildContext context) => MobileDialog(
-                          userProvider: userProvider,
-                          userApi: auth0UserApi,
-                          channel: 'voice',
-                        )
+                    showDialog<int>(
+                      context: context,
+                      builder: (
+                        final BuildContext context) => MobileDialog(
+                        userProvider: userProvider,
+                        userApi: auth0UserApi,
+                        channel: 'voice',
+                      )
                     ).then((final value) {
-                      if (value != null && value == HttpStatus.ok.toString()) {
+                      if (value != null && value == HttpStatus.ok) {
                         setState(() {
                           voiceEnabled = true;
                         });
