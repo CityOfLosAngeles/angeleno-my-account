@@ -100,7 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> get screens => <Widget>[
-    const ProfileScreen(),
+    ProfileScreen(
+      auth0UserApi: auth0UserApi,
+    ),
     PasswordScreen(
       auth0UserApi: auth0UserApi,
     ),

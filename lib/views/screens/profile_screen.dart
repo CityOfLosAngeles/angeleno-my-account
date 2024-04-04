@@ -9,7 +9,12 @@ import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final Auth0UserApi auth0UserApi;
+
+  const ProfileScreen({
+    required this.auth0UserApi,
+    super.key
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -17,14 +22,16 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late Auth0UserApi auth0UserApi;
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
-  final auth0UserApi = Auth0UserApi();
 
   @override
   void initState() {
     super.initState();
+
+    auth0UserApi = widget.auth0UserApi;
   }
 
   void updateUser() {
