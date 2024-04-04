@@ -84,7 +84,6 @@ class Auth0UserApi extends Api {
 
     try {
       final token = await getOAuthToken();
-      print(token);
 
       if (token.isEmpty) {
         throw const FormatException('Empty token received');
