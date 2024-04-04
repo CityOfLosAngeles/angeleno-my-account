@@ -13,6 +13,9 @@ const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
 const double smallScreen = 430;
 
 /* Colors */
+
+const disabledColor = Colors.black54;
+
 ColorScheme colorScheme = const ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xFF006B59),

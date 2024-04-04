@@ -29,7 +29,13 @@ class MyApp extends StatelessWidget {
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       useMaterial3: true,
-      colorScheme: colorScheme
+      colorScheme: colorScheme,
+      inputDecorationTheme: const InputDecorationTheme(
+        disabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: disabledColor)
+        ),
+
+      )
     ),
     onGenerateRoute: (final settings) {
       final uri = Uri.parse(settings.name!);
