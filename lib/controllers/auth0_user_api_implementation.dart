@@ -134,7 +134,7 @@ class Auth0UserApi extends Api {
           Uri.parse('/auth0/updatePassword'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       response = {
         'status': request.statusCode,
@@ -166,7 +166,7 @@ class Auth0UserApi extends Api {
           Uri.parse('/auth0/authMethods'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (request.statusCode == HttpStatus.ok) {
         return ApiResponse(request.statusCode, request.body);
@@ -197,7 +197,7 @@ class Auth0UserApi extends Api {
           Uri.parse('/auth0/enrollMFA'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       final jsonBody = jsonDecode(request.body);
       final barcode = jsonBody['barcode_uri'] ?? '';
@@ -247,7 +247,7 @@ class Auth0UserApi extends Api {
           Uri.parse('/auth0/confirmMFA'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (request.statusCode == HttpStatus.ok) {
         return ApiResponse(request.statusCode, '');
@@ -276,7 +276,7 @@ class Auth0UserApi extends Api {
           Uri.parse('/auth0/unenrollMFA'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (request.statusCode == HttpStatus.ok) {
         return ApiResponse(request.statusCode, '');
