@@ -7,10 +7,12 @@ import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
-import 'package:angeleno_project/controllers/api.dart';
+import 'package:angeleno_project/controllers/auth0_user_api.dart';
 import 'package:angeleno_project/models/user.dart';
 
-class UserApi extends Api {
+class Auth0UserApi extends Api {
+
+  var authToken = '';
 
   String createJwt() {
     final jwt = JWT(
@@ -40,30 +42,40 @@ class UserApi extends Api {
   }
 
   Future<String> getOAuthToken() async {
-    String newToken = '';
 
-    final createdToken = createJwt();
+    if (authToken.isNotEmpty) {
+      final decodedToken = JWT.decode(authToken);
+      final tokenExpiration = decodedToken.payload['exp'] as int;
+      if (DateTime
+          .now()
+          .millisecondsSinceEpoch ~/ 1000 < tokenExpiration) {
+        return authToken;
+      }
+    }
 
     try {
+      final jwt = createJwt();
+
       final response = await http.post(
           Uri.parse('https://www.googleapis.com/oauth2/v4/token'),
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer $createdToken'
+            'Authorization': 'Bearer $jwt'
           },
           // ignore: lines_longer_than_80_chars
-          body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$createdToken'
-      ).timeout(const Duration(seconds: 15));
+          body: 'grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=$jwt'
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == HttpStatus.ok) {
         final jsonRes = jsonDecode(response.body);
-        newToken = jsonRes['id_token'] as String;
+        authToken = jsonRes['id_token'] as String;
+        return authToken;
       }
     } catch (err) {
       print(err);
     }
 
-    return newToken;
+    throw Exception('No token received');
   }
 
   @override
@@ -88,7 +100,7 @@ class UserApi extends Api {
           Uri.parse('/auth0/updateUser'),
           headers: headers,
           body: body
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == HttpStatus.ok) {
         print(response.body);
@@ -110,8 +122,11 @@ class UserApi extends Api {
   Future<Map<String, dynamic>> updatePassword(final PasswordBody body) async {
     late Map<String, dynamic> response;
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
@@ -121,7 +136,7 @@ class UserApi extends Api {
           Uri.parse('/auth0/updatePassword'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       response = {
         'status': request.statusCode,
@@ -142,8 +157,11 @@ class UserApi extends Api {
   @override
   Future<ApiResponse> getAuthenticationMethods(final String userId) async {
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode({'userId': userId});
@@ -153,7 +171,7 @@ class UserApi extends Api {
           Uri.parse('/auth0/authMethods'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (request.statusCode == HttpStatus.ok) {
         return ApiResponse(request.statusCode, request.body);
@@ -173,8 +191,11 @@ class UserApi extends Api {
     enrollMFA(final Map<String, String> body) async {
     late Map<String, dynamic> response;
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
@@ -184,7 +205,7 @@ class UserApi extends Api {
           Uri.parse('/auth0/enrollMFA'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       final jsonBody = jsonDecode(request.body);
       final barcode = jsonBody['barcode_uri'] ?? '';
@@ -223,8 +244,11 @@ class UserApi extends Api {
   @override
   Future<ApiResponse> confirmMFA(final Map<String, String> body) async {
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
@@ -234,7 +258,7 @@ class UserApi extends Api {
           Uri.parse('/auth0/confirmMFA'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (request.statusCode == HttpStatus.ok) {
         return ApiResponse(request.statusCode, '');
@@ -252,8 +276,11 @@ class UserApi extends Api {
   @override
   Future<ApiResponse> unenrollMFA(final Map<String, String> body) async {
 
+    final token = await getOAuthToken();
+
     final headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
     };
 
     final reqBody = json.encode(body);
@@ -263,7 +290,7 @@ class UserApi extends Api {
           Uri.parse('/auth0/unenrollMFA'),
           headers: headers,
           body: reqBody
-      );
+      ).timeout(const Duration(seconds: 5));
 
       if (request.statusCode == HttpStatus.ok) {
         return ApiResponse(request.statusCode, '');

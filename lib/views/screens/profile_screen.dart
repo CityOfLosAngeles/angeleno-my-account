@@ -1,15 +1,21 @@
 import 'dart:io';
 
 import 'package:angeleno_project/controllers/user_provider.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/api_implementation.dart';
+import '../../controllers/auth0_user_api_implementation.dart';
 import '../../controllers/overlay_provider.dart';
 import '../../models/user.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final Auth0UserApi auth0UserApi;
+
+  const ProfileScreen({
+    required this.auth0UserApi,
+    super.key
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -17,21 +23,23 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late Auth0UserApi auth0UserApi;
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
-  final api = UserApi();
 
   @override
   void initState() {
     super.initState();
+
+    auth0UserApi = widget.auth0UserApi;
   }
 
   void updateUser() {
     // Only submit patch if data has been updated
     if (!(user == userProvider.cleanUser)) {
       overlayProvider.showLoading();
-      api.updateUser(user).then((final response) {
+      auth0UserApi.updateUser(user).then((final response) {
           final success = response == HttpStatus.ok;
           overlayProvider.hideLoading();
           if (success) {
@@ -52,6 +60,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  InputDecoration inputDecoration (final String label, final bool editMode) =>
+    InputDecoration(
+      labelText: label,
+      border: const OutlineInputBorder(),
+      labelStyle: TextStyle(color: editMode ? null : disabledColor),
+    );
+
+  TextStyle textStyle (final bool editMode) =>
+    TextStyle(color: editMode ? null : disabledColor);
+
   @override
   Widget build(final BuildContext context) {
     overlayProvider = context.watch<OverlayProvider>();
@@ -62,6 +80,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else {
       user = userProvider.user!;
     }
+
+    final editMode = userProvider.isEditing;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -81,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       ElevatedButton(
                       onPressed: () {
-                        if (userProvider.isEditing) {
+                        if (editMode) {
                           updateUser();
                         }
                         setState(() {
@@ -89,16 +109,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         });
                       },
                       child: Text(
-                        userProvider.isEditing ? 'Save' : 'Edit'
+                          editMode ? 'Save' : 'Edit'
                       ),
                     )
                   ]),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                        labelText: 'First Name',
-                        border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('First Name', editMode),
+                    style: textStyle(editMode),
                     initialValue: user.firstName,
                     keyboardType: TextInputType.name,
                     onChanged: (final val) {
@@ -107,10 +126,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                      labelText: 'Last Name',
-                      border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('Last Name', editMode),
+                    style: textStyle(editMode),
                     initialValue: user.lastName,
                     keyboardType: TextInputType.name,
                     onChanged: (final val) {
@@ -119,10 +137,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                      labelText: 'Mobile',
-                      border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('Mobile', editMode),
+                    style: textStyle(editMode),
                     initialValue: user.phone,
                     onChanged: (final val) {
                       user.phone = val;
@@ -130,10 +147,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                      labelText: 'Address',
-                      border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('Address', editMode),
+                    style: textStyle(editMode),
                     keyboardType: TextInputType.streetAddress,
                     initialValue: user.address,
                     onChanged: (final val) {
@@ -142,10 +158,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                      labelText: 'Address 2',
-                      border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('Address 2', editMode),
+                    style: textStyle(editMode),
                     keyboardType: TextInputType.streetAddress,
                     initialValue: user.address2,
                     onChanged: (final val) {
@@ -154,10 +169,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                      labelText: 'City',
-                      border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('City', editMode),
+                    style: textStyle(editMode),
                     keyboardType: TextInputType.streetAddress,
                     initialValue: user.city,
                     onChanged: (final val) {
@@ -166,10 +180,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                      labelText: 'State',
-                      border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('State', editMode),
+                    style: textStyle(editMode),
                     keyboardType: TextInputType.streetAddress,
                     initialValue: user.state,
                     onChanged: (final val) {
@@ -178,9 +191,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(
-                    enabled: userProvider.isEditing,
-                    decoration: const InputDecoration(
-                      labelText: 'Zip', border: OutlineInputBorder()),
+                    enabled: editMode,
+                    decoration: inputDecoration('Zip', editMode),
+                    style: textStyle(editMode),
                     initialValue: user.zip,
                     onChanged: (final val) {
                       user.zip = val;

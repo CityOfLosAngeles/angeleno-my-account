@@ -5,15 +5,15 @@ import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/api_implementation.dart';
+import '../../controllers/auth0_user_api_implementation.dart';
 import '../../controllers/overlay_provider.dart';
 import '../../controllers/user_provider.dart';
 
 class PasswordScreen extends StatefulWidget {
-  final UserApi userApi;
+  final Auth0UserApi auth0UserApi;
 
   const PasswordScreen({
-    required this.userApi,
+    required this.auth0UserApi,
     super.key
   });
 
@@ -24,7 +24,7 @@ class PasswordScreen extends StatefulWidget {
 class _PasswordScreenState extends State<PasswordScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
-  late UserApi api;
+  late Auth0UserApi auth0UserApi;
 
   final minPasswordLength = 12;
 
@@ -45,7 +45,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
   @override
   void initState() {
     super.initState();
-    api = widget.userApi;
+    auth0UserApi = widget.auth0UserApi;
   }
 
   void submitRequest() {
@@ -64,7 +64,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         userId: userProvider.user!.userId
       );
 
-      api.updatePassword(body).then((final response) {
+      auth0UserApi.updatePassword(body).then((final response) {
         final success = response['status'] == HttpStatus.ok;
         overlayProvider.hideLoading();
         ScaffoldMessenger.of(context).showSnackBar( SnackBar(

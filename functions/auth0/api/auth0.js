@@ -1,14 +1,14 @@
-const {onRequest} = require("firebase-functions/v2/https");
-const axios = require("axios");
-const {User} = require("../models/user");
+const {onRequest} = require('firebase-functions/v2/https');
+const axios = require('axios');
+const {User} = require('../models/user');
 
 const {
   auth0Domain,
   auth0ClientId,
   auth0ClientSecret,
-} = require("../utils/constants");
+} = require('../utils/constants');
 
-const {getAccessToken, authorizeUser} = require("../utils/auth0");
+const {getAccessToken, authorizeUser} = require('../utils/auth0');
 
 const updateUser = onRequest(async (req, res) => {
   let user;
@@ -23,38 +23,38 @@ const updateUser = onRequest(async (req, res) => {
   const updatedUserObject = {};
 
   if (user.firstName) {
-    updatedUserObject["given_name"] = user.firstName;
+    updatedUserObject['given_name'] = user.firstName;
   }
 
   if (user.lastName) {
-    updatedUserObject["family_name"] = user.lastName;
+    updatedUserObject['family_name'] = user.lastName;
   }
 
   const primaryAddress = {};
   if (user.zip) {
-    primaryAddress["zip"] = user.zip;
+    primaryAddress['zip'] = user.zip;
   }
 
   if (user.address) {
-    primaryAddress["address"] = user.address;
+    primaryAddress['address'] = user.address;
   }
 
   if (user.address2) {
-    primaryAddress["address2"] = user.address2;
+    primaryAddress['address2'] = user.address2;
   }
 
   if (user.state) {
-    primaryAddress["state"] = user.state;
+    primaryAddress['state'] = user.state;
   }
 
   if (user.city) {
-    primaryAddress["city"] = user.city;
+    primaryAddress['city'] = user.city;
   }
 
-  const metaAddresses = user.metadata["addresses"];
+  const metaAddresses = user.metadata['addresses'];
 
   if (metaAddresses) {
-    metaAddresses["primary"] = primaryAddress;
+    metaAddresses['primary'] = primaryAddress;
   } else {
     user.metadata = {
       addresses: {
@@ -63,72 +63,84 @@ const updateUser = onRequest(async (req, res) => {
     };
   }
 
-  user.metadata["phone"] = user.phone;
-  updatedUserObject["user_metadata"] = user.metadata;
+  user.metadata['phone'] = user.phone;
+  updatedUserObject['user_metadata'] = user.metadata;
 
   const updateUserUrl = `https://${auth0Domain}/api/v2/users/${user.userId}`;
   const token = await getAccessToken();
   const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    "Authorization": `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${token}`,
   };
 
   try {
-    const request = await axios.patch(updateUserUrl, updatedUserObject, {
+    await axios.patch(updateUserUrl, updatedUserObject, {
       headers,
     });
 
-    if (request.status === 200) {
-      return res.status(200).send(request.data);
-    } else {
-      return res.sendStatus(request.status);
-    }
+    return res.status(200).send();
   } catch (err) {
     console.error(err);
-    return res.send(err);
+    
+    const {
+      status = 500,
+      message = '',
+      data: {error_description},
+    } = err.response;
+
+    return res.status(status).send(message || error_description);
   }
 });
 
 const updatePassword = onRequest(async (req, res) => {
   const body = req.body;
 
+  const {
+    email,
+    oldPassword,
+    newPassword,
+    userId
+  } = body;
+
+  if (!email.length || !oldPassword.length ||
+    !newPassword.length || !userId.length) {
+    res.status(400).send('Invalid request - missing required fields.');
+    return;
+  }
+
   try {
-    const validateResponse = await authorizeUser(body.email, body.oldPassword);
+    await authorizeUser(email, oldPassword);
 
-    if (validateResponse.status === 200) {
-      const auth0Token = await getAccessToken();
-      const passwordUpdateRequest = {
-        method: "PATCH",
-        url: `https://${auth0Domain}/api/v2/users/${body.userId}`,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${auth0Token}`,
-        },
-        data: {
-          password: body.newPassword,
-          connection: "Username-Password-Authentication",
-        },
-      };
+    const auth0Token = await getAccessToken();
+    const passwordUpdateRequest = {
+      method: 'PATCH',
+      url: `https://${auth0Domain}/api/v2/users/${userId}`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${auth0Token}`,
+      },
+      data: {
+        password: newPassword,
+        connection: 'Username-Password-Authentication',
+      },
+    };
 
-      const updateResponse = await axios.request(passwordUpdateRequest);
+    await axios.request(passwordUpdateRequest);
 
-      if (updateResponse.status === 200) {
-        res.status(200).send();
-        return;
-      }
-    }
+    res.status(200).send();
+    return;
   } catch (err) {
     console.error(`Error: ${err.message}`);
 
     const {
-      status,
+      status = 500,
       data: {error_description, message},
     } = err?.response;
 
     res
       .status(status)
-      .send(message || error_description || "Error encountered");
+      .send(message || error_description || 'Error encountered');
     return;
   }
 });
@@ -136,15 +148,22 @@ const updatePassword = onRequest(async (req, res) => {
 const authMethods = onRequest(async (req, res) => {
   const body = req.body;
 
+  const {userId} = body;
+
+  if (!userId) {
+    res.status(400).send('Invalid request - missing required fields.');
+    return;
+  }
+
   try {
     const auth0Token = await getAccessToken();
 
     const config = {
-      method: "get",
+      method: 'get',
       maxBodyLength: Infinity,
-      url: `https://${auth0Domain}/api/v2/users/${body.userId}/authentication-methods`,
+      url: `https://${auth0Domain}/api/v2/users/${userId}/authentication-methods`,
       headers: {
-        Accept: "application/json",
+        Accept: 'application/json',
         Authorization: `Bearer ${auth0Token}`,
       },
     };
@@ -153,6 +172,13 @@ const authMethods = onRequest(async (req, res) => {
     res.status(200).send(request.data);
   } catch (err) {
     console.error(err);
+
+    const {
+      status = 500,
+      message = '',
+    } = err.response;
+
+    return res.status(status).send(message);
   }
 });
 
@@ -171,52 +197,50 @@ const enrollMFA = onRequest(async (req, res) => {
     const validateResponse = await authorizeUser(
       email,
       password,
-      "/mfa/"
+      '/mfa/'
     );
 
-    if (validateResponse.status === 200) {
-      const mfaToken = validateResponse?.data?.access_token;
+    const mfaToken = validateResponse?.data?.access_token;
 
-      let additionalData = {};
+    let additionalData = {};
 
-      if (mfaFactor == "oob") {
-        additionalData = {
-         "oob_channels": [channel],
-         "phone_number": number
-        }
-      }
-
-      const otpRequest = {
-        method: "POST",
-        url: `https://${auth0Domain}/mfa/associate`,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${mfaToken}`,
-        },
-        data: {
-          authenticator_types: [mfaFactor],
-          ...additionalData
-        },
+    if (mfaFactor == 'oob') {
+      additionalData = {
+        'oob_channels': [channel],
+        'phone_number': number
       };
-
-      const otpResponse = await axios.request(otpRequest);
-      otpResponse.data.token = mfaToken;
-
-      if (otpResponse.status === 200) {
-        res.status(200).send(otpResponse?.data);
-      }
     }
+
+    const otpRequest = {
+      method: 'POST',
+      url: `https://${auth0Domain}/mfa/associate`,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${mfaToken}`,
+      },
+      data: {
+        authenticator_types: [mfaFactor],
+        ...additionalData
+      },
+    };
+
+    const otpResponse = await axios.request(otpRequest);
+    otpResponse.data.token = mfaToken;
+    res.status(200).send(otpResponse?.data);
   } catch (err) {
     console.error(err);
 
-    let {code, message} = err;
+    let {
+      code = 500,
+      message
+    } = err;
 
     // Status Code for failed Authorization
     if (code === 403) {
-      message = "Invalid Password.";
+      message = 'Invalid Password.';
     }
 
-    res.status(code || 500).send({error: message || "Error encountered"});
+    res.status(code).send({error: message || 'Error encountered'});
   }
 });
 
@@ -224,30 +248,34 @@ const confirmMFA = onRequest(async (req, res) => {
   const body = req.body;
 
   const {
-    mfaToken, 
+    mfaToken,
     userOtpCode = '',
     oobCode = '',
   } = body;
 
+  if (!mfaToken) {
+    res.status(400).send('Invalid request - missing required fields.');
+    return;
+  }
+
   try {
-  
     let additionalData = {};
 
-     if (oobCode.length) {
+    if (oobCode.length) {
       additionalData = {
         oob_code: `${oobCode}`,
         binding_code: `${userOtpCode}`
-      }
+      };
     } else {
       additionalData = {
         otp: `${userOtpCode}`
-      }
+      };
     }
 
     const options = {
-      method: "POST",
+      method: 'POST',
       url: `https://${auth0Domain}/oauth/token`,
-      headers: {"content-type": "application/x-www-form-urlencoded"},
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
       data: new URLSearchParams({
         grant_type: `http://auth0.com/oauth/grant-type/${oobCode.length ? 'mfa-oob' : 'mfa-otp'}`,
         client_id: `${auth0ClientId}`,
@@ -257,39 +285,46 @@ const confirmMFA = onRequest(async (req, res) => {
       }),
     };
 
-    const enrollment = await axios.request(options);
+    await axios.request(options);
 
-    if (enrollment.status === 200) {
-      res.sendStatus(200);
-    }
+    res.sendStatus(200);
   } catch (err) {
-    let customError = "";
+    let customError = '';
 
     const {
-      status,
+      status = 500,
+      message = '',
       data: {error_description},
     } = err?.response;
 
     if (status === 403) {
-      customError = "Invalid code.";
+      customError = 'Invalid code.';
     }
 
-    res.status(status).send({error: customError || error_description});
+    res.status(status).send({error: message || customError || error_description});
   }
 });
 
 const unenrollMFA = onRequest(async (req, res) => {
   const body = req.body;
 
+  const { userId, authFactorId } = body;
+
+  if (!userId || !authFactorId) {
+    res.status(400).send('Invalid request - missing required fields.');
+    return;
+
+  }
+
   try {
     const auth0Token = await getAccessToken();
 
     const config = {
-      method: "delete",
+      method: 'delete',
       maxBodyLength: Infinity,
-      url: `https://${auth0Domain}/api/v2/users/${body.userId}/authentication-methods/${body.authFactorId}`,
+      url: `https://${auth0Domain}/api/v2/users/${userId}/authentication-methods/${authFactorId}`,
       headers: {
-        "Authorization": `Bearer ${auth0Token}`,
+        'Authorization': `Bearer ${auth0Token}`,
       },
     };
 
@@ -297,6 +332,13 @@ const unenrollMFA = onRequest(async (req, res) => {
     res.status(200).send(request.data);
   } catch (err) {
     console.error(err);
+
+    const {
+      status = 500,
+      message = '',
+    } = err.response;
+
+    return res.status(status).send(message);
   }
 });
 

@@ -9,7 +9,13 @@ const cloudFunctionURL =
 const serviceAccountSecret = String.fromEnvironment('SA_SECRET_KEY');
 const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
 
+/* Media Query Breakpoints */
+const double smallScreen = 430;
+
 /* Colors */
+
+const disabledColor = Colors.black54;
+
 ColorScheme colorScheme = const ColorScheme(
   brightness: Brightness.light,
   primary: Color(0xFF006B59),

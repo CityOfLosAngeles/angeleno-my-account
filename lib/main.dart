@@ -29,19 +29,18 @@ class MyApp extends StatelessWidget {
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       useMaterial3: true,
-      colorScheme: colorScheme
-    ),
-    onGenerateRoute: (final settings) {
-      final uri = Uri.parse(settings.name!);
-      
-      if (uri.path == '/' && uri.queryParameters.isNotEmpty) {
-        return MaterialPageRoute(builder: (final context) => const MyHomePage(),
-          settings: const RouteSettings(name: '/'));
-      }
+      colorScheme: colorScheme,
+      inputDecorationTheme: const InputDecorationTheme(
+        disabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: disabledColor)
+        ),
 
-      return MaterialPageRoute(builder: (final context) => const MyHomePage(),
-        settings: const RouteSettings(name: '/'));
-    },
+      )
+    ),
+    onGenerateRoute: (final settings) => MaterialPageRoute(
+      builder: (final context) => const MyHomePage(),
+      settings: const RouteSettings(name: '/')
+    ),
     home: const MyHomePage()
   );
 }
