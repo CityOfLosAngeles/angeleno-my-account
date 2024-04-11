@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart';
+import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/dialogs/mobile.dart';
 import 'package:flutter/material.dart';
 
@@ -108,13 +109,41 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     });
   }
 
+  List<Map<String, dynamic>> get connectedServices => [
+    {
+      'name': 'Connected Application I',
+      'icon': 'https://i.insider.com/60817ec5354dde0018c06960',
+      'scopes': ['openid', 'profile', 'email'],
+    },
+    {
+      'name': 'Connected Application II',
+      'icon': 'https://media.tenor.com/V1S0oPlXmeQAAAAM/chick-fil-a-no-chick-fil-a-sauce.gif',
+      'scopes': ['openid', 'profile', 'email'],
+    },
+    {
+      'name': 'Connected Application III',
+      'icon': 'https://play-lh.googleusercontent.com/E-zhAf4KJ6JDDXmQfQxBprn2sATGYUMkOEqLQX5HAQQtiwDZJg4c8sQd7deb6nCZCwU',
+      'scopes': ['openid', 'profile', 'email'],
+    },
+  ];
+
   @override
   Widget build(final BuildContext context) => FutureBuilder(
     future: _authMethods, 
     builder:(final BuildContext context, final AsyncSnapshot<void> snapshot) =>
       snapshot.connectionState == ConnectionState.done ?
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Semantics(
+              header: true,
+              child: const Text(
+                'Multi-Factor Authentication',
+                textAlign: TextAlign.left,
+                style: headerStyle
+              )
+            ),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -298,6 +327,42 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 )
               ]
             ),
+            const SizedBox(height: 25),
+            Semantics(
+                header: true,
+                child: const Text(
+                  'Your Connected Services',
+                  textAlign: TextAlign.left,
+                  style: headerStyle
+                )
+            ),
+            const SizedBox(height: 10),
+            ListView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(0),
+              itemCount: connectedServices.length,
+              itemBuilder: (final BuildContext context, final int index) {
+                final service = connectedServices[index];
+                return ListTile(
+                  contentPadding: const EdgeInsets.all(0),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: Image.network(
+                      semanticLabel: '${service['name'] as String} logo',
+                      service['icon'] as String,
+                      width: 50,
+                      height: 50,
+                    ),
+                  ),
+                  title: Text(service['name'] as String),
+                  subtitle: Text(service['scopes'].join(', ').toString()),
+                  trailing: TextButton(
+                    onPressed: () {},
+                    child: const Text('Disconnect')
+                  ),
+                );
+              }
+            )
           ],
         )
         :

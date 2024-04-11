@@ -12,6 +12,12 @@ const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
 /* Media Query Breakpoints */
 const double smallScreen = 430;
 
+/* Text Styles */
+const headerStyle = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold
+);
+
 /* Colors */
 
 const disabledColor = Colors.black54;
