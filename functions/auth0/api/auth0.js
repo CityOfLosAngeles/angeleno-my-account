@@ -169,7 +169,15 @@ const authMethods = onRequest(async (req, res) => {
     };
 
     const request = await axios.request(config);
-    res.status(200).send(request.data);
+
+    const applications = await getConnectedServices(userId);
+
+    const response = {
+      mfaMethods: request.data,
+      services: applications.filter((e) => e !== null)
+    }
+
+    res.status(200).send(response);
   } catch (err) {
     console.error(err);
 
@@ -341,6 +349,79 @@ const unenrollMFA = onRequest(async (req, res) => {
     return res.status(status).send(message);
   }
 });
+
+const getConnectedServices = async (userId) => {
+
+  if (!userId) {
+    res.status(400).send('Invalid request - missing required fields.');
+    return;
+  }
+
+  try {
+    const auth0Token = await getAccessToken();
+
+    const grantConfig = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://${auth0Domain}/api/v2/grants?user_id=${userId}`,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${auth0Token}`,
+      },
+    };
+
+    const grantRequest = await axios.request(grantConfig);
+
+    return await Promise.all(grantRequest.data.map(async (grant) => {
+
+      const {
+        clientID:clientId,
+        scope,
+        id: grantId
+      } = grant;
+
+      const clientConfig = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `https://${auth0Domain}/api/v2/clients/${clientId}`,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${auth0Token}`,
+        },
+      };
+
+      const clientRequest = await axios.request(clientConfig);
+
+      const {
+        name,
+        logo_uri,
+        is_first_party:isFirstParty
+      } = clientRequest.data
+
+      if (isFirstParty) {
+        return null;
+      }
+
+      return {
+        name,
+        logo_uri,
+        clientId,
+        scope,
+        grantId
+      }
+    }));
+
+  } catch (err) {
+    console.error(err);
+
+    const {
+      status = 500,
+      message = '',
+    } = err.response;
+
+    return res.status(status).send(message);
+  }
+};
 
 module.exports = {
   updateUser,
