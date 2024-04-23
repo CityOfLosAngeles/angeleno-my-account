@@ -125,6 +125,25 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     });
   }
 
+  void removeConnection(final String connectionId) {
+    auth0UserApi.removeConnection(connectionId,)
+      .then((final response) {
+      final bool success = response.statusCode == HttpStatus.ok;
+      if (success) {
+        Navigator.pop(context, response.statusCode);
+        ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          width: 280.0,
+          content: Text('Connection has been removed.')
+        ));
+        setState(() {
+          _connectedServices.removeWhere((final Service element) =>
+            element.grantId == connectionId);
+        });
+      }
+    });
+  }
+
   @override
   Widget build(final BuildContext context) => FutureBuilder(
     future: _authMethods, 
@@ -381,8 +400,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                                       TextButton(
                                         child: const Text('Ok'),
                                         onPressed: () {
-                                          // removeService(service.grantId);
-                                          //   https://auth0.com/docs/api/management/v2/grants/delete-grants-by-id
+                                          removeConnection(service.grantId);
                                         },
                                       )
                                     ],

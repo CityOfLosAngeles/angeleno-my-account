@@ -304,4 +304,37 @@ class Auth0UserApi extends Api {
       return ApiResponse(HttpStatus.internalServerError, 'Error Encountered');
     }
   }
+
+  Future<ApiResponse> removeConnection(final String connectionId) async {
+
+    final token = await getOAuthToken();
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token'
+    };
+
+    final reqBody = json.encode({
+      'connectionId': connectionId
+    });
+
+    try {
+      final request = await http.post(
+          Uri.parse('/auth0/removeConnection'),
+          headers: headers,
+          body: reqBody
+      ).timeout(const Duration(seconds: 5));
+
+      if (request.statusCode == HttpStatus.ok) {
+        return ApiResponse(request.statusCode, '');
+      } else {
+        throw ApiException(request.statusCode, request.body);
+      }
+
+    }  on ApiException catch(e) {
+      return ApiResponse(e.statusCode, e.error);
+    } catch (err) {
+      return ApiResponse(HttpStatus.internalServerError, 'Error Encountered');
+    }
+  }
 }

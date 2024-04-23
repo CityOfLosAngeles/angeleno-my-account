@@ -423,6 +423,40 @@ const getConnectedServices = async (userId) => {
   }
 };
 
+const removeConnection = onRequest(async (req, res) => {
+  try {
+    const {
+      connectionId
+    } = req.body;
+
+    if (!connectionId) {
+      res.status(400).send('Invalid request - missing required fields.');
+      return;
+    }
+  
+    const config = {
+      method: 'delete',
+      maxBodyLength: Infinity,
+      url: `https://${auth0Domain}/api/v2/grants/${connectionId}`,
+      headers: {
+        'Authorization': `Bearer ${await getAccessToken()}`
+      }
+    };
+    
+    await axios.request(config)
+    res.status(200).send();
+  } catch (error) {
+    console.log(error);
+
+    const {
+      status = 500,
+      message = '',
+    } = error.response;
+
+    return res.status(status).send(message);
+  };
+});
+
 module.exports = {
   updateUser,
   updatePassword,
@@ -430,4 +464,5 @@ module.exports = {
   enrollMFA,
   confirmMFA,
   unenrollMFA,
+  removeConnection
 };
