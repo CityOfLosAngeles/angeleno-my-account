@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
 import '../../controllers/user_provider.dart';
@@ -49,6 +50,8 @@ class _MobileDialogState extends State<MobileDialog> {
   bool validPhoneNumber = false;
   int _pageIndex = 0;
 
+  late List<Widget> dialogNext;
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +59,32 @@ class _MobileDialogState extends State<MobileDialog> {
     userProvider = widget.userProvider;
     api = widget.userApi;
     channel = widget.channel;
+
+    dialogNext = [
+      TextButton(
+        onPressed: () {
+          try {
+            if (!validPhoneNumber && isNotTestMode) {
+              return;
+            }
+            _navigateToNextPage();
+          } catch (e) {}
+        },
+        child: const Text('Continue'),
+      ),
+      TextButton(
+        onPressed: () {
+          enrollMobile();
+        },
+        child: const Text('Continue'),
+      ),
+      TextButton(
+          onPressed: () {
+            confirmCode();
+          },
+          child: const Text('Continue')
+      )
+    ];
   }
 
   @override
@@ -67,16 +96,19 @@ class _MobileDialogState extends State<MobileDialog> {
 
   Widget get dialogClose => IconButton(
     onPressed: () {
-      if (_pageIndex >= 1) {
-        _pageController.previousPage(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut
-        );
-      } else {
-        Navigator.pop(context);
-      }
+      Navigator.pop(context);
     },
-    icon: Icon(_pageIndex == 0 ? Icons.close : Icons.arrow_back)
+    icon: const Icon( Icons.close)
+  );
+
+  Widget get dialogBack => TextButton(
+    onPressed: () {
+      _pageController.previousPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut
+      );
+    },
+    child: const Text('Back'),
   );
 
   void _navigateToNextPage() {
@@ -150,18 +182,7 @@ class _MobileDialogState extends State<MobileDialog> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          dialogClose,
-          TextButton(
-            onPressed: () {
-              try {
-                if (!validPhoneNumber && isNotTestMode) {
-                  return;
-                }
-                _navigateToNextPage();
-              } catch (e) {}
-            },
-            child: const Text('Continue'),
-          )
+          dialogClose
         ],
       ),
       Expanded(
@@ -197,7 +218,9 @@ class _MobileDialogState extends State<MobileDialog> {
                     signed: true,
                     decimal: true
                   ),
-                  inputBorder: const OutlineInputBorder()
+                  inputBorder: const OutlineInputBorder(),
+
+
                 ),
               )
             ],
@@ -213,13 +236,7 @@ class _MobileDialogState extends State<MobileDialog> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          dialogClose,
-          TextButton(
-            onPressed: () {
-              enrollMobile();
-            },
-            child: const Text('Continue'),
-          )
+          dialogClose
         ],
       ),
       Expanded(
@@ -251,17 +268,17 @@ class _MobileDialogState extends State<MobileDialog> {
                     return null;
                   },
                   decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        key: const Key('toggle_password'),
-                        onPressed: () {
-                          setState(() {
-                            obscurePassword = !obscurePassword;
-                          });
-                        },
-                        icon: Icon(
-                    obscurePassword ? Icons.visibility : Icons.visibility_off
-                        ),
-                      )
+                    suffixIcon: IconButton(
+                      key: const Key('toggle_password'),
+                      onPressed: () {
+                        setState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      },
+                      icon: Icon(
+                  obscurePassword ? Icons.visibility : Icons.visibility_off
+                      ),
+                    )
                   ),
                 ),
               ),
@@ -282,12 +299,7 @@ class _MobileDialogState extends State<MobileDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           dialogClose,
-          TextButton(
-            onPressed: () {
-              confirmCode();
-            },
-            child: const Text('Continue')
-          )
+
         ],
       ),
       Expanded(
@@ -331,10 +343,7 @@ class _MobileDialogState extends State<MobileDialog> {
     codeScreen
   ];
 
-  Widget get dialogBody => SizedBox(
-    width: double.infinity,
-    height: double.infinity,
-    child: PageView.builder(
+  Widget get dialogBody => PageView.builder(
       controller: _pageController,
       itemCount: 3,
       onPageChanged: (final index) {
@@ -345,22 +354,31 @@ class _MobileDialogState extends State<MobileDialog> {
       itemBuilder: (final context, final index) => Container(
         padding: const EdgeInsets.all(20),
         child: screens[_pageIndex],
-      )
-    ),
-  );
+      ),
+    )
+  ;
+
 
   @override
   Widget build(final BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isSmallScreen = screenWidth < smallScreen;
 
-    return isSmallScreen ?
+    return
+      isSmallScreen ?
       Dialog.fullscreen(
         child: dialogBody
       )
       :
-      Dialog(
-        child: dialogBody
+      AlertDialog(
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: dialogBody,
+        ),
+        actionsAlignment: MainAxisAlignment.end,
+        actions: _pageIndex == 0 ? [dialogNext[_pageIndex]]
+            : [dialogBack, dialogNext[_pageIndex]],
       );
   }
 }

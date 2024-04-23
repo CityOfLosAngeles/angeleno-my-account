@@ -242,4 +242,39 @@ void main() {
     expect(find.byKey(const Key('disableVoice')), findsOneWidget);
 
   });
+
+  testWidgets('Advanced Security - Voice', (final WidgetTester tester) async {
+    final authenticationMethodsMockResponse = ApiResponse(200,
+        '{"mfaMethods": [{"type": "phone", "id": "456", "preferred_authentication_method": "voice"}]}');
+
+    when(mockUserApi.getAuthenticationMethods(any))
+        .thenAnswer((_) async => authenticationMethodsMockResponse);
+
+    final disableAuthenticatorMockResponse = ApiResponse(200, '');
+    final confirmAuthenticatorMockResponse = ApiResponse(200, '');
+
+    when(mockUserApi.unenrollMFA(any))
+        .thenAnswer((_) async => disableAuthenticatorMockResponse);
+
+    when(mockUserApi.confirmMFA(any))
+        .thenAnswer((_) async => confirmAuthenticatorMockResponse);
+
+    await tester.pumpWidget(
+      MaterialApp(
+          home: Scaffold(
+            body: AdvancedSecurityScreen(
+                userProvider: userProvider,
+                auth0UserApi: mockUserApi
+            ),
+          )
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    verify(mockUserApi.getAuthenticationMethods(any)).called(1);
+
+    expect(find.byKey(const Key('enableAuthenticator')), findsOneWidget);
+    expect(find.byKey(const Key('enableSMS')), findsOneWidget);
+    expect(find.byKey(const Key('disableVoice')), findsOneWidget);
+  });
 }
