@@ -382,14 +382,24 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                               onPressed: () => showDialog<int>(
                                   context: context,
                                   builder: (final BuildContext context) => AlertDialog(
-                                    title: Text('Remove ${service.name}?'),
-                                    content: const SingleChildScrollView(
-                                        child: ListBody(
-                                          children: <Widget>[
-                                            // ignore: avoid_escaping_inner_quotes
-                                            Text('Fr?')
-                                          ],
-                                        )
+                                    title: Text('Revoke Consent for ${service.name}?'),
+                                    content: Container(
+                                      width: MediaQuery.of(context).size.width * 0.4,
+                                      child:  SingleChildScrollView(
+                                          child: ListBody(
+                                            children: <Widget>[
+                                              // ignore: avoid_escaping_inner_quotes
+                                              // ignore: lines_longer_than_80_chars
+                                              Text('Your information will no longer be shared with ${service.name}.', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                              const SizedBox(height: 10),
+                                              // ignore: lines_longer_than_80_chars
+                                              Text('Your ${service.name} account and the data you shared with ${service.name} will not be deleted. If you want to delete the data and info you shared with ${service.name}, you will need to contact ${service.name}.'),
+                                              const SizedBox(height: 10),
+                                              // ignore: lines_longer_than_80_chars
+                                              Text('To access ${service.name} again, you will need to re-consent by going to their site and logging in.')
+                                            ],
+                                          )
+                                      )
                                     ),
                                     actions: <Widget>[
                                       TextButton(
