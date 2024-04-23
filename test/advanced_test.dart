@@ -46,7 +46,7 @@ void main() {
 
   testWidgets('Advanced Security', (final WidgetTester tester) async {
     final authenticationMethodsMockResponse = ApiResponse(200, 
-    '[{"type": "totp", "id": "123"}, {"type": "phone", "id": "456", "preferred_authentication_method": "sms"}]');
+    '{"mfaMethods": [{"type": "totp", "id": "123"}, {"type": "phone", "id": "456", "preferred_authentication_method": "sms"}]}');
     final disableAuthenticatorMockResponse = ApiResponse(200, '');
     final confirmAuthenticatorMockResponse = ApiResponse(200, '');
 

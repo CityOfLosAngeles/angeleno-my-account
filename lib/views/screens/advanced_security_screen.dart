@@ -61,7 +61,8 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
           final List<dynamic> dataList = json['mfaMethods']
             as List<dynamic>;
 
-          final List<dynamic> services = json['services'] as List<dynamic>;
+          final List<dynamic> services = json.containsKey('services')
+              ? json['services'] as List<dynamic> : [];
 
           final List<Service> connectedServices = services
             .map((final e) =>
