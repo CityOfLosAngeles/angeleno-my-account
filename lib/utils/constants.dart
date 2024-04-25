@@ -10,7 +10,7 @@ const serviceAccountSecret = String.fromEnvironment('SA_SECRET_KEY');
 const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
 
 /* Media Query Breakpoints */
-const double smallScreen = 430;
+const double smallScreen = 575;
 
 /* Text Styles */
 const headerStyle = TextStyle(
