@@ -127,7 +127,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
   }
 
   void removeConnection(final String connectionId) {
-    auth0UserApi.removeConnection(connectionId,)
+    auth0UserApi.removeConnection(connectionId)
       .then((final response) {
       final bool success = response.statusCode == HttpStatus.ok;
       if (success) {
