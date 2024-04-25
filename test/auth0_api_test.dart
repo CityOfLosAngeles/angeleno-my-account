@@ -10,10 +10,10 @@ class MockClient extends Mock implements http.Client {}
 
 void main() {
 
-  late MockUserApi mockUserApi;
+  late MockAuth0UserApi mockUserApi;
 
   setUp(() {
-    mockUserApi = MockUserApi();
+    mockUserApi = MockAuth0UserApi();
   });
 
   test('updateUser returns status code 200 on success', () async {

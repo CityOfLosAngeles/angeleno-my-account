@@ -11,10 +11,10 @@ import 'mocks/auth0_user_api_mock.dart';
 
 void main() {
 
-  late MockUserApi mockUserApi;
+  late MockAuth0UserApi mockUserApi;
 
   setUp(() {
-    mockUserApi = MockUserApi();
+    mockUserApi = MockAuth0UserApi();
   });
 
   final userProvider = UserProvider();

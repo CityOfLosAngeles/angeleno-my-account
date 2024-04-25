@@ -344,20 +344,18 @@ class _MobileDialogState extends State<MobileDialog> {
   ];
 
   Widget get dialogBody => PageView.builder(
-      controller: _pageController,
-      itemCount: 3,
-      onPageChanged: (final index) {
-        setState(() {
-          _pageIndex = index;
-        });
-      },
-      itemBuilder: (final context, final index) => Container(
-        padding: const EdgeInsets.all(20),
-        child: screens[_pageIndex],
-      ),
-    )
-  ;
-
+    controller: _pageController,
+    itemCount: 3,
+    onPageChanged: (final index) {
+      setState(() {
+        _pageIndex = index;
+      });
+    },
+    itemBuilder: (final context, final index) => Container(
+      padding: const EdgeInsets.all(20),
+      child: screens[_pageIndex],
+    ),
+  );
 
   @override
   Widget build(final BuildContext context) {

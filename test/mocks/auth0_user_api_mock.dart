@@ -5,7 +5,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
-import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart' as _i3;
+import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart'
+    as _i3;
 import 'package:angeleno_project/models/api_response.dart' as _i2;
 import 'package:angeleno_project/models/password_reset.dart' as _i7;
 import 'package:angeleno_project/models/user.dart' as _i6;
@@ -35,10 +36,32 @@ class _FakeApiResponse_0 extends _i1.SmartFake implements _i2.ApiResponse {
         );
 }
 
-/// A class which mocks [UserApi].
+/// A class which mocks [Auth0UserApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockUserApi extends _i1.Mock implements _i3.Auth0UserApi {
+class MockAuth0UserApi extends _i1.Mock implements _i3.Auth0UserApi {
+  @override
+  String get authToken => (super.noSuchMethod(
+        Invocation.getter(#authToken),
+        returnValue: _i4.dummyValue<String>(
+          this,
+          Invocation.getter(#authToken),
+        ),
+        returnValueForMissingStub: _i4.dummyValue<String>(
+          this,
+          Invocation.getter(#authToken),
+        ),
+      ) as String);
+
+  @override
+  set authToken(String? _authToken) => super.noSuchMethod(
+        Invocation.setter(
+          #authToken,
+          _authToken,
+        ),
+        returnValueForMissingStub: null,
+      );
+
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
@@ -201,6 +224,30 @@ class MockUserApi extends _i1.Mock implements _i3.Auth0UserApi {
           Invocation.method(
             #unenrollMFA,
             [body],
+          ),
+        )),
+      ) as _i5.Future<_i2.ApiResponse>);
+
+  @override
+  _i5.Future<_i2.ApiResponse> removeConnection(String? connectionId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeConnection,
+          [connectionId],
+        ),
+        returnValue: _i5.Future<_i2.ApiResponse>.value(_FakeApiResponse_0(
+          this,
+          Invocation.method(
+            #removeConnection,
+            [connectionId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i5.Future<_i2.ApiResponse>.value(_FakeApiResponse_0(
+          this,
+          Invocation.method(
+            #removeConnection,
+            [connectionId],
           ),
         )),
       ) as _i5.Future<_i2.ApiResponse>);

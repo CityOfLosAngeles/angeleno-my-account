@@ -359,68 +359,72 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                       )
                   ),
                   const SizedBox(height: 10),
+                  _connectedServices.isEmpty ?
+                  const Text('No connected services')
+                  :
                   ListView.builder(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(0),
-                      itemCount: _connectedServices.length,
-                      itemBuilder: (final BuildContext context, final int index) {
-                        final service = _connectedServices[index];
-                        return ListTile(
-                          contentPadding: const EdgeInsets.all(0),
-                          leading: service.icon.isNotEmpty ? ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: Image.network(
-                              semanticLabel: '${service.name} logo',
-                              service.icon,
-                              width: 50,
-                              height: 50,
-                            ),
-                          ) : null,
-                          title: Text(service.name),
-                          subtitle: Text(service.scope.join(', ').toString()),
-                          trailing: TextButton(
-                              onPressed: () => showDialog<int>(
-                                  context: context,
-                                  builder: (final BuildContext context) => AlertDialog(
-                                    title: Text('Revoke Consent for ${service.name}?'),
-                                    content: Container(
-                                      width: MediaQuery.of(context).size.width * 0.4,
-                                      child:  SingleChildScrollView(
-                                          child: ListBody(
-                                            children: <Widget>[
-                                              // ignore: avoid_escaping_inner_quotes
-                                              // ignore: lines_longer_than_80_chars
-                                              Text('Your information will no longer be shared with ${service.name}.', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                              const SizedBox(height: 10),
-                                              // ignore: lines_longer_than_80_chars
-                                              Text('Your ${service.name} account and the data you shared with ${service.name} will not be deleted. If you want to delete the data and info you shared with ${service.name}, you will need to contact ${service.name}.'),
-                                              const SizedBox(height: 10),
-                                              // ignore: lines_longer_than_80_chars
-                                              Text('To access ${service.name} again, you will need to re-consent by going to their site and logging in.')
-                                            ],
-                                          )
-                                      )
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Cancel'),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: const Text('Ok'),
-                                        onPressed: () {
-                                          removeConnection(service.grantId);
-                                        },
-                                      )
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(0),
+                    itemCount: _connectedServices.length,
+                    itemBuilder: (final BuildContext context, final int index) {
+                      final service = _connectedServices[index];
+                      return ListTile(
+                        contentPadding: const EdgeInsets.all(0),
+                        leading: service.icon.isNotEmpty ? ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image.network(
+                            semanticLabel: '${service.name} logo',
+                            service.icon,
+                            width: 50,
+                            height: 50,
+                          ),
+                        ) : null,
+                        title: Text(service.name),
+                        subtitle: Text(service.scope.join(', ').toString()),
+                        trailing: TextButton(
+                          key: Key('disconnect_${service.grantId}'),
+                          onPressed: () => showDialog<int>(
+                            context: context,
+                            builder: (final BuildContext context) => AlertDialog(
+                              title: Text('Revoke Consent for ${service.name}?'),
+                              content: Container(
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                child:  SingleChildScrollView(
+                                  child: ListBody(
+                                    children: <Widget>[
+                                      // ignore: avoid_escaping_inner_quotes
+                                      // ignore: lines_longer_than_80_chars
+                                      Text('Your information will no longer be shared with ${service.name}.', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 10),
+                                      // ignore: lines_longer_than_80_chars
+                                      Text('Your ${service.name} account and the data you shared with ${service.name} will not be deleted. If you want to delete the data and info you shared with ${service.name}, you will need to contact ${service.name}.'),
+                                      const SizedBox(height: 10),
+                                      // ignore: lines_longer_than_80_chars
+                                      Text('To access ${service.name} again, you will need to re-consent by going to their site and logging in.')
                                     ],
                                   )
+                                )
                               ),
-                              child: const Text('Disconnect')
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Ok'),
+                                  onPressed: () {
+                                    removeConnection(service.grantId);
+                                  },
+                                )
+                              ],
+                            )
                           ),
-                        );
-                      }
+                          child: const Text('Disconnect')
+                        ),
+                      );
+                    }
                   )
                 ],
               )
