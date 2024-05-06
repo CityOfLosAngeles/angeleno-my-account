@@ -386,7 +386,7 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                           onPressed: () => showDialog<int>(
                             context: context,
                             builder: (final BuildContext context) => AlertDialog(
-                              title: Text('Revoke Consent for ${service.name}?'),
+                              title: Text('Revoke consent for ${service.name}?'),
                               content: Container(
                                 width: MediaQuery.of(context).size.width * 0.4,
                                 child:  SingleChildScrollView(
@@ -394,13 +394,13 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                                     children: <Widget>[
                                       // ignore: avoid_escaping_inner_quotes
                                       // ignore: lines_longer_than_80_chars
-                                      Text('Your information will no longer be shared with ${service.name}.', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                      Text('Your Angeleno Account information will no longer be shared with ${service.name}.', style: const TextStyle(fontWeight: FontWeight.bold)),
                                       const SizedBox(height: 10),
                                       // ignore: lines_longer_than_80_chars
-                                      Text('Your ${service.name} account and the data you shared with ${service.name} will not be deleted. If you want to delete the data and info you shared with ${service.name}, you will need to contact ${service.name}.'),
+                                      Text('The information you already shared with ${service.name} will not be deleted. If you want to delete the information you shared with ${service.name}, you will need to contact ${service.name}.'),
                                       const SizedBox(height: 10),
                                       // ignore: lines_longer_than_80_chars
-                                      Text('To access ${service.name} again, you will need to re-consent by going to their site and logging in.')
+                                      Text('To access ${service.name} again in the future, you will need to give your consent to share your Angeleno Account information again. You can give consent again by going to the ${service.name} site and logging in.')
                                     ],
                                   )
                                 )

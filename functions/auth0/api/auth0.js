@@ -24,6 +24,7 @@ const updateUser = onRequest(async (req, res) => {
 
   if (user.firstName) {
     updatedUserObject['given_name'] = user.firstName;
+    updatedUserObject['name'] = user.firstName;
   }
 
   if (user.lastName) {
@@ -239,16 +240,19 @@ const enrollMFA = onRequest(async (req, res) => {
     console.error(err);
 
     let {
-      code = 500,
-      message
-    } = err;
+      status = 500,
+      message,
+      data: {
+        error_description
+      }
+    } = err.response;
 
     // Status Code for failed Authorization
-    if (code === 403) {
+    if (status === 403) {
       message = 'Invalid Password.';
     }
 
-    res.status(code).send({error: message || 'Error encountered'});
+    res.status(status).send({error: error_description || message || 'Error encountered'});
   }
 });
 
