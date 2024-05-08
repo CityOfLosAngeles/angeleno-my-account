@@ -24,6 +24,7 @@ const updateUser = onRequest(async (req, res) => {
 
   if (user.firstName) {
     updatedUserObject['given_name'] = user.firstName;
+    updatedUserObject['name'] = user.firstName;
   }
 
   if (user.lastName) {
@@ -169,7 +170,15 @@ const authMethods = onRequest(async (req, res) => {
     };
 
     const request = await axios.request(config);
-    res.status(200).send(request.data);
+
+    const applications = await getConnectedServices(userId);
+
+    const response = {
+      mfaMethods: request.data,
+      services: applications.filter((e) => e !== null)
+    }
+
+    res.status(200).send(response);
   } catch (err) {
     console.error(err);
 
@@ -231,16 +240,19 @@ const enrollMFA = onRequest(async (req, res) => {
     console.error(err);
 
     let {
-      code = 500,
-      message
-    } = err;
+      status = 500,
+      message,
+      data: {
+        error_description
+      }
+    } = err.response;
 
     // Status Code for failed Authorization
-    if (code === 403) {
+    if (status === 403) {
       message = 'Invalid Password.';
     }
 
-    res.status(code).send({error: message || 'Error encountered'});
+    res.status(status).send({error: error_description || message || 'Error encountered'});
   }
 });
 
@@ -342,6 +354,113 @@ const unenrollMFA = onRequest(async (req, res) => {
   }
 });
 
+const getConnectedServices = async (userId) => {
+
+  if (!userId) {
+    res.status(400).send('Invalid request - missing required fields.');
+    return;
+  }
+
+  try {
+    const auth0Token = await getAccessToken();
+
+    const grantConfig = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://${auth0Domain}/api/v2/grants?user_id=${userId}`,
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${auth0Token}`,
+      },
+    };
+
+    const grantRequest = await axios.request(grantConfig);
+
+    return await Promise.all(grantRequest.data.map(async (grant) => {
+
+      const {
+        clientID:clientId,
+        scope,
+        id: grantId
+      } = grant;
+
+      const clientConfig = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: `https://${auth0Domain}/api/v2/clients/${clientId}`,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${auth0Token}`,
+        },
+      };
+
+      const clientRequest = await axios.request(clientConfig);
+
+      const {
+        name,
+        logo_uri,
+        is_first_party:isFirstParty
+      } = clientRequest.data
+
+      if (isFirstParty) {
+        return null;
+      }
+
+      return {
+        name,
+        logo_uri,
+        clientId,
+        scope,
+        grantId
+      }
+    }));
+
+  } catch (err) {
+    console.error(err);
+
+    const {
+      status = 500,
+      message = '',
+    } = err.response;
+
+    return res.status(status).send(message);
+  }
+};
+
+const removeConnection = onRequest(async (req, res) => {
+  try {
+    const {
+      connectionId
+    } = req.body;
+
+    if (!connectionId) {
+      res.status(400).send('Invalid request - missing required fields.');
+      return;
+    }
+  
+    const config = {
+      method: 'delete',
+      maxBodyLength: Infinity,
+      url: `https://${auth0Domain}/api/v2/grants/${connectionId}`,
+      headers: {
+        'Authorization': `Bearer ${await getAccessToken()}`
+      }
+    };
+    
+    await axios.request(config)
+    res.status(200).send();
+  } catch (error) {
+    console.log(error);
+
+    const {
+      status = 500,
+      message = '',
+    } = error.response;
+
+    return res.status(status).send(message);
+  };
+});
+
 module.exports = {
   updateUser,
   updatePassword,
@@ -349,4 +468,5 @@ module.exports = {
   enrollMFA,
   confirmMFA,
   unenrollMFA,
+  removeConnection
 };

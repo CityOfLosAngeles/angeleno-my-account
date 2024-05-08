@@ -11,7 +11,8 @@ const {
   enrollMFA,
   confirmMFA,
   authMethods,
-  unenrollMFA
+  unenrollMFA,
+  removeConnection
 } = require('./api/auth0');
 
 app.use(express.json());
@@ -22,5 +23,6 @@ app.post('/auth0/enrollMFA', enrollMFA);
 app.post('/auth0/confirmMFA', confirmMFA);
 app.post('/auth0/authMethods', authMethods);
 app.post('/auth0/unenrollMFA', unenrollMFA);
+app.post('/auth0/removeConnection', removeConnection);
 
 exports.auth0 = onRequest(app);

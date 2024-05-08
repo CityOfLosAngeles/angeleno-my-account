@@ -67,12 +67,16 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
   Widget get dialogClose => IconButton(
     onPressed: () {
-      Navigator.pop(context);
-      setState(() {
-        _pageIndex = 0;
-      });
+      if (_pageIndex >= 1) {
+        _pageController.previousPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut
+        );
+      } else {
+        Navigator.pop(context);
+      }
     },
-    icon: const Icon(Icons.close)
+    icon: Icon(_pageIndex == 0 ? Icons.close : Icons.arrow_back)
   );
 
   void enrollTOTP() async {
@@ -330,7 +334,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
       itemCount: 3,
       onPageChanged: (final index) {
         setState(() {
-          _pageIndex++;
+          _pageIndex = index;
         });
       },
       itemBuilder: (final context, final index) => Container(

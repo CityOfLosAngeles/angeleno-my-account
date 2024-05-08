@@ -1,5 +1,6 @@
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/models/api_exception.dart';
+import 'package:angeleno_project/models/connected_applications_model.dart';
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/models/user.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -199,5 +200,56 @@ void main() {
       expect(userProvider.cleanUser, equals(user));
     });
 
+  });
+
+  group('Service', () {
+    test('fromJson creates correct Service object', () {
+      final json = {
+        'clientId': '123',
+        'name': 'Test Service',
+        'scope': ['email', 'openid', 'profile'],
+        'logo_uri': 'https://example.com/logo.png',
+        'grantId': '456'
+      };
+
+      final service = Service.fromJson(json);
+
+      expect(service.id, '123');
+      expect(service.name, 'Test Service');
+      expect(service.scope, ['email', 'profile']);
+      expect(service.icon, 'https://example.com/logo.png');
+      expect(service.grantId, '456');
+    });
+
+    test('toJson creates correct JSON', () {
+      final service = Service(
+          id: '123',
+          name: 'Test Service',
+          scope: ['email', 'profile'],
+          icon: 'https://example.com/logo.png',
+          grantId: '456'
+      );
+
+      final json = service.toJson();
+
+      expect(json['clientId'], '123');
+      expect(json['name'], 'Test Service');
+      expect(json['scope'], ['email', 'profile']);
+      expect(json['logo_uri'], 'https://example.com/logo.png');
+      expect(json['grantId'], '456');
+    });
+
+    test('fromJson handles missing logo_uri', () {
+      final json = {
+        'clientId': '123',
+        'name': 'Test Service',
+        'scope': ['email', 'openid', 'profile'],
+        'grantId': '456'
+      };
+
+      final service = Service.fromJson(json);
+
+      expect(service.icon, '');
+    });
   });
 }

@@ -15,10 +15,10 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late MockUserApi mockUserApi;
+  late MockAuth0UserApi mockUserApi;
 
   setUp(() {
-    mockUserApi = MockUserApi();
+    mockUserApi = MockAuth0UserApi();
   });
 
   final userProvider = UserProvider();
@@ -46,7 +46,7 @@ void main() {
 
   testWidgets('Advanced Security', (final WidgetTester tester) async {
     final authenticationMethodsMockResponse = ApiResponse(200, 
-    '[{"type": "totp", "id": "123"}, {"type": "phone", "id": "456", "preferred_authentication_method": "sms"}]');
+    '{"mfaMethods": [{"type": "totp", "id": "123"}, {"type": "phone", "id": "456", "preferred_authentication_method": "sms"}]}');
     final disableAuthenticatorMockResponse = ApiResponse(200, '');
     final confirmAuthenticatorMockResponse = ApiResponse(200, '');
 
@@ -241,5 +241,63 @@ void main() {
     expect(find.byType(SnackBar), findsOneWidget);
     expect(find.byKey(const Key('disableVoice')), findsOneWidget);
 
+  });
+
+  testWidgets('Advanced Security - Voice', (final WidgetTester tester) async {
+    final authenticationMethodsMockResponse = ApiResponse(200,
+        '{"mfaMethods": [{"type": "phone", "id": "456", "preferred_authentication_method": "voice"}],' +
+            '"services": [{"clientId": "65165", "name": "Example", "scope": ["openid", "profile", "email"], "grantId": "123"}]}');
+
+    final disableAuthenticatorMockResponse = ApiResponse(200, '');
+    final confirmAuthenticatorMockResponse = ApiResponse(200, '');
+
+    when(mockUserApi.getAuthenticationMethods(any))
+        .thenAnswer((_) async => authenticationMethodsMockResponse);
+
+    when(mockUserApi.unenrollMFA(any))
+        .thenAnswer((_) async => disableAuthenticatorMockResponse);
+
+    when(mockUserApi.confirmMFA(any))
+        .thenAnswer((_) async => confirmAuthenticatorMockResponse);
+
+    when(mockUserApi.removeConnection(any))
+        .thenAnswer((_) => Future.value(ApiResponse(200, '')));
+
+    await tester.pumpWidget(
+      MaterialApp(
+          home: Scaffold(
+            body: AdvancedSecurityScreen(
+                userProvider: userProvider,
+                auth0UserApi: mockUserApi
+            ),
+          )
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    verify(mockUserApi.getAuthenticationMethods(any)).called(1);
+
+    expect(find.byKey(const Key('enableAuthenticator')), findsOneWidget);
+    expect(find.byKey(const Key('enableSMS')), findsOneWidget);
+    expect(find.byKey(const Key('disableVoice')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('disconnect_123')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AlertDialog), findsOneWidget);
+
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AlertDialog), findsNothing);
+
+    await tester.tap(find.byKey(const Key('disconnect_123')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Ok'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.byKey(const Key('disconnect_123')), findsNothing);
   });
 }
