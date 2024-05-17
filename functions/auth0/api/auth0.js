@@ -1,12 +1,12 @@
-const {onRequest} = require('firebase-functions/v2/https');
-const axios = require('axios');
-const {User} = require('../models/user');
+import {onRequest} from 'firebase-functions/v2/https';
+import axios from 'axios';
+import {User} from '../models/user';
 
-const {
+import {
   auth0Domain,
   auth0ClientId,
   auth0ClientSecret,
-} = require('../utils/constants');
+} from '../utils/constants';
 
 const {getAccessToken, authorizeUser} = require('../utils/auth0');
 
@@ -147,9 +147,7 @@ const updatePassword = onRequest(async (req, res) => {
 });
 
 const authMethods = onRequest(async (req, res) => {
-  const body = req.body;
-
-  const {userId} = body;
+  const userId = req.params.userId;
 
   if (!userId) {
     res.status(400).send('Invalid request - missing required fields.');
@@ -376,7 +374,9 @@ const getConnectedServices = async (userId) => {
 
     const grantRequest = await axios.request(grantConfig);
 
-    return await Promise.all(grantRequest.data.map(async (grant) => {
+    const thirdPartyApps = grantRequest.data.filter((grant) => grant.clientID !== auth0ClientId);
+
+    return await Promise.all(thirdPartyApps.map(async (grant) => {
 
       const {
         clientID:clientId,

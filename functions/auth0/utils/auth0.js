@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const axios = require('axios');
+import jwt from 'jsonwebtoken';
+import axios from 'axios';
 
 const {
   auth0Domain,

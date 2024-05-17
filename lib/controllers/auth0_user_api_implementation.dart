@@ -164,13 +164,10 @@ class Auth0UserApi extends Api {
       'Authorization': 'Bearer $token'
     };
 
-    final reqBody = json.encode({'userId': userId});
-
     try {
-      final request = await http.post(
-          Uri.parse('/auth0/authMethods'),
-          headers: headers,
-          body: reqBody
+      final request = await http.get(
+          Uri.parse('/auth0/authMethods/$userId'),
+          headers: headers
       ).timeout(const Duration(seconds: 5));
 
       if (request.statusCode == HttpStatus.ok) {
