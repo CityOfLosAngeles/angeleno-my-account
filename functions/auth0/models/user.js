@@ -1,4 +1,4 @@
-class User {
+export class User {
   constructor(
       userId,
       email,
@@ -25,5 +25,3 @@ class User {
     this.metadata = metadata;
   }
 }
-
-module.exports = {User};

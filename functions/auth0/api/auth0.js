@@ -1,16 +1,16 @@
 import {onRequest} from 'firebase-functions/v2/https';
 import axios from 'axios';
-import {User} from '../models/user';
+import {User} from '../models/user.js';
 
 import {
   auth0Domain,
   auth0ClientId,
   auth0ClientSecret,
-} from '../utils/constants';
+} from '../utils/constants.js';
 
-const {getAccessToken, authorizeUser} = require('../utils/auth0');
+import {getAccessToken, authorizeUser} from '../utils/auth0.js';
 
-const updateUser = onRequest(async (req, res) => {
+export const updateUser = onRequest(async (req, res) => {
   let user;
 
   try {
@@ -94,7 +94,7 @@ const updateUser = onRequest(async (req, res) => {
   }
 });
 
-const updatePassword = onRequest(async (req, res) => {
+export const updatePassword = onRequest(async (req, res) => {
   const body = req.body;
 
   const {
@@ -146,7 +146,7 @@ const updatePassword = onRequest(async (req, res) => {
   }
 });
 
-const authMethods = onRequest(async (req, res) => {
+export const authMethods = onRequest(async (req, res) => {
   const userId = req.params.userId;
 
   if (!userId) {
@@ -189,7 +189,7 @@ const authMethods = onRequest(async (req, res) => {
   }
 });
 
-const enrollMFA = onRequest(async (req, res) => {
+export const enrollMFA = onRequest(async (req, res) => {
   const body = req.body;
 
   const {
@@ -254,7 +254,7 @@ const enrollMFA = onRequest(async (req, res) => {
   }
 });
 
-const confirmMFA = onRequest(async (req, res) => {
+export const confirmMFA = onRequest(async (req, res) => {
   const body = req.body;
 
   const {
@@ -315,7 +315,7 @@ const confirmMFA = onRequest(async (req, res) => {
   }
 });
 
-const unenrollMFA = onRequest(async (req, res) => {
+export const unenrollMFA = onRequest(async (req, res) => {
   const body = req.body;
 
   const { userId, authFactorId } = body;
@@ -427,7 +427,7 @@ const getConnectedServices = async (userId) => {
   }
 };
 
-const removeConnection = onRequest(async (req, res) => {
+export const removeConnection = onRequest(async (req, res) => {
   try {
     const {
       connectionId
@@ -460,13 +460,3 @@ const removeConnection = onRequest(async (req, res) => {
     return res.status(status).send(message);
   };
 });
-
-module.exports = {
-  updateUser,
-  updatePassword,
-  authMethods,
-  enrollMFA,
-  confirmMFA,
-  unenrollMFA,
-  removeConnection
-};

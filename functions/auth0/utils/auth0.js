@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
-const {
+import {
   auth0Domain,
   auth0ClientId,
   auth0ClientSecret
-} = require('./constants.js');
+} from './constants.js';
 
 let auth0Token;
 
-const getAccessToken = async () => {
+export const getAccessToken = async () => {
   if (auth0Token) {
     const decodedToken = await jwt.decode(auth0Token);
     const tokenExpiration = decodedToken.exp * 1000;
@@ -47,7 +47,7 @@ const getAccessToken = async () => {
   }
 };
 
-const authorizeUser = async (email, password, audience = '/api/v2/') => {
+export const authorizeUser = async (email, password, audience = '/api/v2/') => {
   try {
     const passwordValidationRequest = {
       method: 'POST',
@@ -71,9 +71,4 @@ const authorizeUser = async (email, password, audience = '/api/v2/') => {
     console.error(err);
     throw err;
   }
-};
-
-module.exports = {
-  getAccessToken,
-  authorizeUser
 };
