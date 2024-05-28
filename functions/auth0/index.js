@@ -1,11 +1,11 @@
-const {onRequest} = require('firebase-functions/v2/https');
-const admin = require('firebase-admin');
-const express = require('express');
+import { onRequest } from 'firebase-functions/v2/https';
+import admin from 'firebase-admin';
+import express from 'express';
 
 admin.initializeApp();
 const app = express();
 
-const {
+import {
   updateUser,
   updatePassword,
   enrollMFA,
@@ -13,7 +13,7 @@ const {
   authMethods,
   unenrollMFA,
   removeConnection
-} = require('./api/auth0');
+} from './api/auth0.js';
 
 app.use(express.json());
 
@@ -21,8 +21,8 @@ app.post('/auth0/updateUser', updateUser);
 app.post('/auth0/updatePassword', updatePassword);
 app.post('/auth0/enrollMFA', enrollMFA);
 app.post('/auth0/confirmMFA', confirmMFA);
-app.post('/auth0/authMethods', authMethods);
+app.get('/auth0/authMethods/:userId', authMethods);
 app.post('/auth0/unenrollMFA', unenrollMFA);
 app.post('/auth0/removeConnection', removeConnection);
 
-exports.auth0 = onRequest(app);
+export const auth0 = onRequest(app);

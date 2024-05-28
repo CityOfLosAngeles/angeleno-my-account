@@ -223,6 +223,12 @@ void main() {
 
     await tester.pumpAndSettle();
 
+    await tester.binding.setSurfaceSize(const Size(400, 600));
+    await tester.pumpAndSettle();
+    expect(find.byType(Dialog), findsOneWidget);
+
+    await tester.binding.setSurfaceSize(const Size(1200, 800));
+    await tester.pumpAndSettle();
     expect(find.byType(MobileDialog), findsOneWidget);
 
     await tester.enterText(inputTextFieldFinder, '2134325435');
