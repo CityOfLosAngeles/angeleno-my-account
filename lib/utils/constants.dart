@@ -10,7 +10,7 @@ const cloudFunctionURL =
 const serviceAccountSecret = String.fromEnvironment('SA_SECRET_KEY');
 const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
 const datadogClientToken = String.fromEnvironment('DATADOG_CLIENT_TOKEN');
-const dataDogApplicationId = String.fromEnvironment('DATADOG_APPLICATION_ID');
+const dataDogApplicationId = String.fromEnvironment('DATADOG_APP_ID');
 
 /* DataDog*/
 final configuration = DatadogConfiguration(
