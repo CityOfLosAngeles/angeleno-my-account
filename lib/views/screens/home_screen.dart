@@ -125,8 +125,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 47.0, 0, 0),
-      child: RumUserActionAnnotation(
-        description: 'User is on the home screen.',
+      child: RumUserActionDetector(
+        rum: DatadogSdk.instance.rum,
         child: Scaffold(
             key: scaffoldKey,
             appBar: AppBar(
