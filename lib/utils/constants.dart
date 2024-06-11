@@ -1,4 +1,5 @@
 import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
+import 'package:datadog_tracking_http_client/datadog_tracking_http_client.dart';
 import 'package:flutter/material.dart';
 
 /* Environment variables */
@@ -21,8 +22,9 @@ final configuration = DatadogConfiguration(
   loggingConfiguration: DatadogLoggingConfiguration(),
   rumConfiguration: DatadogRumConfiguration(
     applicationId: dataDogApplicationId,
-  ),
-);
+    reportFlutterPerformance: true,
+  )
+)..enableHttpTracking();
 final logConfiguration = DatadogLoggerConfiguration();
 final logger = DatadogSdk.instance.logs?.createLogger(logConfiguration);
 
