@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/auth0_user_api_implementation.dart';
@@ -119,7 +120,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: inputDecoration('First Name', editMode),
                     style: textStyle(editMode),
                     initialValue: user.firstName,
+                    maxLength: 300,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     keyboardType: TextInputType.name,
+                    validator: (final val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Please enter a first name';
+                      }
+                      return null;
+                    },
                     onChanged: (final val) {
                       user.firstName = val;
                     },
@@ -130,7 +139,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: inputDecoration('Last Name', editMode),
                     style: textStyle(editMode),
                     initialValue: user.lastName,
+                    maxLength: 150,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     keyboardType: TextInputType.name,
+                    validator: (final val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Please enter a last name';
+                      }
+                      return null;
+                    },
                     onChanged: (final val) {
                       user.lastName = val;
                     },
@@ -141,6 +158,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     decoration: inputDecoration('Mobile', editMode),
                     style: textStyle(editMode),
                     initialValue: user.phone,
+                    maxLength: 15,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     onChanged: (final val) {
                       user.phone = val;
                     },

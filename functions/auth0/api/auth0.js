@@ -14,10 +14,10 @@ export const updateUser = onRequest(async (req, res) => {
   let user;
 
   try {
-    user = Object.assign(new User(), req.body);
+    user = new User(req.body);
   } catch (err) {
     console.error(err);
-    return res.send(400);
+    return res.status(400).send(err.message);
   }
 
   const updatedUserObject = {};
@@ -32,6 +32,7 @@ export const updateUser = onRequest(async (req, res) => {
   }
 
   const primaryAddress = {};
+  
   if (user.zip) {
     primaryAddress['zip'] = user.zip;
   }
