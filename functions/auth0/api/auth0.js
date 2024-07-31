@@ -66,6 +66,7 @@ export const updateUser = onRequest(async (req, res) => {
   }
 
   user.metadata['phone'] = user.phone;
+
   updatedUserObject['user_metadata'] = user.metadata;
 
   const updateUserUrl = `https://${auth0Domain}/api/v2/users/${user.userId}`;

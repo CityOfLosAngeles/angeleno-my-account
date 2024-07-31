@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:angeleno_project/controllers/user_provider.dart';
 import 'package:angeleno_project/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 
 import '../../controllers/auth0_user_api_implementation.dart';
@@ -28,6 +30,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late User user;
+  late bool isFormValid;
+  bool validPhoneNumber = false;
+  final isNotTestMode = kIsWeb ||
+      !Platform.environment.containsKey('FLUTTER_TEST');
 
   @override
   void initState() {
@@ -84,6 +90,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final editMode = userProvider.isEditing;
 
+    if (formKey.currentState != null) {
+      isFormValid = formKey.currentState!.validate();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -101,13 +111,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       ElevatedButton(
-                      onPressed: () {
-                        if (editMode) {
-                          updateUser();
-                        }
-                        setState(() {
-                          userProvider.toggleEditing();
-                        });
+                        onPressed: (editMode &&
+                            ((user.phone!.isNotEmpty && !validPhoneNumber) ||
+                          !isFormValid)
+                        ) ? null : () {
+                          if (editMode) {
+                            updateUser();
+                          }
+                          setState(() {
+                            userProvider.toggleEditing();
+                          });
                       },
                       child: Text(
                           editMode ? 'Save' : 'Edit'
@@ -123,14 +136,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     maxLength: 300,
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     keyboardType: TextInputType.name,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (final val) {
                       if (val == null || val.isEmpty) {
                         return 'Please enter a first name';
                       }
+
+                      if (!nameRegEx.hasMatch(val)) {
+                        return 'Invalid characters in first name';
+                      }
+
                       return null;
                     },
                     onChanged: (final val) {
-                      user.firstName = val;
+                      setState(() {
+                        user.firstName = val;
+                      });
                     },
                   ),
                   const SizedBox(height: 25.0),
@@ -142,27 +163,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     maxLength: 150,
                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                     keyboardType: TextInputType.name,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (final val) {
                       if (val == null || val.isEmpty) {
                         return 'Please enter a last name';
                       }
+
+                      if (!nameRegEx.hasMatch(val)) {
+                        return 'Invalid characters in last name';
+                      }
+
                       return null;
                     },
                     onChanged: (final val) {
-                      user.lastName = val;
+                      setState(() {
+                        user.lastName = val;
+                      });
                     },
                   ),
                   const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('Mobile', editMode),
-                    style: textStyle(editMode),
-                    initialValue: user.phone,
-                    maxLength: 15,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    onChanged: (final val) {
-                      user.phone = val;
+                  InternationalPhoneNumberInput(
+                    selectorConfig: const SelectorConfig(
+                      selectorType: PhoneInputSelectorType.DIALOG,
+                      setSelectorButtonAsPrefixIcon: true,
+                      leadingPadding: 20.0,
+                    ),
+                    isEnabled: editMode,
+                    key: const Key('phoneField'),
+                    onInputChanged: (final PhoneNumber number) {
+                      if (number.parseNumber().isNotEmpty) {
+                        user.phone = number.phoneNumber!;
+                      } else {
+                        user.phone = '';
+                        setState(() {
+                          validPhoneNumber = true;
+                        });
+                      }
                     },
+                    onInputValidated: (final bool value) {
+                      if (validPhoneNumber != value) {
+                        setState(() {
+                          validPhoneNumber = value;
+                        });
+                      }
+                    },
+                    autoValidateMode: isNotTestMode ?
+                    AutovalidateMode.onUserInteraction
+                        : AutovalidateMode.disabled,
+                    selectorTextStyle: const TextStyle(color: Colors.black),
+                    initialValue: PhoneNumber(phoneNumber: user.phone, isoCode: 'US'),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      signed: true,
+                      decimal: true
+                    ),
+                    ignoreBlank: true,
+                    inputBorder: const OutlineInputBorder(),
                   ),
                   const SizedBox(height: 25.0),
                   TextFormField(

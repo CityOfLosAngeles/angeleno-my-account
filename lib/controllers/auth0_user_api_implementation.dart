@@ -97,7 +97,7 @@ class Auth0UserApi extends Api {
       final body = json.encode(user);
 
       final response = await http.post(
-          Uri.parse('/auth0/updateUser'),
+          Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0/auth0/updateUser'),
           headers: headers,
           body: body
       ).timeout(const Duration(seconds: 5));
@@ -133,7 +133,7 @@ class Auth0UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/auth0/updatePassword'),
+          Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0/auth0/updatePassword'),
           headers: headers,
           body: reqBody
       ).timeout(const Duration(seconds: 5));
@@ -166,7 +166,7 @@ class Auth0UserApi extends Api {
 
     try {
       final request = await http.get(
-          Uri.parse('/auth0/authMethods/$userId'),
+          Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0/auth0/authMethods/$userId'),
           headers: headers
       ).timeout(const Duration(seconds: 5));
 
@@ -199,7 +199,7 @@ class Auth0UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/auth0/enrollMFA'),
+          Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0/auth0/enrollMFA'),
           headers: headers,
           body: reqBody
       ).timeout(const Duration(seconds: 5));
@@ -252,7 +252,7 @@ class Auth0UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/auth0/confirmMFA'),
+          Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0/auth0/confirmMFA'),
           headers: headers,
           body: reqBody
       ).timeout(const Duration(seconds: 5));
@@ -284,7 +284,7 @@ class Auth0UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/auth0/unenrollMFA'),
+          Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0/auth0/unenrollMFA'),
           headers: headers,
           body: reqBody
       ).timeout(const Duration(seconds: 5));
@@ -317,7 +317,7 @@ class Auth0UserApi extends Api {
 
     try {
       final request = await http.post(
-          Uri.parse('/auth0/removeConnection'),
+          Uri.parse('http://127.0.0.1:5001/my-account-dev-402917/us-central1/auth0/auth0/removeConnection'),
           headers: headers,
           body: reqBody
       ).timeout(const Duration(seconds: 5));
