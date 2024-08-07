@@ -18,10 +18,10 @@ jobs:
       - uses: actions/checkout@v3
        # https://github.com/marketplace/actions/flutter-action
       - name: Setup Flutter
-         # SHA for v2.10.0
-        uses: subosito/flutter-action@48cafc24713cca54bbe03cdc3a423187d413aafa
+         # SHA for v2.16.0
+        uses: subosito/flutter-action@44ac965b96f18d999802d4b807e3256d5a3f9fa1
         with:
-          flutter-version: '3.13.9'
+          flutter-version: '3.22.2'
           channel: 'stable'
           cache: true
       - run: flutter pub get
@@ -34,6 +34,8 @@ jobs:
               echo CLOUD_FUNCTIONS_URL=${{ secrets.CLOUD_FUNCTIONS_URL }} >> .env
               echo SA_EMAIL=${{ secrets.SA_EMAIL }} >> .env
               echo SA_SECRET_KEY="${{ secrets.SA_SECRET_KEY }}" >> .env
+              echo DATADOG_CLIENT_TOKEN="${{ secrets.DATADOG_CLIENT_TOKEN }}" >> .env
+              echo DATADOG_APP_ID="${{ secrets.DATADOG_APP_ID }}" >> .env
       - run: flutter build web --dart-define-from-file=.env
       - name: Update .firebaserc
         run: |

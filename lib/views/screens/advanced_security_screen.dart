@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:angeleno_project/controllers/auth0_user_api_implementation.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/views/dialogs/mobile.dart';
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 
 
@@ -25,7 +26,8 @@ class AdvancedSecurityScreen extends StatefulWidget {
   State<AdvancedSecurityScreen> createState() => _AdvancedSecurityState();
 }
 
-class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
+class _AdvancedSecurityState extends State<AdvancedSecurityScreen>
+    with RouteAware, DatadogRouteAwareMixin {
 
   late Auth0UserApi auth0UserApi;
   late UserProvider userProvider;
@@ -48,6 +50,9 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     auth0UserApi = widget.auth0UserApi;
     _authMethods = getAuthenticationMethods();
   }
+
+  @override
+  RumViewInfo get rumViewInfo => RumViewInfo(name: 'Security Screen');
 
   Future<void> getAuthenticationMethods() async {
     await auth0UserApi.getAuthenticationMethods(userProvider.user!.userId)

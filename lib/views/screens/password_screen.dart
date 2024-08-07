@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:angeleno_project/models/password_reset.dart';
 import 'package:angeleno_project/utils/constants.dart';
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,8 @@ class PasswordScreen extends StatefulWidget {
   State<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _PasswordScreenState extends State<PasswordScreen> {
+class _PasswordScreenState extends State<PasswordScreen>
+    with RouteAware, DatadogRouteAwareMixin {
   late OverlayProvider overlayProvider;
   late UserProvider userProvider;
   late Auth0UserApi auth0UserApi;
@@ -47,6 +49,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
     super.initState();
     auth0UserApi = widget.auth0UserApi;
   }
+
+  @override
+  RumViewInfo get rumViewInfo => RumViewInfo(name: 'Password Screen');
 
   void submitRequest() {
     if (newPassword == passwordMatch) {
