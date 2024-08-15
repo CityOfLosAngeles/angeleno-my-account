@@ -88,14 +88,14 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(0), '');
     await tester.pump();
     final firstNameError = find.text('Please enter a first name');
-    expect(firstNameError, findsOne);
+    expect(firstNameError, findsOneWidget);
     await tester.enterText(find.byType(TextFormField).at(0), 'New First Name');
     await tester.pump();
 
     await tester.enterText(find.byType(TextFormField).at(1), '');
     await tester.pump();
     final lastNameError = find.text('Please enter a last name');
-    expect(lastNameError, findsOne);
+    expect(lastNameError, findsOneWidget);
     await tester.enterText(find.byType(TextFormField).at(1), 'New Last Name');
     await tester.pump();
 
