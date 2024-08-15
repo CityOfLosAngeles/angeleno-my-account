@@ -11,7 +11,9 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
-import '../integration_test/auth0_user_api_mock.dart';
+import 'mocks/auth0_user_api_mock.dart';
+
+
 
 @GenerateNiceMocks([MockSpec<Auth0UserApi>()])
 void main() {
