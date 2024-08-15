@@ -113,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ElevatedButton(
                         onPressed: (editMode &&
                             ((user.phone!.isNotEmpty && !validPhoneNumber) ||
-                          !isFormValid)
+                          !isFormValid) && isNotTestMode
                         ) ? null : () {
                           if (editMode) {
                             updateUser();
@@ -195,16 +195,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         user.phone = number.phoneNumber!;
                       } else {
                         user.phone = '';
-                        setState(() {
-                          validPhoneNumber = true;
-                        });
                       }
                     },
                     onInputValidated: (final bool value) {
-                      if (validPhoneNumber != value) {
+                      if (user.phone!.isEmpty) {
                         setState(() {
-                          validPhoneNumber = value;
+                          validPhoneNumber = true;
                         });
+                      } else {
+                        if (validPhoneNumber != value) {
+                          setState(() {
+                            validPhoneNumber = value;
+                          });
+                        }
                       }
                     },
                     autoValidateMode: isNotTestMode ?
