@@ -207,7 +207,9 @@ class _MobileDialogState extends State<MobileDialog> {
           width: 500,
           child: InternationalPhoneNumberInput(
             selectorConfig: const SelectorConfig(
-                selectorType: PhoneInputSelectorType.BOTTOM_SHEET
+              selectorType: PhoneInputSelectorType.DIALOG,
+              setSelectorButtonAsPrefixIcon: true,
+              leadingPadding: 20.0
             ),
             key: const Key('phoneField'),
             onInputChanged: (final PhoneNumber number) {

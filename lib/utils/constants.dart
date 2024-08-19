@@ -9,6 +9,9 @@ const cloudFunctionURL =
 const serviceAccountSecret = String.fromEnvironment('SA_SECRET_KEY');
 const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
 
+/* Regex */
+final RegExp nameRegEx = RegExp(r"^[a-zA-ZÀ-ÿ\s'\-\d]*$");
+
 /* Media Query Breakpoints */
 const double smallScreen = 575;
 
@@ -19,7 +22,6 @@ const headerStyle = TextStyle(
 );
 
 /* Colors */
-
 const disabledColor = Colors.black54;
 
 ColorScheme colorScheme = const ColorScheme(
