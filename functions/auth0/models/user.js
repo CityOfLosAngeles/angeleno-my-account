@@ -31,7 +31,8 @@ export class User {
     }
 
     phone = phone.replaceAll(' ', '');
-    if (phone.length > 15 || phoneRegex.test(phone) === false) {
+    // We accept empty phone numbers, so enforce restrictions only if a phone number is provided
+    if (phone.length > 0 && (phone.length > 15 || phoneRegex.test(phone) === false)) {
       throw new Error('Phone must be less than 15 characters and include valid characters');
     }
 

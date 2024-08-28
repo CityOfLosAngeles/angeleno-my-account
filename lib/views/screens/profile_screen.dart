@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     keyboardType: TextInputType.name,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (final val) {
-                      if (val == null || val.isEmpty) {
+                      if (val == null || val.trim().isEmpty) {
                         return 'Please enter a first name';
                       }
 
@@ -165,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     keyboardType: TextInputType.name,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (final val) {
-                      if (val == null || val.isEmpty) {
+                      if (val == null || val.trim().isEmpty) {
                         return 'Please enter a last name';
                       }
 
