@@ -10,16 +10,15 @@ import {
 let auth0Token;
 
 export const getAccessToken = async () => {
-
-//  if (auth0Token) {
-//    const decodedToken = await jwt.decode(auth0Token);
-//    const tokenExpiration = decodedToken.exp * 1000;
-//    const now = Date.now();
-//    const tokenValid = tokenExpiration > now;
-//    if (tokenValid) {
-//      return auth0Token;
-//    }
-//  }
+  if (auth0Token) {
+    const decodedToken = await jwt.decode(auth0Token);
+    const tokenExpiration = decodedToken.exp * 1000;
+    const now = Date.now();
+    const tokenValid = tokenExpiration > now;
+    if (tokenValid) {
+      return auth0Token;
+    }
+  }
 
   const options = {
     'Content-Type': 'application/x-www-form-urlencoded'
