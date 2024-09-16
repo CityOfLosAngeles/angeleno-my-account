@@ -35,6 +35,7 @@ jobs:
               echo CLOUD_FUNCTIONS_URL=${{ secrets.CLOUD_FUNCTIONS_URL }} >> .env
               echo SA_EMAIL=${{ secrets.SA_EMAIL }} >> .env
               echo SA_SECRET_KEY="${{ secrets.SA_SECRET_KEY }}" >> .env
+              echo ENVIRONMENT="${{ secrets.ENVIRONMENT }}" >> .env
       - run: flutter build web --dart-define-from-file=.env
       - name: Update .firebaserc
         run: |

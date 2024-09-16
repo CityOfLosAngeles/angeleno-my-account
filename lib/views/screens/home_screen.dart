@@ -24,6 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late User user;
   late OverlayProvider overlayProvider;
   int _selectedIndex = 0;
+  final currentYear = DateTime.now().year;
 
   @override
   void initState() {
@@ -72,17 +73,17 @@ class _MyHomePageState extends State<MyHomePage> {
         switch(index) {
           case 3:
             await launchUrl(
-              Uri.parse('https://angeleno.lacity.org/')
+              Uri.parse('https://sandbox.account.lacity.gov/')
             );
             break;
           case 4:
             await launchUrl(
-              Uri.parse('https://angeleno.lacity.org/apps')
+              Uri.parse('https://sandbox.account.lacity.gov/services')
             );
             break;
           case 5:
             await launchUrl(
-              Uri.parse('https://angeleno.lacity.org/help')
+              Uri.parse('https://sandbox.account.lacity.gov/help')
             );
             break;
           case 6:
@@ -214,11 +215,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         bottomNavigationBar: Container(
           padding: const EdgeInsets.all(16.0),
-          child: const Wrap(
+          child: Wrap(
             alignment: WrapAlignment.center,
             children: [
               Text(
-                '© Copyright 2023 City of Los Angeles. '
+                '© Copyright $currentYear City of Los Angeles. '
                     'All rights reserved. Disclaimer | Privacy Policy',
                 textDirection: TextDirection.ltr,
                 textAlign: TextAlign.center,

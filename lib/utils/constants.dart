@@ -8,6 +8,7 @@ const cloudFunctionURL =
     String.fromEnvironment('CLOUD_FUNCTIONS_URL');
 const serviceAccountSecret = String.fromEnvironment('SA_SECRET_KEY');
 const serviceAccountEmail = String.fromEnvironment('SA_EMAIL');
+const environment = String.fromEnvironment('ENVIRONMENT');
 
 /* Regex */
 final RegExp nameRegEx = RegExp(r"^[a-zA-ZÀ-ÿ\s'\-\d]*$");
