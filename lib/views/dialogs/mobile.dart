@@ -50,7 +50,7 @@ class _MobileDialogState extends State<MobileDialog> {
   bool validPhoneNumber = false;
   int _pageIndex = 0;
 
-  late List<Widget> dialogNext;
+  // late List<Widget> dialogNext;
 
   @override
   void initState() {
@@ -60,31 +60,9 @@ class _MobileDialogState extends State<MobileDialog> {
     api = widget.userApi;
     channel = widget.channel;
 
-    dialogNext = [
-      TextButton(
-        onPressed: () {
-          try {
-            if (!validPhoneNumber && isNotTestMode) {
-              return;
-            }
-            _navigateToNextPage();
-          } catch (e) {}
-        },
-        child: const Text('Continue'),
-      ),
-      TextButton(
-        onPressed: () {
-          enrollMobile();
-        },
-        child: const Text('Continue'),
-      ),
-      TextButton(
-          onPressed: () {
-            confirmCode();
-          },
-          child: const Text('Continue')
-      )
-    ];
+    passwordField.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -93,6 +71,32 @@ class _MobileDialogState extends State<MobileDialog> {
     phoneField.dispose();
     super.dispose();
   }
+
+  List<Widget> get dialogNext => [
+    TextButton(
+      onPressed: !validPhoneNumber && isNotTestMode ? null : () {
+        try {
+          if (!validPhoneNumber && isNotTestMode) {
+            return;
+          }
+          _navigateToNextPage();
+        } catch (e) {}
+      },
+      child: const Text('Continue'),
+    ),
+    TextButton(
+      onPressed: passwordField.text.isEmpty ? null : () {
+        enrollMobile();
+      },
+      child: const Text('Continue'),
+    ),
+    TextButton(
+        onPressed: codeProvided.isEmpty ? null : () {
+          confirmCode();
+        },
+        child: const Text('Continue')
+    )
+  ];
 
   Widget get dialogClose => IconButton(
     alignment: Alignment.centerLeft,
@@ -216,7 +220,9 @@ class _MobileDialogState extends State<MobileDialog> {
               phoneNumber = number.phoneNumber!;
             },
             onInputValidated: (final bool value) {
-              validPhoneNumber = value;
+              setState(() {
+                validPhoneNumber = value;
+              });
             },
             autoValidateMode: isNotTestMode ?
             AutovalidateMode.onUserInteraction
@@ -256,7 +262,7 @@ class _MobileDialogState extends State<MobileDialog> {
               obscureText: obscurePassword,
               enableSuggestions: false,
               autocorrect: false,
-              autovalidateMode: AutovalidateMode.always,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (final value) {
                 if (value == null || value.trim().isEmpty) {
                   return 'Password is required';
@@ -264,17 +270,17 @@ class _MobileDialogState extends State<MobileDialog> {
                 return null;
               },
               decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    key: const Key('toggle_password'),
-                    onPressed: () {
-                      setState(() {
-                        obscurePassword = !obscurePassword;
-                      });
-                    },
-                    icon: Icon(
-                        obscurePassword ? Icons.visibility : Icons.visibility_off
-                    ),
-                  )
+                suffixIcon: IconButton(
+                  key: const Key('toggle_password'),
+                  onPressed: () {
+                    setState(() {
+                      obscurePassword = !obscurePassword;
+                    });
+                  },
+                  icon: Icon(
+                      obscurePassword ? Icons.visibility : Icons.visibility_off
+                  ),
+                )
               ),
             ),
           ),
@@ -296,7 +302,7 @@ class _MobileDialogState extends State<MobileDialog> {
           child: TextFormField(
             key: const Key('phoneCode'),
             autofocus: true,
-            autovalidateMode: AutovalidateMode.always,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (final value) {
               if (value == null || value.trim().isEmpty) {
                 return 'Code is required';

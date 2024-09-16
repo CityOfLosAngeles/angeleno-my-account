@@ -46,7 +46,13 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
     super.initState();
     userProvider = widget.userProvider;
     auth0UserApi = widget.auth0UserApi;
-    _authMethods = getAuthenticationMethods();
+    _triggerAuthMethods();
+  }
+
+  void _triggerAuthMethods() {
+    setState(() {
+      _authMethods = getAuthenticationMethods();
+    });
   }
 
   Future<void> getAuthenticationMethods() async {
@@ -158,12 +164,12 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Semantics(
-                      header: true,
-                      child: const Text(
-                          'Multi-Factor Authentication',
-                          textAlign: TextAlign.left,
-                          style: headerStyle
-                      )
+                    header: true,
+                    child: const Text(
+                      'Multi-Factor Authentication',
+                      textAlign: TextAlign.left,
+                      style: headerStyle
+                    )
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -179,34 +185,34 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                       FilledButton.tonal(
                         key: const Key('disableAuthenticator'),
                         onPressed: () => showDialog<int>(
-                            context: context,
-                            builder: (final BuildContext context) => AlertDialog(
-                              title: const Text('Remove authenticator app?'),
-                              content: const SingleChildScrollView(
-                                  child: ListBody(
-                                    children: <Widget>[
-                                      // ignore: avoid_escaping_inner_quotes
-                                      Text('You won\'t be able to use your  '
-                                          'authenticator app to sign into your Angeleno '
-                                          'Account.')
-                                    ],
-                                  )
+                          context: context,
+                          builder: (final BuildContext context) => AlertDialog(
+                            title: const Text('Remove authenticator app?'),
+                            content: const SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  // ignore: avoid_escaping_inner_quotes
+                                  Text('You won\'t be able to use your  '
+                                      'authenticator app to sign into your Angeleno '
+                                      'Account.')
+                                ],
+                              )
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                               ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('Cancel'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                TextButton(
-                                  child: const Text('Ok'),
-                                  onPressed: () {
-                                    disableMFA(totpAuthId, 'totp');
-                                  },
-                                )
-                              ],
-                            )
+                              TextButton(
+                                child: const Text('Ok'),
+                                onPressed: () {
+                                  disableMFA(totpAuthId, 'totp');
+                                },
+                              )
+                            ],
+                          )
                         ).then((final value) {
                           if (value != null && value == HttpStatus.ok) {
                             setState(() {
@@ -218,24 +224,22 @@ class _AdvancedSecurityState extends State<AdvancedSecurityScreen> {
                       )
                           :
                       FilledButton(
-                          key: const Key('enableAuthenticator'),
-                          onPressed: () {
-                            showDialog<int>(
-                              context: context,
-                              builder: (final BuildContext context) =>
-                                  AuthenticatorDialog(
-                                      userProvider: userProvider,
-                                      auth0UserApi: auth0UserApi
-                                  ),
-                            ).then((final value) {
-                              if (value != null && value == HttpStatus.ok){
-                                setState(() {
-                                  authenticatorEnabled = true;
-                                });
-                              }
-                            });
-                          },
-                          child: const Text('Enable')
+                        key: const Key('enableAuthenticator'),
+                        onPressed: () {
+                          showDialog<int>(
+                            context: context,
+                            builder: (final BuildContext context) =>
+                              AuthenticatorDialog(
+                                userProvider: userProvider,
+                                auth0UserApi: auth0UserApi
+                              ),
+                          ).then((final value) {
+                            if (value != null && value == HttpStatus.ok){
+                              _triggerAuthMethods();
+                            }
+                          });
+                        },
+                        child: const Text('Enable')
                       ),
                     ],
                   ),
