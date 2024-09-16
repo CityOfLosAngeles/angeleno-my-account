@@ -144,7 +144,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byKey(const Key('totpCode')), '123456');
-
+    await tester.pump();
     await tester.tap(find.widgetWithText(TextButton, 'Finish'));
     await tester.pumpAndSettle();
 
@@ -211,6 +211,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byKey(const Key('phoneCode')), '483234');
+    await tester.pump();
     await tester.tap(find.widgetWithText(TextButton, 'Continue'));
     await tester.pumpAndSettle();
 
@@ -237,10 +238,12 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byKey(const Key('passwordField')), 'myPassword');
+    await tester.pump();
     await tester.tap(find.widgetWithText(TextButton, 'Continue'));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byKey(const Key('phoneCode')), '483234');
+    await tester.pump();
     await tester.tap(find.widgetWithText(TextButton, 'Continue'));
     await tester.pumpAndSettle();
 
