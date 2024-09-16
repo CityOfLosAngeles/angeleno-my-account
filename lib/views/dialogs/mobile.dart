@@ -42,15 +42,12 @@ class _MobileDialogState extends State<MobileDialog> {
 
   String errMsg = '';
   String phoneNumber = '';
-  String userPassword = '';
   String mfaToken = '';
   String oobCode = '';
   String codeProvided = '';
   bool obscurePassword = true;
   bool validPhoneNumber = false;
   int _pageIndex = 0;
-
-  // late List<Widget> dialogNext;
 
   @override
   void initState() {

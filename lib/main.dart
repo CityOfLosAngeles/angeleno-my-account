@@ -26,7 +26,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) => MaterialApp(
-    title: 'Angeleno - Account',
+    title: 'Angeleno - My Account '
+        '${environment == 'prod' ? '' : ' - $environment'}',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
       useMaterial3: true,
