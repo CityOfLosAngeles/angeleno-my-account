@@ -2,7 +2,6 @@ import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/views/screens/advanced_security_screen.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
