@@ -2,6 +2,7 @@ import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/views/screens/advanced_security_screen.dart';
 import 'package:angeleno_project/views/screens/password_screen.dart';
 import 'package:angeleno_project/views/screens/profile_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -211,6 +212,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ),
           ],
+        ),
+        bottomNavigationBar: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const Text(
+                'City of Los Angeles. '
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  overlayColor: Colors.transparent
+                ),
+                onPressed: () async {
+                  await launchUrl(
+                    Uri.parse('https://disclaimer.lacity.org/disclaimer.htm')
+                  );
+                },
+                child: const Text('Disclaimer')
+              ),
+              const Text(' | '),
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  overlayColor: Colors.transparent
+                ),
+                onPressed: () async {
+                  await launchUrl(
+                    Uri.parse('https://disclaimer.lacity.org/privacy.htm')
+                  );
+                },
+                child: const Text('Privacy Policy')
+              ),
+            ],
+          )
         )
       ),
     );
