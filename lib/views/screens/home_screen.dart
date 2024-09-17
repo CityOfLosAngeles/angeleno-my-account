@@ -72,17 +72,17 @@ class _MyHomePageState extends State<MyHomePage> {
         switch(index) {
           case 3:
             await launchUrl(
-              Uri.parse('https://angeleno.lacity.org/')
+              Uri.parse('https://sandbox.account.lacity.gov/')
             );
             break;
           case 4:
             await launchUrl(
-              Uri.parse('https://angeleno.lacity.org/apps')
+              Uri.parse('https://sandbox.account.lacity.gov/services')
             );
             break;
           case 5:
             await launchUrl(
-              Uri.parse('https://angeleno.lacity.org/help')
+              Uri.parse('https://sandbox.account.lacity.gov/help')
             );
             break;
           case 6:
@@ -214,15 +214,38 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         bottomNavigationBar: Container(
           padding: const EdgeInsets.all(16.0),
-          child: const Wrap(
+          child: Wrap(
             alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Text(
-                '© Copyright 2023 City of Los Angeles. '
-                    'All rights reserved. Disclaimer | Privacy Policy',
-                textDirection: TextDirection.ltr,
-                textAlign: TextAlign.center,
-              )
+              const Text(
+                'City of Los Angeles. '
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  overlayColor: Colors.transparent
+                ),
+                onPressed: () async {
+                  await launchUrl(
+                    Uri.parse('https://disclaimer.lacity.org/disclaimer.htm')
+                  );
+                },
+                child: const Text('Disclaimer')
+              ),
+              const Text(' | '),
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  overlayColor: Colors.transparent
+                ),
+                onPressed: () async {
+                  await launchUrl(
+                    Uri.parse('https://disclaimer.lacity.org/privacy.htm')
+                  );
+                },
+                child: const Text('Privacy Policy')
+              ),
             ],
           )
         )

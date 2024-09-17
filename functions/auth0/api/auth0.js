@@ -29,6 +29,7 @@ export const updateUser = onRequest(async (req, res) => {
 
   if (user.lastName) {
     updatedUserObject['family_name'] = user.lastName;
+    updatedUserObject['name'] += ` ${user.lastName}`;
   }
 
   const primaryAddress = {};
@@ -171,11 +172,11 @@ export const authMethods = onRequest(async (req, res) => {
 
     const request = await axios.request(config);
 
-    const applications = await getConnectedServices(userId);
+//    const applications = await getConnectedServices(userId);
 
     const response = {
       mfaMethods: request.data,
-      services: applications.filter((e) => e !== null)
+//      services: applications.filter((e) => e !== null)
     }
 
     res.status(200).send(response);
@@ -354,6 +355,40 @@ export const unenrollMFA = onRequest(async (req, res) => {
   }
 });
 
+export const removeConnection = onRequest(async (req, res) => {
+  try {
+    const {
+      connectionId
+    } = req.body;
+
+    if (!connectionId) {
+      res.status(400).send('Invalid request - missing required fields.');
+      return;
+    }
+  
+    const config = {
+      method: 'delete',
+      maxBodyLength: Infinity,
+      url: `https://${auth0Domain}/api/v2/grants/${connectionId}`,
+      headers: {
+        'Authorization': `Bearer ${await getAccessToken()}`
+      }
+    };
+    
+    await axios.request(config)
+    res.status(200).send();
+  } catch (error) {
+    console.log(error);
+
+    const {
+      status = 500,
+      message = '',
+    } = error.response;
+
+    return res.status(status).send(message);
+  };
+});
+
 const getConnectedServices = async (userId) => {
 
   if (!userId) {
@@ -428,37 +463,3 @@ const getConnectedServices = async (userId) => {
     return res.status(status).send(message);
   }
 };
-
-export const removeConnection = onRequest(async (req, res) => {
-  try {
-    const {
-      connectionId
-    } = req.body;
-
-    if (!connectionId) {
-      res.status(400).send('Invalid request - missing required fields.');
-      return;
-    }
-  
-    const config = {
-      method: 'delete',
-      maxBodyLength: Infinity,
-      url: `https://${auth0Domain}/api/v2/grants/${connectionId}`,
-      headers: {
-        'Authorization': `Bearer ${await getAccessToken()}`
-      }
-    };
-    
-    await axios.request(config)
-    res.status(200).send();
-  } catch (error) {
-    console.log(error);
-
-    const {
-      status = 500,
-      message = '',
-    } = error.response;
-
-    return res.status(status).send(message);
-  };
-});

@@ -36,7 +36,6 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
   String qrCodeAltString = '';
   String mfaToken = '';
 
-  String userPassword = '';
   bool obscurePassword = true;
 
   @override
@@ -45,6 +44,10 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
     userProvider = widget.userProvider;
     auth0UserApi = widget.auth0UserApi;
+
+    passwordField.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -151,7 +154,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
         children: [
           dialogClose,
           TextButton(
-            onPressed: () {
+            onPressed: passwordField.text.isEmpty ? null : () {
               enrollTOTP();
             },
             child: const Text('Continue'),
@@ -183,7 +186,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                   obscureText: obscurePassword,
                   enableSuggestions: false,
                   autocorrect: false,
-                  autovalidateMode: AutovalidateMode.always,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (final value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Password is required';
@@ -251,14 +254,14 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                 const SizedBox(height: 20),
                 const Text('If unable to scan, please enter the code below:'),
                 const SizedBox(height: 15),
-                Text(
-                    qrCodeAltString,
-                    style: const TextStyle(
-                        decoration: TextDecoration.none,
-                        color: Colors.black,
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.normal
-                    )
+                SelectableText(
+                  qrCodeAltString,
+                  style: const TextStyle(
+                    decoration: TextDecoration.none,
+                    color: Colors.black,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.normal
+                  )
                 )
               ],
             ),
@@ -275,7 +278,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
         children: [
           dialogClose,
           TextButton(
-            onPressed: () {
+            onPressed: totpCode.isEmpty ? null : () {
               confirmTOTP();
             },
             child: const Text('Finish'),
@@ -296,7 +299,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
                     child: TextFormField(
                       key: const Key('totpCode'),
                       autofocus: true,
-                      autovalidateMode: AutovalidateMode.always,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (final value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Code is required';

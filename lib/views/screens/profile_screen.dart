@@ -99,186 +99,190 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              onChanged: () {
-                formKey.currentState!.save();
-              },
-              autovalidateMode: AutovalidateMode.disabled,
-              child: Column(
-                children: [
-                  const SizedBox(height: 10.0),
-                  Row(mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: (editMode &&
-                            ((user.phone!.isNotEmpty && !validPhoneNumber) ||
-                          !isFormValid) && isNotTestMode
-                        ) ? null : () {
-                          if (editMode) {
-                            updateUser();
-                          }
-                          setState(() {
-                            userProvider.toggleEditing();
-                          });
-                      },
-                      child: Text(
-                          editMode ? 'Save' : 'Edit'
-                      ),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: Form(
+                    key: formKey,
+                    onChanged: () {
+                      formKey.currentState!.save();
+                    },
+                    autovalidateMode: AutovalidateMode.disabled,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 10.0),
+                        Row(mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: (editMode &&
+                                    ((user.phone!.isNotEmpty && !validPhoneNumber) ||
+                                        !isFormValid) && isNotTestMode
+                                ) ? null : () {
+                                  if (editMode) {
+                                    updateUser();
+                                  }
+                                  setState(() {
+                                    userProvider.toggleEditing();
+                                  });
+                                },
+                                child: Text(
+                                    editMode ? 'Save' : 'Edit'
+                                ),
+                              )
+                            ]
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: editMode,
+                          decoration: inputDecoration('First Name', editMode),
+                          style: textStyle(editMode),
+                          initialValue: user.firstName,
+                          maxLength: 300,
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          keyboardType: TextInputType.name,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (final val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Please enter a first name';
+                            }
+
+                            if (!nameRegEx.hasMatch(val)) {
+                              return 'Invalid characters in first name';
+                            }
+
+                            return null;
+                          },
+                          onChanged: (final val) {
+                            setState(() {
+                              user.firstName = val;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: editMode,
+                          decoration: inputDecoration('Last Name', editMode),
+                          style: textStyle(editMode),
+                          initialValue: user.lastName,
+                          maxLength: 150,
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          keyboardType: TextInputType.name,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (final val) {
+                            if (val == null || val.trim().isEmpty) {
+                              return 'Please enter a last name';
+                            }
+
+                            if (!nameRegEx.hasMatch(val)) {
+                              return 'Invalid characters in last name';
+                            }
+
+                            return null;
+                          },
+                          onChanged: (final val) {
+                            setState(() {
+                              user.lastName = val;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        InternationalPhoneNumberInput(
+                          selectorConfig: const SelectorConfig(
+                            selectorType: PhoneInputSelectorType.DIALOG,
+                            setSelectorButtonAsPrefixIcon: true,
+                            leadingPadding: 20.0,
+                          ),
+                          isEnabled: editMode,
+                          key: const Key('phoneField'),
+                          onInputChanged: (final PhoneNumber number) {
+                            if (number.parseNumber().isNotEmpty) {
+                              user.phone = number.phoneNumber!;
+                            } else {
+                              user.phone = '';
+                            }
+                          },
+                          onInputValidated: (final bool value) {
+                            if (user.phone!.isEmpty) {
+                              setState(() {
+                                validPhoneNumber = true;
+                              });
+                            } else {
+                              if (validPhoneNumber != value) {
+                                setState(() {
+                                  validPhoneNumber = value;
+                                });
+                              }
+                            }
+                          },
+                          autoValidateMode: isNotTestMode ?
+                          AutovalidateMode.onUserInteraction
+                              : AutovalidateMode.disabled,
+                          selectorTextStyle: const TextStyle(color: Colors.black),
+                          initialValue: PhoneNumber(phoneNumber: user.phone, isoCode: 'US'),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              signed: true,
+                              decimal: true
+                          ),
+                          ignoreBlank: true,
+                          inputBorder: const OutlineInputBorder(),
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: editMode,
+                          decoration: inputDecoration('Address', editMode),
+                          style: textStyle(editMode),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.address,
+                          onChanged: (final val) {
+                            user.address = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: editMode,
+                          decoration: inputDecoration('Address 2', editMode),
+                          style: textStyle(editMode),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.address2,
+                          onChanged: (final val) {
+                            user.address2 = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: editMode,
+                          decoration: inputDecoration('City', editMode),
+                          style: textStyle(editMode),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.city,
+                          onChanged: (final val) {
+                            user.city = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: editMode,
+                          decoration: inputDecoration('State', editMode),
+                          style: textStyle(editMode),
+                          keyboardType: TextInputType.streetAddress,
+                          initialValue: user.state,
+                          onChanged: (final val) {
+                            user.state = val;
+                          },
+                        ),
+                        const SizedBox(height: 25.0),
+                        TextFormField(
+                          enabled: editMode,
+                          decoration: inputDecoration('Zip', editMode),
+                          style: textStyle(editMode),
+                          initialValue: user.zip,
+                          onChanged: (final val) {
+                            user.zip = val;
+                          },
+                          keyboardType: TextInputType.number,
+                        ),
+                      ],
                     )
-                  ]),
-                  const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('First Name', editMode),
-                    style: textStyle(editMode),
-                    initialValue: user.firstName,
-                    maxLength: 300,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    keyboardType: TextInputType.name,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (final val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return 'Please enter a first name';
-                      }
-
-                      if (!nameRegEx.hasMatch(val)) {
-                        return 'Invalid characters in first name';
-                      }
-
-                      return null;
-                    },
-                    onChanged: (final val) {
-                      setState(() {
-                        user.firstName = val;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('Last Name', editMode),
-                    style: textStyle(editMode),
-                    initialValue: user.lastName,
-                    maxLength: 150,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                    keyboardType: TextInputType.name,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (final val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return 'Please enter a last name';
-                      }
-
-                      if (!nameRegEx.hasMatch(val)) {
-                        return 'Invalid characters in last name';
-                      }
-
-                      return null;
-                    },
-                    onChanged: (final val) {
-                      setState(() {
-                        user.lastName = val;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 25.0),
-                  InternationalPhoneNumberInput(
-                    selectorConfig: const SelectorConfig(
-                      selectorType: PhoneInputSelectorType.DIALOG,
-                      setSelectorButtonAsPrefixIcon: true,
-                      leadingPadding: 20.0,
-                    ),
-                    isEnabled: editMode,
-                    key: const Key('phoneField'),
-                    onInputChanged: (final PhoneNumber number) {
-                      if (number.parseNumber().isNotEmpty) {
-                        user.phone = number.phoneNumber!;
-                      } else {
-                        user.phone = '';
-                      }
-                    },
-                    onInputValidated: (final bool value) {
-                      if (user.phone!.isEmpty) {
-                        setState(() {
-                          validPhoneNumber = true;
-                        });
-                      } else {
-                        if (validPhoneNumber != value) {
-                          setState(() {
-                            validPhoneNumber = value;
-                          });
-                        }
-                      }
-                    },
-                    autoValidateMode: isNotTestMode ?
-                    AutovalidateMode.onUserInteraction
-                        : AutovalidateMode.disabled,
-                    selectorTextStyle: const TextStyle(color: Colors.black),
-                    initialValue: PhoneNumber(phoneNumber: user.phone, isoCode: 'US'),
-                    keyboardType: const TextInputType.numberWithOptions(
-                      signed: true,
-                      decimal: true
-                    ),
-                    ignoreBlank: true,
-                    inputBorder: const OutlineInputBorder(),
-                  ),
-                  const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('Address', editMode),
-                    style: textStyle(editMode),
-                    keyboardType: TextInputType.streetAddress,
-                    initialValue: user.address,
-                    onChanged: (final val) {
-                      user.address = val;
-                    },
-                  ),
-                  const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('Address 2', editMode),
-                    style: textStyle(editMode),
-                    keyboardType: TextInputType.streetAddress,
-                    initialValue: user.address2,
-                    onChanged: (final val) {
-                      user.address2 = val;
-                    },
-                  ),
-                  const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('City', editMode),
-                    style: textStyle(editMode),
-                    keyboardType: TextInputType.streetAddress,
-                    initialValue: user.city,
-                    onChanged: (final val) {
-                      user.city = val;
-                    },
-                  ),
-                  const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('State', editMode),
-                    style: textStyle(editMode),
-                    keyboardType: TextInputType.streetAddress,
-                    initialValue: user.state,
-                    onChanged: (final val) {
-                      user.state = val;
-                    },
-                  ),
-                  const SizedBox(height: 25.0),
-                  TextFormField(
-                    enabled: editMode,
-                    decoration: inputDecoration('Zip', editMode),
-                    style: textStyle(editMode),
-                    initialValue: user.zip,
-                    onChanged: (final val) {
-                      user.zip = val;
-                    },
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              )
+          )
             )
           )
         )
