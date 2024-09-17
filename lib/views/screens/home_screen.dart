@@ -24,7 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late User user;
   late OverlayProvider overlayProvider;
   int _selectedIndex = 0;
-  final currentYear = DateTime.now().year;
 
   @override
   void initState() {
@@ -212,20 +211,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
               ),
           ],
-        ),
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              Text(
-                '© Copyright $currentYear City of Los Angeles. '
-                    'All rights reserved. Disclaimer | Privacy Policy',
-                textDirection: TextDirection.ltr,
-                textAlign: TextAlign.center,
-              )
-            ],
-          )
         )
       ),
     );
