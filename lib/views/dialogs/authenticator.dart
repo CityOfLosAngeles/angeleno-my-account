@@ -23,7 +23,6 @@ class AuthenticatorDialog extends StatefulWidget {
 
 class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
 
-  final PageController _pageController = PageController();
   final passwordField = TextEditingController();
 
   late UserProvider userProvider;
@@ -37,6 +36,7 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
   String mfaToken = '';
 
   bool obscurePassword = true;
+  late bool _isSmallScreen;
 
   @override
   void initState() {
@@ -53,33 +53,55 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
   @override
   void dispose() {
     passwordField.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
+  List<Widget> get dialogNext => [
+    TextButton(
+      onPressed: passwordField.text.isEmpty ? null : () {
+        enrollTOTP();
+      },
+      child: const Text('Continue'),
+    ),
+    TextButton(
+      onPressed: () {
+        _navigateToNextPage();
+      },
+      child: const Text('Continue'),
+    ),
+    TextButton(
+      onPressed: totpCode.isEmpty ? null : () {
+        confirmTOTP();
+      },
+      child: const Text('Finish'),
+    )
+  ];
+
   void _navigateToNextPage() {
     if (_pageIndex <= 2) {
-      _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut
-      );
+      setState(() {
+        _pageIndex += 1;
+      });
     } else {
       Navigator.pop(context);
     }
   }
 
   Widget get dialogClose => IconButton(
+    alignment: Alignment.centerLeft,
     onPressed: () {
-      if (_pageIndex >= 1) {
-        _pageController.previousPage(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut
-        );
-      } else {
-        Navigator.pop(context);
-      }
+      Navigator.pop(context);
     },
-    icon: Icon(_pageIndex == 0 ? Icons.close : Icons.arrow_back)
+    icon: const Icon( Icons.close)
+  );
+
+  Widget get dialogBack => TextButton(
+    onPressed: () {
+      setState(() {
+        _pageIndex -= 1;
+      });
+    },
+    child: const Text('Back'),
   );
 
   void enrollTOTP() async {
@@ -146,181 +168,152 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     });
   }
 
-  Widget get passwordPrompt => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget modalBody(final Widget body)  => Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      dialogClose,
+      _isSmallScreen ? Expanded(
+        child: body,
+      ) : body,
+      if(_isSmallScreen)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: _pageIndex == 0 ? [dialogNext[_pageIndex]]
+              : [dialogBack, dialogNext[_pageIndex]],
+        )
+
+    ],
+  );
+
+  Widget get passwordPrompt => modalBody(
+    Align(
+      child:  Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          dialogClose,
-          TextButton(
-            onPressed: passwordField.text.isEmpty ? null : () {
-              enrollTOTP();
-            },
-            child: const Text('Continue'),
+          const Text(
+            'Set up Multi-Factor Authentication (MFA). Continue MFA '
+                'setup to add an additional layer of security when signing '
+                'in to your account. \n Please enter your password:',
+            textAlign: TextAlign.center,
+            softWrap: true,
+          ),
+          const SizedBox(height: 15),
+          SizedBox(
+            key: const Key('passwordField'),
+            width: 250,
+            child: TextFormField(
+              autofocus: true,
+              controller: passwordField,
+              onFieldSubmitted: (final value) {
+                enrollTOTP();
+              },
+              obscureText: obscurePassword,
+              enableSuggestions: false,
+              autocorrect: false,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (final value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Password is required';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    key: const Key('toggle_password'),
+                    onPressed: () {
+                      setState(() {
+                        obscurePassword = !obscurePassword;
+                      });
+                    },
+                    icon: Icon(
+                      // ignore: lines_longer_than_80_chars
+                        obscurePassword ? Icons.visibility : Icons.visibility_off
+                    ),
+                  )
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          if (errMsg.isNotEmpty)
+            Text(errMsg, style: TextStyle(color: colorScheme.error))
+        ],
+      ),
+    )
+  );
+
+  Widget get qrCodeScreen =>  modalBody(
+    Align(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('Setup Authenticator. Scan code below:',
+            style: TextStyle(
+              decoration: TextDecoration.none,
+              color: Colors.black,
+              fontSize: 16.0,
+              fontWeight: FontWeight.normal
+            ),
+          ),
+        SizedBox(
+            height: 150,
+            width: 150,
+            child: QrImageView(
+              data: totpQrCode,
+              size: 150
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text('If unable to scan, please enter the code below:'),
+          const SizedBox(height: 15),
+          SelectableText(
+            qrCodeAltString,
+            style: const TextStyle(
+              decoration: TextDecoration.none,
+              color: Colors.black,
+              fontSize: 14.0,
+              fontWeight: FontWeight.normal
+            )
           )
         ],
       ),
-      Expanded(
-        child: Align(
-          child: Column(
+    ),
+  );
+
+  Widget get confirmationScreen => modalBody(
+  Align(
+          child:  Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Set up Multi-Factor Authentication (MFA). Continue MFA '
-                    'setup to add an additional layer of security when signing '
-                    'in to your account. \n Please enter your password:',
-                textAlign: TextAlign.center,
-                softWrap: true,
+              const Text('Enter code displayed from the application:',
+                  textAlign: TextAlign.center,
+                  softWrap: true
               ),
-              const SizedBox(height: 15),
               SizedBox(
-                key: const Key('passwordField'),
-                width: 250,
-                child: TextFormField(
-                  autofocus: true,
-                  controller: passwordField,
-                  onFieldSubmitted: (final value) {
-                    enrollTOTP();
-                  },
-                  obscureText: obscurePassword,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (final value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Password is required';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                        key: const Key('toggle_password'),
-                        onPressed: () {
-                          setState(() {
-                            obscurePassword = !obscurePassword;
-                          });
-                        },
-                        icon: Icon(
-                          // ignore: lines_longer_than_80_chars
-                          obscurePassword ? Icons.visibility : Icons.visibility_off
-                        ),
-                      )
-                  ),
-                ),
+                  width: 250,
+                  child: TextFormField(
+                    key: const Key('totpCode'),
+                    autofocus: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (final value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Code is required';
+                      }
+                      return null;
+                    },
+                    onChanged: (final val) {
+                      setState(() {
+                        totpCode = val;
+                      });
+                    },
+                  )
               ),
               const SizedBox(height: 15),
               if (errMsg.isNotEmpty)
                 Text(errMsg, style: TextStyle(color: colorScheme.error))
             ],
-          ),
-        ),
-      )
-    ],
-  );
-
-  Widget get qrCodeScreen =>  Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            dialogClose,
-            TextButton(
-              onPressed: () {
-                _navigateToNextPage();
-              },
-              child: const Text('Continue'),
-            )
-          ],
-        ),
-        Expanded(
-          child: Align(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Setup Authenticator. Scan code below:',
-                  style: TextStyle(
-                      decoration: TextDecoration.none,
-                      color: Colors.black,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.normal
-                  ),
-                ),
-                QrImageView(
-                    data: totpQrCode,
-                    size: 150
-                ),
-                const SizedBox(height: 20),
-                const Text('If unable to scan, please enter the code below:'),
-                const SizedBox(height: 15),
-                SelectableText(
-                  qrCodeAltString,
-                  style: const TextStyle(
-                    decoration: TextDecoration.none,
-                    color: Colors.black,
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.normal
-                  )
-                )
-              ],
-            ),
-          ),
-        )
-      ]
-  );
-
-  Widget get confirmationScreen => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          dialogClose,
-          TextButton(
-            onPressed: totpCode.isEmpty ? null : () {
-              confirmTOTP();
-            },
-            child: const Text('Finish'),
-          )
-        ],
-      ),
-      Expanded(
-          child: Align(
-              child:  Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Enter code displayed from the application:',
-                      textAlign: TextAlign.center,
-                      softWrap: true
-                  ),
-                  SizedBox(
-                    width: 250,
-                    child: TextFormField(
-                      key: const Key('totpCode'),
-                      autofocus: true,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (final value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Code is required';
-                        }
-                        return null;
-                      },
-                      onChanged: (final val) {
-                        setState(() {
-                          totpCode = val;
-                        });
-                      },
-                    )
-                  ),
-                  const SizedBox(height: 15),
-                  if (errMsg.isNotEmpty)
-                    Text(errMsg, style: TextStyle(color: colorScheme.error))
-                ],
-              )
           )
       )
-    ]
   );
 
   List<Widget> get screens => [
@@ -329,22 +322,8 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     confirmationScreen
   ];
 
-  Widget get dialogBody => SizedBox(
-    width: double.infinity,
-    height: double.infinity,
-    child: PageView.builder(
-      controller: _pageController,
-      itemCount: 3,
-      onPageChanged: (final index) {
-        setState(() {
-          _pageIndex = index;
-        });
-      },
-      itemBuilder: (final context, final index) => Container(
-          padding: const EdgeInsets.all(20),
-          child: screens[_pageIndex]
-      )
-    ),
+  Widget get dialogBody => Container(
+      child: screens[_pageIndex]
   );
 
   @override
@@ -352,13 +331,18 @@ class _AuthenticatorDialogState extends State<AuthenticatorDialog> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isSmallScreen = screenWidth < smallScreen;
 
+    _isSmallScreen = isSmallScreen;
+
     return isSmallScreen ?
       Dialog.fullscreen(
         child: dialogBody
       )
       :
-      Dialog(
-        child: dialogBody
+      AlertDialog(
+        content: dialogBody,
+        actionsAlignment: MainAxisAlignment.end,
+        actions: _pageIndex == 0 ? [dialogNext[_pageIndex]]
+            : [dialogBack, dialogNext[_pageIndex]],
       );
   }
 }

@@ -340,15 +340,15 @@ class _MobileDialogState extends State<MobileDialog> {
 
     return
       isSmallScreen ?
-      Dialog.fullscreen(
-        child: dialogBody
-      )
+        Dialog.fullscreen(
+          child: dialogBody
+        )
       :
-      AlertDialog(
-        content:  dialogBody,
-        actionsAlignment: MainAxisAlignment.end,
-        actions: _pageIndex == 0 ? [dialogNext[_pageIndex]]
-            : [dialogBack, dialogNext[_pageIndex]],
-      );
+        AlertDialog(
+          content:  dialogBody,
+          actionsAlignment: MainAxisAlignment.end,
+          actions: _pageIndex == 0 ? [dialogNext[_pageIndex]]
+              : [dialogBack, dialogNext[_pageIndex]],
+        );
   }
 }
