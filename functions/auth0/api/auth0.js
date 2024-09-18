@@ -126,7 +126,7 @@ export const updatePassword = onRequest(async (req, res) => {
       },
       data: {
         password: newPassword,
-        connection: 'Username-Password-Authentication',
+        connection: 'Angeleno-Users-Default',
       },
     };
 
