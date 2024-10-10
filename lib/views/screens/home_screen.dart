@@ -129,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           leadingWidth: 75,
           leading:  TextButton(
+            key: const Key('menuButton'),
             style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(0)
