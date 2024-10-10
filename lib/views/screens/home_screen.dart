@@ -127,6 +127,18 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
+          leadingWidth: 75,
+          leading:  TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0)
+              ),
+            ),
+            onPressed: () { scaffoldKey.currentState!.openDrawer(); },
+            child: const Text('Menu', style: TextStyle(
+              fontSize: 16,
+            ),)
+          ),
           title: const Text('Angeleno Account',
             style: TextStyle(fontWeight: FontWeight.bold),
           )
