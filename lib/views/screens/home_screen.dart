@@ -226,41 +226,41 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         bottomNavigationBar: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                const Text(
-                  'City of Los Angeles. '
+          padding: const EdgeInsets.all(16.0),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const Text(
+                'City of Los Angeles. '
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  overlayColor: Colors.transparent
                 ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    overlayColor: Colors.transparent
-                  ),
-                  onPressed: () async {
-                    await launchUrl(
-                      Uri.parse('https://disclaimer.lacity.org/disclaimer.htm')
-                    );
-                  },
-                  child: const Text('Disclaimer')
+                onPressed: () async {
+                  await launchUrl(
+                    Uri.parse('https://disclaimer.lacity.org/disclaimer.htm')
+                  );
+                },
+                child: const Text('Disclaimer')
+              ),
+              const Text(' | '),
+              TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  overlayColor: Colors.transparent
                 ),
-                const Text(' | '),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    overlayColor: Colors.transparent
-                  ),
-                  onPressed: () async {
-                    await launchUrl(
-                      Uri.parse('https://disclaimer.lacity.org/privacy.htm')
-                    );
-                  },
-                  child: const Text('Privacy Policy')
-                ),
-              ],
-            )
+                onPressed: () async {
+                  await launchUrl(
+                    Uri.parse('https://disclaimer.lacity.org/privacy.htm')
+                  );
+                },
+                child: const Text('Privacy Policy')
+              ),
+            ],
+          )
         )
       ),
     );

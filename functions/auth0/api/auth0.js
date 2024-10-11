@@ -172,6 +172,7 @@ export const authMethods = onRequest(async (req, res) => {
 
     const request = await axios.request(config);
 
+
    const applications = await getConnectedServices(userId);
 
     const response = {
