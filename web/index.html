@@ -76,6 +76,27 @@
         }
       }
 
+      function updateCurrentTitle() {
+        updateTitleFromUrl(window.location.href);
+      }
+
+      function patchHistoryMethod(methodName) {
+        var originalMethod = window.history[methodName];
+
+        if (typeof originalMethod !== "function") {
+          return;
+        }
+
+        window.history[methodName] = function() {
+          var result = originalMethod.apply(this, arguments);
+          updateCurrentTitle();
+          return result;
+        };
+      }
+
+      window.addEventListener("load", updateCurrentTitle);
+      window.addEventListener("flutter-first-frame", updateCurrentTitle);
+
       if (window.navigation && typeof window.navigation.addEventListener === "function") {
         window.navigation.addEventListener("navigate", function(event) {
           if (event && event.destination && event.destination.url) {
@@ -83,6 +104,8 @@
           }
         });
       } else {
+        patchHistoryMethod("pushState");
+        patchHistoryMethod("replaceState");
         window.addEventListener("popstate", function() {
           updateTitleFromUrl(window.location.href);
         });
