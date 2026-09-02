@@ -1,7 +1,7 @@
-import 'dart:js_interop';
-
 import 'package:angeleno_project/controllers/overlay_provider.dart';
 import 'package:angeleno_project/controllers/user_provider.dart';
+import 'package:angeleno_project/utils/flutter_environment_stub.dart'
+    if (dart.library.js_interop) 'package:angeleno_project/utils/flutter_environment_web.dart';
 import 'package:angeleno_project/utils/constants.dart';
 import 'package:angeleno_project/utils/theme.dart';
 import 'package:angeleno_project/views/screens/mfa_screen.dart';
@@ -14,15 +14,12 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 
-@JS('flutterEnvironment')
-external set flutterEnvironment(final String value);
-
 Future<void> main() async {
 
   setPathUrlStrategy();
 
   // Expose environment to JavaScript
-  flutterEnvironment = environment;
+  setFlutterEnvironment(environment);
 
   await DatadogSdk.runApp(datadogConfig, TrackingConsent.granted, () async {
     runApp(
