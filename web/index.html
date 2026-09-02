@@ -34,12 +34,35 @@
 
   <script>
     (function() {
+      function getBasePathname() {
+        var baseUrl = new URL(document.baseURI || window.location.origin, window.location.origin);
+        var basePathname = baseUrl.pathname || "/";
+
+        if (basePathname.length > 1 && basePathname.endsWith("/")) {
+          basePathname = basePathname.slice(0, -1);
+        }
+
+        return basePathname;
+      }
+
+      function normalizeRoutePath(pathname) {
+        var basePathname = getBasePathname();
+
+        if (basePathname !== "/" && pathname.indexOf(basePathname + "/") === 0) {
+          pathname = pathname.slice(basePathname.length);
+        } else if (pathname === basePathname) {
+          pathname = "/";
+        }
+
+        return pathname || "/";
+      }
+
       function updateTitleFromUrl(urlString) {
         try {
-          var url = new URL(urlString);
+          var url = new URL(urlString, document.baseURI || window.location.origin);
           var env = window.flutterEnvironment;
           var environment = env === 'production' ? '' : (env ? env + ' ' : '');
-          var pathname = url.pathname;
+          var pathname = normalizeRoutePath(url.pathname);
 
           if (pathname === "/profile") {
             document.title = "Profile | " + environment + "Angeleno Account";
