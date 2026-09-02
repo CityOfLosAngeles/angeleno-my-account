@@ -70,6 +70,8 @@
             document.title = "Password change | " + environment + "Angeleno Account";
           } else if (pathname === "/multi-factor-authentication") {
             document.title = "Multi-factor authentication | " + environment + "Angeleno Account";
+          } else {
+            document.title = environment + "Angeleno Account";
           }
         } catch (e) {
           // Ignore URL parsing errors to avoid breaking app startup.
