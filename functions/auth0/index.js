@@ -18,8 +18,8 @@ const client = jwksClient({
 });
 
 const verifyToken = (req, res, next) => {
-  const token = req.headers['X-ACCESS-TOKEN'] || req.headers['x-access-token'];
-  const userId = req.body.userId || req.query.userId;
+  const token = req.headers['x-access-token'];
+  const userId = req.body?.userId || req.query.userId;
 
   if (!token) {
     return res.status(401).send('Unauthorized: No token provided');
@@ -42,8 +42,8 @@ const verifyToken = (req, res, next) => {
 };
 
 
-app.use(verifyToken);
 app.use(express.json());
+app.use(verifyToken);
 
 app.get('/auth0/authMethods', auth0.authMethods);
 app.post('/auth0/updateUser', auth0.updateUser);
