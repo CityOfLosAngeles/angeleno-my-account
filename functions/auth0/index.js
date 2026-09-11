@@ -3,6 +3,7 @@ import admin from 'firebase-admin';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
+import rateLimit from 'express-rate-limit';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { auth0Domain } from './utils/constants.js';
 import * as auth0 from './api/auth0.js';
@@ -41,18 +42,31 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+// Rate limiters
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later.'
+});
+
+const strictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // stricter limit for sensitive operations
+  message: 'Too many requests, please try again later.'
+});
 
 app.use(express.json());
 app.use(verifyToken);
+app.use(generalLimiter);
 
 app.get('/auth0/authMethods', auth0.authMethods);
-app.post('/auth0/updateUser', auth0.updateUser);
-app.post('/auth0/updatePassword', auth0.updatePassword);
-app.post('/auth0/enrollMFA', auth0.enrollMFA);
-app.post('/auth0/confirmMFA', auth0.confirmMFA);
-app.post('/auth0/unenrollMFA', auth0.unenrollMFA);
+app.post('/auth0/updateUser', strictLimiter, auth0.updateUser);
+app.post('/auth0/updatePassword', strictLimiter, auth0.updatePassword);
+app.post('/auth0/enrollMFA', strictLimiter, auth0.enrollMFA);
+app.post('/auth0/confirmMFA', strictLimiter, auth0.confirmMFA);
+app.post('/auth0/unenrollMFA', strictLimiter, auth0.unenrollMFA);
 app.post('/auth0/removeConnection', auth0.removeConnection);
-app.post('/auth0/challengeMfa', auth0.challengeMfa);
-app.post('/auth0/requestMFAToken', auth0.requestMFAToken);
+app.post('/auth0/challengeMfa', strictLimiter, auth0.challengeMfa);
+app.post('/auth0/requestMFAToken', strictLimiter, auth0.requestMFAToken);
 
 export const auth0 = onRequest(app);
