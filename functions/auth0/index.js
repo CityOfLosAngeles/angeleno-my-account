@@ -56,8 +56,8 @@ const strictLimiter = rateLimit({
 });
 
 app.use(express.json());
-app.use(verifyToken);
 app.use(generalLimiter);
+app.use(verifyToken);
 
 app.get('/auth0/authMethods', auth0.authMethods);
 app.post('/auth0/updateUser', strictLimiter, auth0.updateUser);
